@@ -14,7 +14,9 @@
     "cancel": "Annuler",
     "confirm": "Confirmer",
     "save": "Enregistrer",
-    "close": "Fermer"
+    "close": "Fermer",
+    "previous": "Précédent",
+    "next": "Suivant"
   },
   "home": {
     "badge": "Location de voitures au Maroc",
@@ -22,12 +24,150 @@
     "subtitle": "Une flotte moderne de voitures premium et économiques, réservation rapide sans inscription et tarifs transparents.",
     "ctaPrimary": "Voir les voitures",
     "ctaSecondary": "Nous contacter",
-    "soon": "Site en construction — d'autres fonctionnalités arrivent bientôt."
+    "soon": "Site en construction — d'autres fonctionnalités arrivent bientôt.",
+    "heroImageAlt": "Voiture premium en location",
+    "valueProps": {
+      "title": "Pourquoi nous choisir",
+      "subtitle": "Une expérience de location fluide du début à la fin.",
+      "noSignup": {
+        "title": "Réservation sans compte",
+        "desc": "Réservez votre voiture en quelques minutes, sans inscription."
+      },
+      "transparent": {
+        "title": "Tarifs transparents",
+        "desc": "Des prix journaliers clairs, sans frais cachés."
+      },
+      "fleet": {
+        "title": "Flotte moderne",
+        "desc": "Des véhicules récents et soigneusement entretenus pour tous les goûts."
+      },
+      "support": {
+        "title": "Assistance rapide",
+        "desc": "Notre équipe est disponible par WhatsApp et par téléphone."
+      }
+    },
+    "featured": {
+      "title": "Voitures en vedette",
+      "subtitle": "Une sélection de notre flotte la plus demandée.",
+      "viewAll": "Voir toutes les voitures"
+    },
+    "about": {
+      "badge": "À propos",
+      "title": "Votre partenaire de confiance sur la route",
+      "body": "Nous offrons une expérience de location haut de gamme au Maroc : une flotte variée de l'économique au luxe, des prix clairs et un service rapide sans complications. Chaque réservation est confirmée rapidement via WhatsApp.",
+      "cta": "Nous contacter"
+    }
+  },
+  "quickSearch": {
+    "title": "Trouvez votre voiture",
+    "category": "Catégorie",
+    "anyCategory": "Toutes les catégories",
+    "dates": "Dates de location",
+    "selectDates": "Choisir les dates",
+    "submit": "Rechercher"
+  },
+  "catalog": {
+    "title": "Notre flotte",
+    "subtitle": "Choisissez la voiture idéale pour votre trajet dans notre sélection complète.",
+    "filters": "Filtres",
+    "results": "{count, plural, =0 {Aucune voiture} one {# voiture} other {# voitures}}",
+    "category": "Catégorie",
+    "transmission": "Transmission",
+    "seats": "Places",
+    "priceRange": "Prix par jour",
+    "minPrice": "Min",
+    "maxPrice": "Max",
+    "sort": "Trier",
+    "any": "Tous",
+    "seatsPlus": "{count}+ places",
+    "clear": "Effacer les filtres",
+    "empty": {
+      "title": "Aucune voiture ne correspond",
+      "desc": "Essayez d'ajuster ou d'effacer les filtres.",
+      "action": "Effacer les filtres"
+    },
+    "datesFilter": "Disponible du {from} au {to}",
+    "clearDates": "Effacer les dates"
+  },
+  "sort": {
+    "newest": "Plus récentes",
+    "priceAsc": "Prix : croissant",
+    "priceDesc": "Prix : décroissant"
+  },
+  "categories": {
+    "economy": "Économique",
+    "sedan": "Berline",
+    "suv": "SUV",
+    "luxury": "Luxe",
+    "van": "Van",
+    "pickup": "Pick-up",
+    "sport": "Sport"
+  },
+  "transmission": {
+    "manual": "Manuelle",
+    "automatic": "Automatique"
+  },
+  "fuel": {
+    "diesel": "Diesel",
+    "gasoline": "Essence",
+    "hybrid": "Hybride",
+    "electric": "Électrique"
+  },
+  "features": {
+    "climatisation": "Climatisation",
+    "bluetooth": "Bluetooth",
+    "usb": "Port USB",
+    "carplay": "Apple CarPlay",
+    "gps": "GPS",
+    "cruise_control": "Régulateur de vitesse",
+    "4x4": "4x4",
+    "cuir": "Sièges en cuir",
+    "toit_ouvrant": "Toit ouvrant",
+    "9_places": "9 places",
+    "sport_mode": "Mode sport"
+  },
+  "car": {
+    "perDay": "/ jour",
+    "perWeek": "/ semaine",
+    "from": "À partir de",
+    "book": "Réserver",
+    "viewDetails": "Détails",
+    "specs": "Caractéristiques",
+    "features": "Équipements",
+    "description": "Description",
+    "availability": "Calendrier de disponibilité",
+    "availabilityHint": "Les dates réservées ou bloquées sont désactivées dans le calendrier.",
+    "deposit": "Caution",
+    "year": "Année",
+    "seats": "Places",
+    "doors": "Portes",
+    "fuel": "Carburant",
+    "transmission": "Transmission",
+    "category": "Catégorie",
+    "brand": "Marque",
+    "model": "Modèle",
+    "legendAvailable": "Disponible",
+    "legendUnavailable": "Indisponible",
+    "galleryThumb": "Voir l'image {n}",
+    "openImage": "Agrandir l'image",
+    "weekPrice": "Tarif hebdomadaire disponible",
+    "backToCatalog": "Retour à la flotte",
+    "noImage": "Aucune image"
+  },
+  "book": {
+    "title": "Réserver {name}",
+    "badge": "Bientôt",
+    "soon": "Le formulaire de réservation sera disponible prochainement. En attendant, contactez-nous directement.",
+    "back": "Retour à la voiture",
+    "contact": "Nous contacter"
   },
   "footer": {
     "tagline": "Votre agence de confiance pour la location de voitures.",
     "rights": "Tous droits réservés.",
     "explore": "Explorer",
-    "contact": "Contact"
+    "contact": "Contact",
+    "phone": "Téléphone",
+    "email": "E-mail",
+    "address": "Adresse"
   }
 }

@@ -8,9 +8,13 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
     formats: ["image/avif", "image/webp"],
-    // Supabase Storage / remote image hosts are added per-deployment.
-    // Example: { protocol: "https", hostname: "<project>.supabase.co" }
-    remotePatterns: [],
+    // Supabase Storage is the production image host; `placehold.co` covers
+    // the dev/seed dataset. Add the concrete Supabase project host (or a
+    // CDN) per-deployment as needed.
+    remotePatterns: [
+      { protocol: "https", hostname: "*.supabase.co" },
+      { protocol: "https", hostname: "placehold.co" },
+    ],
   },
   async headers() {
     return [
