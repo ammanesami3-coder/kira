@@ -10,6 +10,7 @@ const eslintConfig = [
       "node_modules/**",
       "next-env.d.ts",
       "types/database.types.ts",
+      "supabase/**",
     ],
   },
   ...nextCoreWebVitals,

@@ -1,8 +1,10 @@
 /**
  * Shared Zod schemas (used identically on client and server).
- *
- * Phase 0: intentionally empty. Booking / car / settings schemas are added
- * with their respective features.
+ * One module per entity; re-exported here for convenient imports.
  */
 
-export {};
+export * from "./car";
+export * from "./carImage";
+export * from "./booking";
+export * from "./blockedPeriod";
+export * from "./agencySettings";
