@@ -1,0 +1,7 @@
+.next
+node_modules
+pnpm-lock.yaml
+types/database.types.ts
+CLAUDE.md
+prompts.md
+kira-roadmap.html

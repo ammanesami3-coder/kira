@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "cars": "Voitures",
+    "contact": "Contact",
+    "book": "Réserver"
+  },
+  "common": {
+    "language": "Langue",
+    "arabic": "Arabe",
+    "french": "Français",
+    "loading": "Chargement…",
+    "search": "Rechercher",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "save": "Enregistrer",
+    "close": "Fermer"
+  },
+  "home": {
+    "badge": "Location de voitures au Maroc",
+    "title": "Prenez la route avec {name}",
+    "subtitle": "Une flotte moderne de voitures premium et économiques, réservation rapide sans inscription et tarifs transparents.",
+    "ctaPrimary": "Voir les voitures",
+    "ctaSecondary": "Nous contacter",
+    "soon": "Site en construction — d'autres fonctionnalités arrivent bientôt."
+  },
+  "footer": {
+    "tagline": "Votre agence de confiance pour la location de voitures.",
+    "rights": "Tous droits réservés.",
+    "explore": "Explorer",
+    "contact": "Contact"
+  }
+}
