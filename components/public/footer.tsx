@@ -1,9 +1,10 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { Car, Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 
 import { Link } from "@/i18n/navigation";
 import { siteConfig, type Locale } from "@/config/site.config";
 import { getAgencySettings } from "@/server/queries";
+import { BrandLogo } from "@/components/public/brand";
 
 /**
  * Site footer. Contact details come from the `agency_settings` singleton
@@ -31,10 +32,7 @@ export async function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-3 lg:px-8">
         <div className="space-y-3">
           <Link href="/" className="flex items-center gap-2 font-semibold">
-            <span className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-lg">
-              <Car className="size-4" aria-hidden />
-            </span>
-            <span>{siteConfig.name}</span>
+            <BrandLogo size="sm" />
           </Link>
           <p className="text-muted-foreground max-w-xs text-sm">
             {t("footer.tagline")}

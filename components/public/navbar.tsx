@@ -1,9 +1,8 @@
 import { useTranslations } from "next-intl";
-import { Car } from "lucide-react";
 
 import { Link } from "@/i18n/navigation";
-import { siteConfig } from "@/config/site.config";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/public/brand";
 import { LocaleSwitcher } from "@/components/public/locale-switcher";
 
 export function Navbar() {
@@ -22,10 +21,7 @@ export function Navbar() {
           href="/"
           className="flex items-center gap-2 font-semibold tracking-tight"
         >
-          <span className="bg-primary text-primary-foreground flex size-9 items-center justify-center rounded-lg">
-            <Car className="size-5" />
-          </span>
-          <span className="text-lg">{siteConfig.name}</span>
+          <BrandLogo size="md" />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">

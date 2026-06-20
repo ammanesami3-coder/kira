@@ -245,6 +245,7 @@ NEXT_PUBLIC_SITE_NAME=
 NEXT_PUBLIC_SITE_URL=
 NEXT_PUBLIC_DEFAULT_LOCALE=ar
 NEXT_PUBLIC_CURRENCY=MAD
+NEXT_PUBLIC_LOGO_URL=                # رابط صورة الشعار (فارغ = أيقونة + اسم الموقع)
 
 # اختياري
 RESEND_API_KEY=

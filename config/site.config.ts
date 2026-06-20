@@ -23,6 +23,8 @@ const defaultLocale = env("NEXT_PUBLIC_DEFAULT_LOCALE", "ar") as Locale;
 export const siteConfig = {
   name: env("NEXT_PUBLIC_SITE_NAME", "Kira"),
   url: env("NEXT_PUBLIC_SITE_URL", "http://localhost:3000"),
+  /** Brand logo image URL. Empty → fall back to the built-in icon + name. */
+  logo: env("NEXT_PUBLIC_LOGO_URL", ""),
   defaultLocale: (locales.includes(defaultLocale)
     ? defaultLocale
     : "ar") as Locale,
