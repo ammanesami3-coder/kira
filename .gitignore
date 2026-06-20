@@ -31,6 +31,9 @@ pnpm-debug.log*
 # vercel
 .vercel
 
+# local scratch (e.g. pdf preview output)
+/tmp/
+
 # typescript
 *.tsbuildinfo
 

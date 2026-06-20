@@ -1,9 +1,11 @@
 "use server";
 
 import { headers } from "next/headers";
+import { after } from "next/server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { fulfillBooking } from "@/server/fulfillment";
 import type { Json } from "@/types/database.types";
 import { extrasTotal } from "@/lib/booking/extras";
 import { rateLimit, pruneRateLimits } from "@/lib/rate-limit";
@@ -146,6 +148,11 @@ export async function createBooking(
     return { ok: false, error: "DB_ERROR", code: insertError.code };
   }
 
+  // Fulfilment (PDF → Storage → WhatsApp) runs AFTER the response so the
+  // guest gets an instant confirmation. It is idempotent and never throws,
+  // so a slow/down gateway can't delay or fail the booking.
+  after(() => fulfillBooking(inserted.id));
+
   return {
     ok: true,
     data: {
@@ -156,6 +163,33 @@ export async function createBooking(
       total_days: inserted.total_days,
       total_price: Number(inserted.total_price),
     },
+  };
+}
+
+/**
+ * Admin: re-run fulfilment for a booking (e.g. the gateway was down at booking
+ * time). Idempotent — regenerates the PDF only if missing and re-sends to
+ * WhatsApp only if not already sent. Intended to be called from the admin
+ * bookings UI or a scheduled retry job over `whatsapp_sent = false`.
+ */
+export async function retryBookingFulfillment(
+  bookingId: unknown,
+): Promise<ActionResult<{ pdfReady: boolean; whatsappSent: boolean }>> {
+  if (typeof bookingId !== "string" || bookingId.length === 0) {
+    return { ok: false, error: "INVALID_INPUT" };
+  }
+
+  // Only the authenticated owner may trigger a resend.
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "UNAUTHORIZED" };
+
+  const result = await fulfillBooking(bookingId);
+  return {
+    ok: true,
+    data: { pdfReady: result.pdfReady, whatsappSent: result.whatsappSent },
   };
 }
 
