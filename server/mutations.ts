@@ -1,8 +1,13 @@
 "use server";
 
+import { headers } from "next/headers";
+
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import type { Json } from "@/types/database.types";
+import { extrasTotal } from "@/lib/booking/extras";
+import { rateLimit, pruneRateLimits } from "@/lib/rate-limit";
+import { verifyTurnstile } from "@/lib/turnstile";
 import {
   bookingInputSchema,
   bookingStatusUpdateSchema,
@@ -38,9 +43,26 @@ function dateRangeLiteral(start: string, end: string): string {
   return `[${start},${end})`;
 }
 
+/** Best-effort client IP from proxy headers (Vercel sets these). */
+async function clientIp(): Promise<string> {
+  const h = await headers();
+  const fwd = h.get("x-forwarded-for");
+  if (fwd) return fwd.split(",")[0]!.trim();
+  return h.get("x-real-ip") ?? "unknown";
+}
+
+export interface BookingConfirmation {
+  id: string;
+  reference: string;
+  start_date: string;
+  end_date: string;
+  total_days: number;
+  total_price: number;
+}
+
 export async function createBooking(
   input: unknown,
-): Promise<ActionResult<{ id: string; reference: string }>> {
+): Promise<ActionResult<BookingConfirmation>> {
   const parsed = bookingInputSchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false, error: "INVALID_INPUT" };
@@ -50,6 +72,20 @@ export async function createBooking(
   // Honeypot: silently reject bots without revealing the check.
   if (data.company && data.company.length > 0) {
     return { ok: false, error: "INVALID_INPUT" };
+  }
+
+  // Simple per-IP rate limit against automated submissions.
+  pruneRateLimits();
+  const ip = await clientIp();
+  const limit = rateLimit(`booking:${ip}`, 5, 60_000);
+  if (!limit.ok) {
+    return { ok: false, error: "RATE_LIMITED", code: String(limit.retryAfter) };
+  }
+
+  // Turnstile is a no-op until TURNSTILE_SECRET_KEY is configured.
+  const human = await verifyTurnstile(data.turnstileToken, ip);
+  if (!human) {
+    return { ok: false, error: "CAPTCHA_FAILED" };
   }
 
   const admin = createAdminClient();
@@ -79,8 +115,11 @@ export async function createBooking(
     };
   }
 
+  // Authoritative pricing — recomputed server-side from the car price and
+  // the shared extras catalog. The client total is for display only.
   const totalDays = daysBetween(data.start_date, data.end_date);
-  const totalPrice = totalDays * Number(car.price_per_day);
+  const basePrice = totalDays * Number(car.price_per_day);
+  const totalPrice = basePrice + extrasTotal(data.extras, totalDays);
 
   const { data: inserted, error: insertError } = await admin
     .from("bookings")
@@ -90,13 +129,14 @@ export async function createBooking(
       customer_phone: data.customer_phone,
       customer_email: data.customer_email ? data.customer_email : null,
       period: dateRangeLiteral(data.start_date, data.end_date),
-      pickup_location: data.pickup_location ?? null,
-      dropoff_location: data.dropoff_location ?? null,
+      pickup_location: data.pickup_location,
+      dropoff_location: data.dropoff_location ? data.dropoff_location : null,
       total_price: totalPrice,
-      extras: (data.extras ?? {}) as Json,
+      extras: { selected: data.extras } as Json,
+      notes: data.note ? data.note : null,
       status: "pending",
     })
-    .select("id, reference")
+    .select("id, reference, start_date, end_date, total_days, total_price")
     .single();
 
   if (insertError) {
@@ -106,7 +146,17 @@ export async function createBooking(
     return { ok: false, error: "DB_ERROR", code: insertError.code };
   }
 
-  return { ok: true, data: { id: inserted.id, reference: inserted.reference } };
+  return {
+    ok: true,
+    data: {
+      id: inserted.id,
+      reference: inserted.reference,
+      start_date: inserted.start_date,
+      end_date: inserted.end_date,
+      total_days: inserted.total_days,
+      total_price: Number(inserted.total_price),
+    },
+  };
 }
 
 /**

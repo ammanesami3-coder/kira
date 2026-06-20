@@ -1,22 +1,20 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { useLocale, useTranslations } from "next-intl";
-import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
 
-import { Link } from "@/i18n/navigation";
 import { type Locale } from "@/config/site.config";
-import { getCarBySlug, type CarWithImages } from "@/server/queries";
-import { carName } from "@/lib/display";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { getCarBySlug } from "@/server/queries";
+import { getUnavailableRanges } from "@/server/availability";
+import { carName, imageAlt, primaryImage } from "@/lib/display";
+import { BookingForm } from "@/components/public/booking/booking-form";
+import type { BookingCar } from "@/components/public/booking/types";
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>;
 };
 
-// Booking metadata pages should not be indexed (the real flow lands in
-// Phase 3); keep them out of search results for now.
+// The booking flow is transactional, not content — keep it out of the index
+// (it must still be crawlable, hence a real page rather than an iframe).
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
   const car = await getCarBySlug(slug);
@@ -35,36 +33,24 @@ export default async function BookPage({ params }: Props) {
   const car = await getCarBySlug(slug);
   if (!car) notFound();
 
-  return <BookPlaceholder car={car} />;
-}
+  const ranges = await getUnavailableRanges(car.id);
 
-function BookPlaceholder({ car }: { car: CarWithImages }) {
-  const t = useTranslations();
-  const locale = useLocale() as Locale;
-  const Arrow = locale === "ar" ? ArrowLeft : ArrowRight;
-  const name = carName(car, locale);
+  const name = carName(car, locale as Locale);
+  const primary = primaryImage(car.car_images);
+  const bookingCar: BookingCar = {
+    id: car.id,
+    slug: car.slug,
+    name,
+    brand: car.brand,
+    model: car.model,
+    year: car.year,
+    category: car.category,
+    pricePerDay: Number(car.price_per_day),
+    deposit: Number(car.deposit),
+    image: primary
+      ? { url: primary.url, alt: imageAlt(primary, name, locale as Locale) }
+      : null,
+  };
 
-  return (
-    <section className="mx-auto flex max-w-xl flex-col items-center gap-6 px-4 py-24 text-center sm:px-6 lg:px-8">
-      <Badge variant="secondary" className="gap-1.5">
-        <Clock className="size-3.5" aria-hidden />
-        {t("book.badge")}
-      </Badge>
-      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-        {t("book.title", { name })}
-      </h1>
-      <p className="text-muted-foreground text-pretty">{t("book.soon")}</p>
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <Button asChild variant="outline">
-          <Link href={`/cars/${car.slug}`} className="gap-2">
-            <Arrow className="size-4 rotate-180" aria-hidden />
-            {t("book.back")}
-          </Link>
-        </Button>
-        <Button asChild>
-          <Link href="/contact">{t("book.contact")}</Link>
-        </Button>
-      </div>
-    </section>
-  );
+  return <BookingForm car={bookingCar} ranges={ranges} />;
 }
