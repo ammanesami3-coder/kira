@@ -23,7 +23,7 @@ export function BrandLogo({ size = "md" }: { size?: "md" | "sm" }) {
       <img
         src={siteConfig.logo}
         alt={siteConfig.name}
-        className={`${isMd ? "h-16" : "h-8"} w-auto max-w-[180px] object-contain`}
+        className={`${isMd ? "h-22" : "h-8"} w-auto max-w-[180px] object-contain`}
       />
     );
   }
