@@ -17,6 +17,7 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "db:test": "node supabase/tests/db.test.mjs",
+    "verify:rebrand": "node scripts/verify-rebrand.mjs",
     "pdf:preview": "tsx --tsconfig scripts/tsconfig.preview.json scripts/pdf-preview.tsx",
     "prepare": "husky"
   },
@@ -81,6 +82,9 @@
       "@swc/core",
       "sharp",
       "unrs-resolver"
-    ]
+    ],
+    "overrides": {
+      "postcss@<8.5.10": ">=8.5.10"
+    }
   }
 }

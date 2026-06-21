@@ -518,5 +518,14 @@
       "cancelled": "Annulée",
       "completed": "Terminée"
     }
+  },
+  "errors": {
+    "notFoundTitle": "Page introuvable",
+    "notFoundMessage": "Désolé, la page que vous recherchez n'existe pas ou a été déplacée.",
+    "serverErrorTitle": "Une erreur est survenue",
+    "serverErrorMessage": "Un problème inattendu est survenu. Réessayez ; si l'erreur persiste, contactez-nous.",
+    "tryAgain": "Réessayer",
+    "backHome": "Retour à l'accueil",
+    "browseCars": "Parcourir les voitures"
   }
 }

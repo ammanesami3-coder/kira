@@ -56,3 +56,19 @@ scaffolded as placeholders.
 
 A Husky `pre-commit` hook runs `lint-staged` (ESLint + Prettier) and a full
 `pnpm typecheck`, blocking commits that fail linting or type-checking.
+
+## Launch & operations docs
+
+Everything needed to ship and resell the template lives in [`docs/`](./docs):
+
+| Doc                                                   | Purpose                                            |
+| ----------------------------------------------------- | -------------------------------------------------- |
+| [`redeploy-playbook.md`](./docs/redeploy-playbook.md) | End-to-end launch for a new agency (config-only)   |
+| [`production-launch.md`](./docs/production-launch.md) | Env reference, analytics, monitoring & uptime      |
+| [`wa-gateway-setup.md`](./docs/wa-gateway-setup.md)   | Free self-hosted WhatsApp gateway (full reference) |
+| [`security-audit.md`](./docs/security-audit.md)       | Final security audit report                        |
+| [`qa-checklist.md`](./docs/qa-checklist.md)           | Pre/post-launch QA (browsers, mobile, a11y, SEO)   |
+| [`admin-guide.md`](./docs/admin-guide.md)             | Dashboard guide for the agency owner (Arabic)      |
+| [`backup-strategy.md`](./docs/backup-strategy.md)     | Backup & disaster recovery                         |
+
+Validate the config-only rebrand claim any time with `pnpm verify:rebrand`.
