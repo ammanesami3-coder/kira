@@ -46,3 +46,13 @@ export const carSchema = z.object({
 });
 
 export type CarInput = z.infer<typeof carSchema>;
+
+/** Update payload: same fields plus the target id. */
+export const carUpdateSchema = carSchema.extend({ id: z.uuid() });
+export type CarUpdateInput = z.infer<typeof carUpdateSchema>;
+
+/** Toggle a car's public availability (the master show/hide switch). */
+export const toggleAvailabilitySchema = z.object({
+  id: z.uuid(),
+  is_available: z.boolean(),
+});

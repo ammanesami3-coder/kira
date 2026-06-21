@@ -2,7 +2,8 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Mail, MapPin, Phone } from "lucide-react";
 
 import { Link } from "@/i18n/navigation";
-import { siteConfig, type Locale } from "@/config/site.config";
+import { type Locale } from "@/config/site.config";
+import { resolveBranding } from "@/lib/branding";
 import { getAgencySettings } from "@/server/queries";
 import { BrandLogo } from "@/components/public/brand";
 
@@ -15,6 +16,7 @@ export async function Footer() {
   const t = await getTranslations();
   const locale = (await getLocale()) as Locale;
   const settings = await getAgencySettings().catch(() => null);
+  const brand = resolveBranding(settings, locale);
 
   const year = new Date().getFullYear();
   const address =
@@ -32,7 +34,7 @@ export async function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-3 lg:px-8">
         <div className="space-y-3">
           <Link href="/" className="flex items-center gap-2 font-semibold">
-            <BrandLogo size="sm" />
+            <BrandLogo size="sm" name={brand.name} logo={brand.logo} />
           </Link>
           <p className="text-muted-foreground max-w-xs text-sm">
             {t("footer.tagline")}
@@ -92,7 +94,7 @@ export async function Footer() {
 
       <div className="border-t py-6">
         <p className="text-muted-foreground text-center text-xs">
-          © {year} {siteConfig.name}. {t("footer.rights")}
+          © {year} {brand.name}. {t("footer.rights")}
         </p>
       </div>
     </footer>

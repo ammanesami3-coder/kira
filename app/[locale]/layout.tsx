@@ -6,8 +6,8 @@ import { Plus_Jakarta_Sans, Tajawal } from "next/font/google";
 
 import { routing } from "@/i18n/routing";
 import { siteConfig, localeDirection, type Locale } from "@/config/site.config";
-import { Navbar } from "@/components/public/navbar";
-import { Footer } from "@/components/public/footer";
+import { resolveBranding } from "@/lib/branding";
+import { getAgencySettings } from "@/server/queries";
 import { Toaster } from "@/components/ui/sonner";
 import "../globals.css";
 
@@ -28,14 +28,24 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const settings = await getAgencySettings().catch(() => null);
+  const brand = resolveBranding(
+    settings,
+    hasLocale(routing.locales, locale) ? (locale as Locale) : "ar",
+  );
   return {
     metadataBase: new URL(siteConfig.url),
     title: {
-      default: siteConfig.name,
-      template: `%s · ${siteConfig.name}`,
+      default: settings?.seo_title || brand.name,
+      template: `%s · ${brand.name}`,
     },
-    description: siteConfig.name,
+    description: settings?.seo_description || brand.name,
     icons: { icon: "/favicon.ico" },
   };
 }
@@ -57,11 +67,14 @@ export default async function LocaleLayout({
 
   const dir = localeDirection[locale as Locale];
 
-  // Inject brand colors as inline custom properties so changing the env
-  // values re-themes the entire site (overrides the defaults in globals.css).
+  // Brand colors come from the agency settings (owner-editable), falling back
+  // to env defaults. Injected as inline custom properties so an edit in the
+  // dashboard re-themes the entire site with no redeploy.
+  const settings = await getAgencySettings().catch(() => null);
+  const brand = resolveBranding(settings, locale as Locale);
   const themeStyle = {
-    "--primary": siteConfig.colors.primary,
-    "--secondary": siteConfig.colors.secondary,
+    "--primary": brand.primaryColor,
+    "--secondary": brand.secondaryColor,
   } as React.CSSProperties;
 
   return (
@@ -74,9 +87,7 @@ export default async function LocaleLayout({
     >
       <body className="flex min-h-dvh flex-col">
         <NextIntlClientProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          {children}
           <Toaster />
         </NextIntlClientProvider>
       </body>

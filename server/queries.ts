@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type {
   AgencySettings,
@@ -20,17 +21,22 @@ import type {
 
 export type CarWithImages = Car & { car_images: CarImage[] };
 
-/** The agency identity / SEO singleton (public). */
-export async function getAgencySettings(): Promise<AgencySettings | null> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("agency_settings")
-    .select("*")
-    .limit(1)
-    .maybeSingle();
-  if (error) throw error;
-  return data;
-}
+/**
+ * The agency identity / SEO singleton (public).
+ * `cache`d so the layout, metadata and footer share one query per request.
+ */
+export const getAgencySettings = cache(
+  async (): Promise<AgencySettings | null> => {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("agency_settings")
+      .select("*")
+      .limit(1)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+);
 
 /** Public catalog: available cars with their images, ordered for display. */
 export async function getAvailableCars(): Promise<CarWithImages[]> {
@@ -69,9 +75,25 @@ export async function getAllCars(): Promise<CarWithImages[]> {
   const { data, error } = await supabase
     .from("cars")
     .select("*, car_images(*)")
-    .order("sort_order", { ascending: true });
+    .order("sort_order", { ascending: true })
+    .order("sort_order", { ascending: true, referencedTable: "car_images" });
   if (error) throw error;
   return data ?? [];
+}
+
+/** A single car with its images (admin; includes hidden cars). */
+export async function getCarForAdmin(
+  id: string,
+): Promise<CarWithImages | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("cars")
+    .select("*, car_images(*)")
+    .eq("id", id)
+    .order("sort_order", { ascending: true, referencedTable: "car_images" })
+    .maybeSingle();
+  if (error) throw error;
+  return data;
 }
 
 /** Bookings list (admin; contains PII — RLS limits this to the owner). */

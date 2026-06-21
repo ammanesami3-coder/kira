@@ -1,12 +1,18 @@
-import { useTranslations } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
+import { type Locale } from "@/config/site.config";
+import { resolveBranding } from "@/lib/branding";
+import { getAgencySettings } from "@/server/queries";
 import { Button } from "@/components/ui/button";
 import { BrandLogo } from "@/components/public/brand";
 import { LocaleSwitcher } from "@/components/public/locale-switcher";
 
-export function Navbar() {
-  const t = useTranslations("nav");
+export async function Navbar() {
+  const t = await getTranslations("nav");
+  const locale = (await getLocale()) as Locale;
+  const settings = await getAgencySettings().catch(() => null);
+  const brand = resolveBranding(settings, locale);
 
   const links = [
     { href: "/", label: t("home") },
@@ -21,7 +27,7 @@ export function Navbar() {
           href="/"
           className="flex items-center gap-2 font-semibold tracking-tight"
         >
-          <BrandLogo size="md" />
+          <BrandLogo size="md" name={brand.name} logo={brand.logo} />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">

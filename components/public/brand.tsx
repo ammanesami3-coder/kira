@@ -14,15 +14,25 @@ import { siteConfig } from "@/config/site.config";
  * so this stays host-agnostic (no `next.config` image allowlist to edit).
  * A fixed height reserves layout space to avoid CLS.
  */
-export function BrandLogo({ size = "md" }: { size?: "md" | "sm" }) {
+export function BrandLogo({
+  size = "md",
+  name = siteConfig.name,
+  logo = siteConfig.logo,
+}: {
+  size?: "md" | "sm";
+  /** Display name — defaults to the env value; pass the agency setting. */
+  name?: string;
+  /** Logo image URL — defaults to the env value; pass the agency setting. */
+  logo?: string;
+}) {
   const isMd = size === "md";
 
-  if (siteConfig.logo) {
+  if (logo) {
     return (
       // eslint-disable-next-line @next/next/no-img-element -- arbitrary external logo host; see above
       <img
-        src={siteConfig.logo}
-        alt={siteConfig.name}
+        src={logo}
+        alt={name}
         className={`${isMd ? "h-22" : "h-8"} w-auto max-w-[180px] object-contain`}
       />
     );
@@ -37,7 +47,7 @@ export function BrandLogo({ size = "md" }: { size?: "md" | "sm" }) {
       >
         <Car className={isMd ? "size-5" : "size-4"} aria-hidden />
       </span>
-      <span className={isMd ? "text-lg" : undefined}>{siteConfig.name}</span>
+      <span className={isMd ? "text-lg" : undefined}>{name}</span>
     </>
   );
 }

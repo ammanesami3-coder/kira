@@ -19,3 +19,6 @@ export const blockedPeriodSchema = z
   });
 
 export type BlockedPeriodInput = z.infer<typeof blockedPeriodSchema>;
+
+/** Remove a blocked period by id (admin). */
+export const deleteBlockedPeriodSchema = z.object({ id: z.uuid() });
