@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/public";
 import type {
   AgencySettings,
   Booking,
@@ -12,11 +13,12 @@ import type {
 /**
  * Read-side data access for Server Components.
  *
- * Public reads go through the cookie-bound anon client and are therefore
- * constrained by RLS (only available cars / their images / the singleton
- * settings are visible). Admin reads run inside authenticated admin pages,
- * where the same client carries the owner's session and RLS grants full
- * visibility.
+ * Public reads go through the cookie-LESS anon client (`createPublicClient`)
+ * and are wrapped in React `cache`: they only ever touch anon-visible data,
+ * never read cookies, and so keep the public pages statically renderable +
+ * ISR cacheable while deduping repeated calls within a single render. Admin
+ * reads use the cookie-bound client, which carries the owner's session so
+ * RLS grants full visibility.
  */
 
 export type CarWithImages = Car & { car_images: CarImage[] };
@@ -27,7 +29,7 @@ export type CarWithImages = Car & { car_images: CarImage[] };
  */
 export const getAgencySettings = cache(
   async (): Promise<AgencySettings | null> => {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("agency_settings")
       .select("*")
@@ -39,8 +41,8 @@ export const getAgencySettings = cache(
 );
 
 /** Public catalog: available cars with their images, ordered for display. */
-export async function getAvailableCars(): Promise<CarWithImages[]> {
-  const supabase = await createClient();
+export const getAvailableCars = cache(async (): Promise<CarWithImages[]> => {
+  const supabase = createPublicClient();
   const { data, error } = await supabase
     .from("cars")
     .select("*, car_images(*)")
@@ -49,23 +51,38 @@ export async function getAvailableCars(): Promise<CarWithImages[]> {
     .order("sort_order", { ascending: true, referencedTable: "car_images" });
   if (error) throw error;
   return data ?? [];
-}
+});
 
-/** Public car detail by slug (only if available). */
-export async function getCarBySlug(
-  slug: string,
-): Promise<CarWithImages | null> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("cars")
-    .select("*, car_images(*)")
-    .eq("slug", slug)
-    .eq("is_available", true)
-    .order("sort_order", { ascending: true, referencedTable: "car_images" })
-    .maybeSingle();
-  if (error) throw error;
-  return data;
-}
+/** Public car detail by slug (only if available). `cache`d so a page and its
+ * `generateMetadata` share a single query. */
+export const getCarBySlug = cache(
+  async (slug: string): Promise<CarWithImages | null> => {
+    const supabase = createPublicClient();
+    const { data, error } = await supabase
+      .from("cars")
+      .select("*, car_images(*)")
+      .eq("slug", slug)
+      .eq("is_available", true)
+      .order("sort_order", { ascending: true, referencedTable: "car_images" })
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+);
+
+/** Slugs of all available cars — drives the dynamic sitemap. */
+export const getCarSlugs = cache(
+  async (): Promise<{ slug: string; updated_at: string }[]> => {
+    const supabase = createPublicClient();
+    const { data, error } = await supabase
+      .from("cars")
+      .select("slug, updated_at")
+      .eq("is_available", true)
+      .order("sort_order", { ascending: true });
+    if (error) throw error;
+    return data ?? [];
+  },
+);
 
 /* ── Admin reads (require an authenticated owner session) ─────────── */
 

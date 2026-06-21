@@ -1,5 +1,7 @@
 import "server-only";
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/public";
 import type { CarUnavailableRange } from "@/types/database.types";
 
 /**
@@ -37,20 +39,22 @@ export async function isCarAvailable(
  * periods), with NO customer data. Used to disable/grey out dates in the
  * public date picker. Reads the public `car_unavailable_ranges` view.
  */
-export async function getUnavailableRanges(
-  carId: string,
-): Promise<DateRange[]> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("car_unavailable_ranges")
-    .select("start_date, end_date")
-    .eq("car_id", carId);
-  if (error) throw error;
+export const getUnavailableRanges = cache(
+  async (carId: string): Promise<DateRange[]> => {
+    // Cookie-less public client: the view is anon-readable and carries no
+    // PII, so reading it must not opt the car detail page out of ISR.
+    const supabase = createPublicClient();
+    const { data, error } = await supabase
+      .from("car_unavailable_ranges")
+      .select("start_date, end_date")
+      .eq("car_id", carId);
+    if (error) throw error;
 
-  return (data ?? [])
-    .filter(
-      (r): r is CarUnavailableRange & DateRange =>
-        r.start_date !== null && r.end_date !== null,
-    )
-    .map((r) => ({ start_date: r.start_date, end_date: r.end_date }));
-}
+    return (data ?? [])
+      .filter(
+        (r): r is CarUnavailableRange & DateRange =>
+          r.start_date !== null && r.end_date !== null,
+      )
+      .map((r) => ({ start_date: r.start_date, end_date: r.end_date }));
+  },
+);

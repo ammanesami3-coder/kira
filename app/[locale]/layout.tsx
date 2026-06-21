@@ -3,9 +3,12 @@ import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { Plus_Jakarta_Sans, Tajawal } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 
 import { routing } from "@/i18n/routing";
 import { siteConfig, localeDirection, type Locale } from "@/config/site.config";
+import { ogLocale } from "@/lib/seo";
 import { resolveBranding } from "@/lib/branding";
 import { getAgencySettings } from "@/server/queries";
 import { Toaster } from "@/components/ui/sonner";
@@ -34,19 +37,47 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const safeLocale = hasLocale(routing.locales, locale)
+    ? (locale as Locale)
+    : siteConfig.defaultLocale;
   const settings = await getAgencySettings().catch(() => null);
-  const brand = resolveBranding(
-    settings,
-    hasLocale(routing.locales, locale) ? (locale as Locale) : "ar",
-  );
+  const brand = resolveBranding(settings, safeLocale);
+  const description = settings?.seo_description || brand.name;
+
   return {
     metadataBase: new URL(siteConfig.url),
     title: {
       default: settings?.seo_title || brand.name,
       template: `%s · ${brand.name}`,
     },
-    description: settings?.seo_description || brand.name,
+    description,
+    applicationName: brand.name,
     icons: { icon: "/favicon.ico" },
+    // Per-page metadata overrides title/description/canonical; these are the
+    // shared OG/Twitter defaults. The actual OG/Twitter image comes from the
+    // file-convention `opengraph-image` (per-car, with a branded public
+    // default) so every page ships a social card.
+    openGraph: {
+      type: "website",
+      siteName: brand.name,
+      locale: ogLocale[safeLocale],
+      alternateLocale: siteConfig.locales
+        .filter((l) => l !== safeLocale)
+        .map((l) => ogLocale[l]),
+    },
+    twitter: {
+      card: "summary_large_image",
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
   };
 }
 
@@ -90,6 +121,10 @@ export default async function LocaleLayout({
           {children}
           <Toaster />
         </NextIntlClientProvider>
+        {/* Field Core Web Vitals (LCP/CLS/INP) + privacy-light page analytics.
+            No-ops in dev / outside Vercel. */}
+        <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );

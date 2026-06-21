@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { useLocale, useTranslations } from "next-intl";
 import {
   ArrowLeft,
@@ -17,7 +17,19 @@ import {
 
 import { Link } from "@/i18n/navigation";
 import { siteConfig, type Locale } from "@/config/site.config";
-import { getCarBySlug, type CarWithImages } from "@/server/queries";
+import {
+  absoluteUrl,
+  clampDescription,
+  localePath,
+  localizedAlternates,
+} from "@/lib/seo";
+import { breadcrumbJsonLd, carJsonLd } from "@/lib/structured-data";
+import { routing } from "@/i18n/routing";
+import {
+  getCarBySlug,
+  getCarSlugs,
+  type CarWithImages,
+} from "@/server/queries";
 import { getUnavailableRanges, type DateRange } from "@/server/availability";
 import {
   carDescription,
@@ -25,12 +37,27 @@ import {
   formatPrice,
   galleryImages,
   imageAlt,
-  primaryImage,
 } from "@/lib/display";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CarGallery, type GalleryImage } from "@/components/public/car-gallery";
 import { AvailabilityCalendar } from "@/components/public/availability-calendar";
+
+// Detail pages are content: prerender on first hit, then serve from the ISR
+// cache and revalidate hourly. Date conflicts are always re-checked live at
+// booking time, so a slightly stale availability calendar is safe.
+export const revalidate = 3600;
+
+// Prerender every available car in both locales at build time. `dynamicParams`
+// stays true (default) so a newly added slug still renders on-demand and is
+// then cached, picked up automatically on the next revalidation.
+export async function generateStaticParams() {
+  const cars = await getCarSlugs().catch(() => []);
+  return routing.locales.flatMap((locale) =>
+    cars.map((car) => ({ locale, slug: car.slug })),
+  );
+}
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>;
@@ -39,28 +66,26 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
   const car = await getCarBySlug(slug);
-  if (!car) return {};
+  if (!car) return { robots: { index: false } };
 
   const name = carName(car, locale as Locale);
-  const description =
-    carDescription(car, locale as Locale) ?? `${car.brand} ${car.model}`;
-  const image = primaryImage(car.car_images)?.url;
+  const description = clampDescription(
+    carDescription(car, locale as Locale) ??
+      `${name} — ${car.brand} ${car.model} ${car.year}.`,
+  );
 
   return {
     title: name,
     description,
-    alternates: {
-      canonical: `/${locale}/cars/${slug}`,
-      languages: Object.fromEntries(
-        siteConfig.locales.map((l) => [l, `/${l}/cars/${slug}`]),
-      ),
-    },
+    alternates: localizedAlternates(locale as Locale, `/cars/${slug}`),
+    // OG image is provided by the route's dynamic `opengraph-image` (next/og).
     openGraph: {
       title: name,
       description,
       type: "website",
-      images: image ? [{ url: image }] : undefined,
+      url: `/${locale}/cars/${slug}`,
     },
+    twitter: { card: "summary_large_image", title: name, description },
   };
 }
 
@@ -72,8 +97,46 @@ export default async function CarDetailPage({ params }: Props) {
   if (!car) notFound();
 
   const ranges = await getUnavailableRanges(car.id);
+  const t = await getTranslations({ locale });
 
-  return <CarDetail car={car} ranges={ranges} />;
+  const name = carName(car, locale as Locale);
+  const description = carDescription(car, locale as Locale);
+  const url = absoluteUrl(localePath(locale as Locale, `/cars/${slug}`));
+
+  // Car + Offer and BreadcrumbList structured data, built server-side where
+  // the locale-aware translations and absolute URLs are available.
+  const carLd = carJsonLd({
+    name,
+    description: clampDescription(
+      description ?? `${name} — ${car.brand} ${car.model} ${car.year}.`,
+    ),
+    brand: car.brand,
+    model: car.model,
+    year: car.year,
+    transmission: t(`transmission.${car.transmission}`),
+    fuelType: t.has(`fuel.${car.fuel_type}`)
+      ? t(`fuel.${car.fuel_type}`)
+      : car.fuel_type,
+    seats: car.seats,
+    doors: car.doors,
+    images: galleryImages(car.car_images).map((img) => img.url),
+    pricePerDay: Number(car.price_per_day),
+    currency: siteConfig.currency,
+    url,
+    available: car.is_available,
+  });
+  const breadcrumbLd = breadcrumbJsonLd([
+    { name: t("nav.home"), path: localePath(locale as Locale) },
+    { name: t("nav.cars"), path: localePath(locale as Locale, "/cars") },
+    { name, path: localePath(locale as Locale, `/cars/${slug}`) },
+  ]);
+
+  return (
+    <>
+      <JsonLd data={[carLd, breadcrumbLd]} />
+      <CarDetail car={car} ranges={ranges} />
+    </>
+  );
 }
 
 function CarDetail({
@@ -118,34 +181,8 @@ function CarDetail({
     },
   ];
 
-  // Product / Car JSON-LD for rich results.
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Car",
-    name,
-    brand: { "@type": "Brand", name: car.brand },
-    model: car.model,
-    vehicleModelDate: String(car.year),
-    vehicleTransmission: t(`transmission.${car.transmission}`),
-    fuelType: car.fuel_type,
-    seatingCapacity: car.seats,
-    numberOfDoors: car.doors,
-    image: images.map((i) => i.url),
-    offers: {
-      "@type": "Offer",
-      price: car.price_per_day,
-      priceCurrency: siteConfig.currency,
-      availability: "https://schema.org/InStock",
-    },
-  };
-
   return (
     <article className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:py-12 lg:px-8">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-
       <Button asChild variant="ghost" size="sm" className="-ms-2 mb-6">
         <Link href="/cars" className="text-muted-foreground gap-2">
           <Arrow className="size-4 rotate-180" aria-hidden />

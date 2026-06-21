@@ -4,12 +4,20 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CalendarDays, X } from "lucide-react";
 
 import { Link } from "@/i18n/navigation";
-import { siteConfig } from "@/config/site.config";
+import { type Locale } from "@/config/site.config";
+import { clampDescription, localePath, localizedAlternates } from "@/lib/seo";
+import { breadcrumbJsonLd } from "@/lib/structured-data";
 import { parseFilters, type RawSearchParams } from "@/lib/catalog";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Badge } from "@/components/ui/badge";
 import { CarFilters } from "@/components/public/car-filters";
 import { CarResults } from "@/components/public/car-results";
 import { CarGridSkeleton } from "@/components/public/car-card-skeleton";
+
+// Revalidate hourly. Filtered views (query params) render dynamically; the
+// canonical points at the param-less /cars to avoid duplicate-content from
+// every filter combination.
+export const revalidate = 3600;
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -19,15 +27,14 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "catalog" });
+  const title = t("title");
+  const description = clampDescription(t("subtitle"));
   return {
-    title: t("title"),
-    description: t("subtitle"),
-    alternates: {
-      canonical: `/${locale}/cars`,
-      languages: Object.fromEntries(
-        siteConfig.locales.map((l) => [l, `/${l}/cars`]),
-      ),
-    },
+    title,
+    description,
+    alternates: localizedAlternates(locale as Locale, "/cars"),
+    openGraph: { title, description, url: `/${locale}/cars` },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 
@@ -37,7 +44,13 @@ export default async function CarsPage({ params, searchParams }: Props) {
 
   const sp = await searchParams;
   const t = await getTranslations({ locale, namespace: "catalog" });
+  const tNav = await getTranslations({ locale, namespace: "nav" });
   const filters = parseFilters(sp);
+
+  const breadcrumbLd = breadcrumbJsonLd([
+    { name: tNav("home"), path: localePath(locale as Locale) },
+    { name: tNav("cars"), path: localePath(locale as Locale, "/cars") },
+  ]);
 
   // A query key changes whenever filters change → Suspense re-shows the
   // skeleton while the new result set streams in.
@@ -52,6 +65,7 @@ export default async function CarsPage({ params, searchParams }: Props) {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
+      <JsonLd data={breadcrumbLd} />
       <header className="mb-8 max-w-2xl">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
           {t("title")}

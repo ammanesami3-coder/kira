@@ -58,6 +58,36 @@
       "cta": "Nous contacter"
     }
   },
+  "faq": {
+    "title": "Questions fréquentes",
+    "subtitle": "Tout ce qu'il faut savoir avant de louer votre voiture chez nous.",
+    "items": {
+      "account": {
+        "q": "Dois-je créer un compte pour réserver ?",
+        "a": "Non. La réservation se fait sans compte : choisissez la voiture et les dates, remplissez vos informations en quelques minutes, sans inscription."
+      },
+      "documents": {
+        "q": "Quels documents faut-il pour louer une voiture ?",
+        "a": "Un permis de conduire valide et une carte d'identité nationale ou un passeport. L'âge minimum est généralement de 21 ans avec au moins un an de permis."
+      },
+      "deposit": {
+        "q": "Y a-t-il une caution ?",
+        "a": "Oui, une caution remboursable est demandée selon la catégorie de la voiture. Elle vous est restituée intégralement au retour du véhicule en bon état."
+      },
+      "payment": {
+        "q": "Comment la réservation et le paiement sont-ils confirmés ?",
+        "a": "Après l'envoi de la demande, nous vous contactons par WhatsApp ou téléphone pour confirmer la disponibilité, le paiement et la prise en charge. Vos dates restent réservées en attendant."
+      },
+      "cancel": {
+        "q": "Puis-je modifier ou annuler ma réservation ?",
+        "a": "Oui, contactez-nous par WhatsApp ou téléphone avec votre numéro de référence et nous modifions ou annulons votre réservation selon les conditions."
+      },
+      "delivery": {
+        "q": "Proposez-vous la livraison et la récupération ?",
+        "a": "Oui, prise en charge à l'agence, à l'aéroport ou à l'adresse de votre choix. Indiquez le lieu de prise en charge dans le formulaire et nous confirmerons les détails."
+      }
+    }
+  },
   "quickSearch": {
     "title": "Trouvez votre voiture",
     "category": "Catégorie",
@@ -237,6 +267,32 @@
     "child_seat": "Siège enfant",
     "perDay": "/ jour",
     "perBooking": "/ réservation"
+  },
+  "contactPage": {
+    "title": "Nous contacter",
+    "subtitle": "Nous sommes là pour vous aider à louer votre voiture. Contactez-nous par WhatsApp, par téléphone ou passez à l'agence.",
+    "reach": "Nous joindre",
+    "phone": "Téléphone",
+    "whatsapp": "WhatsApp",
+    "whatsappCta": "Écrivez-nous sur WhatsApp",
+    "email": "E-mail",
+    "address": "Adresse",
+    "hoursTitle": "Horaires d'ouverture",
+    "findUs": "Nous trouver",
+    "openMap": "Ouvrir dans Maps",
+    "browseCars": "Voir les voitures"
+  },
+  "hours": {
+    "closed": "Fermé",
+    "days": {
+      "mon": "Lundi",
+      "tue": "Mardi",
+      "wed": "Mercredi",
+      "thu": "Jeudi",
+      "fri": "Vendredi",
+      "sat": "Samedi",
+      "sun": "Dimanche"
+    }
   },
   "footer": {
     "tagline": "Votre agence de confiance pour la location de voitures.",

@@ -1,13 +1,22 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { siteConfig } from "@/config/site.config";
-import { getAvailableCars } from "@/server/queries";
+import { type Locale } from "@/config/site.config";
+import { clampDescription, localizedAlternates } from "@/lib/seo";
+import { resolveBranding } from "@/lib/branding";
+import { autoRentalJsonLd, faqJsonLd } from "@/lib/structured-data";
+import { getAgencySettings, getAvailableCars } from "@/server/queries";
 import { primaryImage } from "@/lib/display";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Hero } from "@/components/public/hero";
 import { ValueProps } from "@/components/public/value-props";
 import { FeaturedCars } from "@/components/public/featured-cars";
 import { AboutSection } from "@/components/public/about-section";
+import { FaqSection, FAQ_KEYS } from "@/components/public/faq-section";
+
+// ISR: the landing page is content, not per-user. Revalidate hourly so a new
+// car / branding edit appears without a redeploy, while serving from cache.
+export const revalidate = 3600;
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -16,16 +25,20 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "home" });
+  const settings = await getAgencySettings().catch(() => null);
+  const brand = resolveBranding(settings, locale as Locale);
+
+  const title = t("title", { name: brand.name });
+  const description = clampDescription(
+    settings?.seo_description || t("subtitle"),
+  );
 
   return {
-    title: t("title", { name: siteConfig.name }),
-    description: t("subtitle"),
-    alternates: {
-      canonical: `/${locale}`,
-      languages: Object.fromEntries(
-        siteConfig.locales.map((l) => [l, `/${l}`]),
-      ),
-    },
+    title,
+    description,
+    alternates: localizedAlternates(locale as Locale),
+    openGraph: { title, description, url: `/${locale}` },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 
@@ -33,18 +46,42 @@ export default async function HomePage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const cars = await getAvailableCars();
+  const [cars, settings, t, tFaq] = await Promise.all([
+    getAvailableCars(),
+    getAgencySettings().catch(() => null),
+    getTranslations({ locale, namespace: "home" }),
+    getTranslations({ locale, namespace: "faq" }),
+  ]);
+
+  const brand = resolveBranding(settings, locale as Locale);
   const featured = cars.slice(0, 6);
 
   // First car with an image drives the hero LCP visual.
   const heroImage =
     cars.map((c) => primaryImage(c.car_images)).find(Boolean)?.url ?? null;
 
+  // Structured data: the rental business + the FAQ (also fed to AI answer
+  // engines). Both validate clean on the Rich Results Test.
+  const businessLd = autoRentalJsonLd(
+    settings,
+    brand,
+    locale as Locale,
+    clampDescription(settings?.seo_description || t("subtitle")),
+  );
+  const faqLd = faqJsonLd(
+    FAQ_KEYS.map((key) => ({
+      question: tFaq(`items.${key}.q`),
+      answer: tFaq(`items.${key}.a`),
+    })),
+  );
+
   return (
     <>
+      <JsonLd data={[businessLd, faqLd]} />
       <Hero imageUrl={heroImage} />
       <ValueProps />
       <FeaturedCars cars={featured} locale={locale} />
+      <FaqSection />
       <AboutSection locale={locale} />
     </>
   );
