@@ -33,7 +33,7 @@ const csp = [
   `img-src 'self' data: blob: https:`,
   `font-src 'self' data:`,
   `connect-src 'self' https://*.supabase.co wss://*.supabase.co https://va.vercel-scripts.com https://*.vercel-insights.com https://challenges.cloudflare.com`,
-  `frame-src https://challenges.cloudflare.com`,
+  `frame-src https://challenges.cloudflare.com https://www.google.com https://maps.google.com`,
   `worker-src 'self' blob:`,
   `manifest-src 'self'`,
   `upgrade-insecure-requests`,
@@ -42,6 +42,14 @@ const csp = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Native View Transitions API for client-side route changes. Next wraps
+  // soft navigations in `document.startViewTransition`, giving a smooth
+  // crossfade between pages and a shared-element morph wherever the same
+  // `view-transition-name` exists on both pages (catalog card ↔ detail hero).
+  // CSS in globals.css neutralises the effect under `prefers-reduced-motion`.
+  experimental: {
+    viewTransition: true,
+  },
   // @react-pdf/renderer (+ fontkit) is a heavy native-ish dependency that
   // must run in the Node runtime, not be bundled/transpiled by Turbopack.
   serverExternalPackages: ["@react-pdf/renderer"],

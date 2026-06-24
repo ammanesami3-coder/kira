@@ -37,6 +37,10 @@ pnpm-debug.log*
 
 # local scratch (e.g. pdf preview output)
 /tmp/
+files.zip
+
+# supabase CLI local temp
+/supabase/.temp/
 
 # typescript
 *.tsbuildinfo

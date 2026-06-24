@@ -227,7 +227,7 @@
     <div class="meta">
       <span><b>تاريخ الإصدار:</b> 18 يونيو 2026</span>
       <span><b>التنفيذ بـ:</b> Claude Opus 4.8 (Claude Code)</span>
-      <span><b>المراحل:</b> 8 مراحل (0 → 7)</span>
+      <span><b>المراحل:</b> 9 مراحل (0 → 8)</span>
       <span><b>السوق:</b> المغرب · عربي + فرنسي</span>
     </div>
   </header>
@@ -286,6 +286,7 @@
         <div class="card"><div class="name">React 19 + TypeScript</div><div class="role">المكونات + الأمان النوعي</div><div class="why">TypeScript صارم (strict) يقلّل الأخطاء؛ React 19 مدعوم بالكامل في Next 16. مثالي للمطور المنفرد لصيانة طويلة الأمد.</div></div>
         <div class="card"><div class="name">Tailwind CSS 4</div><div class="role">التنسيق</div><div class="why">utility-first سريع، مع نظام theming عبر CSS variables يجعل تخصيص ألوان كل وكالة فوريا.</div></div>
         <div class="card"><div class="name">shadcn/ui</div><div class="role">مكتبة المكونات</div><div class="why">مكونات Radix accessible وقابلة للتخصيص بالكامل — لا قيود مكتبة جاهزة، وملكية كاملة للكود.</div></div>
+        <div class="card"><div class="name">Motion (Framer Motion)</div><div class="role">الحركات والانتقالات</div><div class="why">scroll-reveal، stagger، micro-interactions، وعدّادات متحركة + انتقالات صفحات عبر View Transitions API — يحترم prefers-reduced-motion وبلا إضرار بالأداء.</div></div>
       </div>
     </div>
 
@@ -346,7 +347,7 @@
 
   <!-- PHASES -->
   <section>
-    <div class="sec-head"><span class="num">06</span><h2>مراحل التطوير</h2><p>8 مراحل · لكل مرحلة برومبت جاهز في prompts.md</p></div>
+    <div class="sec-head"><span class="num">06</span><h2>مراحل التطوير</h2><p>9 مراحل · لكل مرحلة برومبت جاهز في prompts.md</p></div>
 
     <!-- Phase 0 -->
     <div class="phase">
@@ -569,6 +570,37 @@
     <div class="phase">
       <div class="phase-top">
         <div class="pn">7</div>
+        <div class="ttl"><h3>الأقسام التكميلية والحركات والانتقالات السلسة</h3><div class="tagline">Supplementary Sections, Animations &amp; Smooth Transitions</div>
+        <div class="goal"><b>الهدف:</b> إكمال الموقع بأقسام تسويقية تكميلية + طبقة حركات وانتقالات سلسة احترافية تحترم الأداء وتفضيل تقليل الحركة.</div></div>
+      </div>
+      <div class="phase-body">
+        <div class="block"><h4>الأقسام التكميلية</h4><ul>
+          <li>"كيف يعمل" — الحجز في 3 خطوات</li>
+          <li>"لماذا تختارنا" + "فئات الأسطول" (تنقل للكتالوج مفلتر)</li>
+          <li>"آراء العملاء" + "الأسئلة الشائعة" (FAQ أكورديون)</li>
+          <li>"من نحن" بعدّادات + "اتصل بنا" بخريطة + شارات ثقة و CTA</li>
+        </ul></div>
+        <div class="block"><h4>الحركات والانتقالات</h4><ul>
+          <li>Motion: scroll-reveal + stagger للبطاقات</li>
+          <li>Micro-interactions + عدّادات متحركة (counters)</li>
+          <li>انتقالات صفحات عبر View Transitions API + smooth scroll</li>
+          <li>metadata + FAQ/Rating schema + sitemap للصفحات الجديدة</li>
+        </ul></div>
+        <div class="dod"><h4>معايير الإنجاز</h4><div class="dod-list">
+          <div class="item"><span class="box"></span>الأقسام الجديدة متجاوبة ومترجمة ar/fr</div>
+          <div class="item"><span class="box"></span>الحركات سلسة (≈60fps) وتُعطَّل مع prefers-reduced-motion</div>
+          <div class="item"><span class="box"></span>انتقالات الصفحات سلسة بلا وميض أو قفز</div>
+          <div class="item"><span class="box"></span>Performance ≥ 90 و CWV خضراء بعد الحركات</div>
+          <div class="item"><span class="box"></span>FAQ schema يمر · الصفحات في sitemap بلها metadata</div>
+          <div class="item"><span class="box"></span>build و lint يمران</div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- Phase 8 -->
+    <div class="phase">
+      <div class="phase-top">
+        <div class="pn">8</div>
         <div class="ttl"><h3>الإطلاق ودليل إعادة النشر للعملاء</h3><div class="tagline">Launch &amp; Per-Client Deployment</div>
         <div class="goal"><b>الهدف:</b> إطلاق على دومين الإنتاج + دليل إعادة نشر سريع لأي وكالة جديدة (المنتج القابل للبيع) + تدقيق أمني.</div></div>
       </div>
@@ -634,23 +666,25 @@
     <div class="timeline">
       <div class="tl-bar">
         <div class="tl-seg" style="flex:2.4;background:#3DA5FF">0</div>
-        <div class="tl-seg" style="flex:2.6;background:#33B0F2">1</div>
-        <div class="tl-seg" style="flex:3.4;background:#2BB9E6;color:#06121f">2</div>
-        <div class="tl-seg" style="flex:2.6;background:#22C3DC">3</div>
-        <div class="tl-seg" style="flex:3.4;background:#28CBCB">4</div>
-        <div class="tl-seg" style="flex:3.4;background:#34D3B5">5</div>
-        <div class="tl-seg" style="flex:3;background:#46D69A">6</div>
-        <div class="tl-seg" style="flex:2;background:#5BD884">7</div>
+        <div class="tl-seg" style="flex:2.6;background:#31AFF1">1</div>
+        <div class="tl-seg" style="flex:3.4;background:#26B8E6;color:#06121f">2</div>
+        <div class="tl-seg" style="flex:2.6;background:#1FC1DA">3</div>
+        <div class="tl-seg" style="flex:3.4;background:#24CACB">4</div>
+        <div class="tl-seg" style="flex:3.4;background:#30D2B8">5</div>
+        <div class="tl-seg" style="flex:3;background:#3FD6A0">6</div>
+        <div class="tl-seg" style="flex:2.8;background:#52D889">7</div>
+        <div class="tl-seg" style="flex:2;background:#67DA74">8</div>
       </div>
       <div class="tl-legend">
         <div class="tl-item"><span class="sw" style="background:#3DA5FF"></span>0 · الأساس والهوية</div>
-        <div class="tl-item"><span class="sw" style="background:#33B0F2"></span>1 · قاعدة البيانات</div>
-        <div class="tl-item"><span class="sw" style="background:#2BB9E6"></span>2 · الموقع والتصميم</div>
-        <div class="tl-item"><span class="sw" style="background:#22C3DC"></span>3 · نظام الحجز</div>
-        <div class="tl-item"><span class="sw" style="background:#28CBCB"></span>4 · PDF + الواتساب</div>
-        <div class="tl-item"><span class="sw" style="background:#34D3B5"></span>5 · لوحة التحكم</div>
-        <div class="tl-item"><span class="sw" style="background:#46D69A"></span>6 · SEO والأداء</div>
-        <div class="tl-item"><span class="sw" style="background:#5BD884"></span>7 · الإطلاق</div>
+        <div class="tl-item"><span class="sw" style="background:#31AFF1"></span>1 · قاعدة البيانات</div>
+        <div class="tl-item"><span class="sw" style="background:#26B8E6"></span>2 · الموقع والتصميم</div>
+        <div class="tl-item"><span class="sw" style="background:#1FC1DA"></span>3 · نظام الحجز</div>
+        <div class="tl-item"><span class="sw" style="background:#24CACB"></span>4 · PDF + الواتساب</div>
+        <div class="tl-item"><span class="sw" style="background:#30D2B8"></span>5 · لوحة التحكم</div>
+        <div class="tl-item"><span class="sw" style="background:#3FD6A0"></span>6 · SEO والأداء</div>
+        <div class="tl-item"><span class="sw" style="background:#52D889"></span>7 · الأقسام والحركات</div>
+        <div class="tl-item"><span class="sw" style="background:#67DA74"></span>8 · الإطلاق</div>
       </div>
       <div class="tl-note">الترتيب إلزامي — كل مرحلة تبني على ما قبلها. يُفضّل تنفيذ كل مرحلة في جلسة Claude Code مستقلة (Opus 4.8) لتركيز السياق، مع التحقق من معايير الإنجاز قبل الانتقال. الجزء (ب) من المرحلة 4 (بوابة الواتساب) يُنفَّذ في repo منفصل.</div>
     </div>

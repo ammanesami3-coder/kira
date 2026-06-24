@@ -22,9 +22,13 @@ export interface GalleryImage {
 export function CarGallery({
   images,
   name,
+  viewTransitionName,
 }: {
   images: GalleryImage[];
   name: string;
+  /** Shared-element name to morph from the catalog card image (View
+   * Transitions API). Applied to the main image only. */
+  viewTransitionName?: string;
 }) {
   const t = useTranslations("car");
   const tc = useTranslations("common");
@@ -56,6 +60,13 @@ export function CarGallery({
           fetchPriority="high"
           sizes="(max-width: 1024px) 100vw, 50vw"
           className="object-cover"
+          // Only the primary image (the one shown on the catalog card) carries
+          // the shared name, so the morph target is unambiguous.
+          style={
+            active === 0 && viewTransitionName
+              ? { viewTransitionName }
+              : undefined
+          }
         />
         <Button
           type="button"

@@ -11,6 +11,7 @@ import {
 } from "@/lib/catalog";
 import { Button } from "@/components/ui/button";
 import { CarCard } from "@/components/public/car-card";
+import { Stagger, StaggerItem } from "@/components/motion/stagger";
 
 /**
  * Async results region for the catalog — rendered inside <Suspense> so the
@@ -60,11 +61,13 @@ export async function CarResults({
       <p className="text-muted-foreground mb-6 text-sm" aria-live="polite">
         {t("results", { count: cars.length })}
       </p>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <Stagger className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {cars.map((car, i) => (
-          <CarCard key={car.id} car={car} priority={i < 3} />
+          <StaggerItem key={car.id}>
+            <CarCard car={car} priority={i < 3} />
+          </StaggerItem>
         ))}
-      </div>
+      </Stagger>
     </div>
   );
 }

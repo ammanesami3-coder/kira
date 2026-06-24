@@ -1,6 +1,8 @@
 import { useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
 
+import { Reveal } from "@/components/motion/reveal";
+
 /**
  * Frequently-asked questions. Rendered with native `<details>`/`<summary>`
  * so it ships zero client JS (great for INP / bundle size) while staying
@@ -26,7 +28,7 @@ export function FaqSection() {
       aria-labelledby="faq-heading"
       className="mx-auto max-w-3xl px-4 py-16 sm:px-6 md:py-24 lg:px-8"
     >
-      <div className="mx-auto mb-10 max-w-2xl text-center">
+      <Reveal className="mx-auto mb-10 max-w-2xl text-center">
         <h2
           id="faq-heading"
           className="text-3xl font-bold tracking-tight sm:text-4xl"
@@ -34,7 +36,7 @@ export function FaqSection() {
           {t("title")}
         </h2>
         <p className="text-muted-foreground mt-3">{t("subtitle")}</p>
-      </div>
+      </Reveal>
 
       <ul className="space-y-3">
         {FAQ_KEYS.map((key) => (

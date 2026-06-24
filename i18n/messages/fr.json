@@ -2,6 +2,8 @@
   "nav": {
     "home": "Accueil",
     "cars": "Voitures",
+    "about": "À propos",
+    "faq": "FAQ",
     "contact": "Contact",
     "book": "Réserver"
   },
@@ -58,7 +60,109 @@
       "cta": "Nous contacter"
     }
   },
+  "howItWorks": {
+    "title": "Comment réserver votre voiture",
+    "subtitle": "Trois étapes simples vous séparent de la route.",
+    "step1": {
+      "title": "Choisissez votre voiture",
+      "desc": "Parcourez notre flotte et choisissez la voiture adaptée à votre trajet et à votre budget."
+    },
+    "step2": {
+      "title": "Sélectionnez les dates",
+      "desc": "Choisissez les dates de prise et de retour et vérifiez la disponibilité instantanément."
+    },
+    "step3": {
+      "title": "Récupérez votre voiture",
+      "desc": "Nous confirmons votre demande via WhatsApp et vous récupérez la voiture où vous le souhaitez."
+    }
+  },
+  "fleet": {
+    "title": "Parcourir par catégorie",
+    "subtitle": "Trouvez la voiture idéale selon son type.",
+    "cta": "Voir toutes les voitures",
+    "browse": "Parcourir",
+    "items": {
+      "economy": "Économique pour vos trajets quotidiens au meilleur prix.",
+      "suv": "Puissance et espace pour toutes les routes.",
+      "luxury": "Une expérience de conduite haut de gamme.",
+      "van": "Un grand espace pour les familles et les groupes."
+    }
+  },
+  "testimonials": {
+    "title": "Ce que disent nos clients",
+    "subtitle": "Des expériences réelles de clients qui nous ont fait confiance.",
+    "ratingLabel": "{rating} sur 5 — sur la base de {count} avis",
+    "items": {
+      "t1": {
+        "name": "Youssef El Idrissi",
+        "location": "Casablanca",
+        "quote": "Service rapide et voiture propre, la confirmation par WhatsApp a été immédiate. Je recommande sans hésiter."
+      },
+      "t2": {
+        "name": "Salma Benamar",
+        "location": "Marrakech",
+        "quote": "Des prix clairs sans surprises et une voiture en parfait état. Je les recommande vivement."
+      },
+      "t3": {
+        "name": "Karim El Alaoui",
+        "location": "Rabat",
+        "quote": "Réservé en quelques minutes sans inscription, et la livraison à l'aéroport était parfaitement à l'heure."
+      },
+      "t4": {
+        "name": "Nadia El Fassi",
+        "location": "Tanger",
+        "quote": "Une équipe professionnelle et un support réactif. La meilleure expérience de location au Maroc."
+      }
+    }
+  },
+  "stats": {
+    "title": "Des chiffres dont nous sommes fiers",
+    "subtitle": "Une confiance renouvelée à chaque trajet.",
+    "cars": "voitures dans la flotte",
+    "clients": "clients satisfaits",
+    "years": "ans d'expérience",
+    "satisfaction": "taux de satisfaction"
+  },
+  "trust": {
+    "title": "Réservez et roulez en toute confiance",
+    "secure": "Réservation sécurisée",
+    "insurance": "Assurance tous risques disponible",
+    "support": "Support 24/7",
+    "flexible": "Annulation flexible"
+  },
+  "cta": {
+    "title": "Prêt à prendre la route ?",
+    "subtitle": "Réservez votre voiture en quelques minutes — sans inscription et à prix transparents.",
+    "primary": "Voir les voitures",
+    "secondary": "Nous contacter"
+  },
+  "aboutPage": {
+    "metaTitle": "À propos",
+    "metaDescription": "Découvrez {name} : notre histoire, nos valeurs et notre engagement à offrir la meilleure expérience de location de voitures au Maroc, à prix transparents.",
+    "badge": "À propos",
+    "title": "Passionnés par la route, dévoués à votre service",
+    "lead": "Nous pensons que louer une voiture doit être simple, rapide et transparent. C'est pourquoi nous avons conçu une expérience de réservation sans complications qui place votre confort en premier.",
+    "p1": "Nous sommes partis d'une idée simple : proposer une flotte moderne et soigneusement entretenue pour tous les goûts et tous les budgets, avec des prix clairs et sans frais cachés. Aujourd'hui, nous servons des milliers de clients à travers le Maroc.",
+    "p2": "De l'économique au luxe, notre équipe vous accompagne à chaque étape — du choix de la voiture à sa livraison à l'endroit qui vous convient, avec une confirmation immédiate via WhatsApp.",
+    "valuesTitle": "Nos valeurs",
+    "values": {
+      "transparency": {
+        "title": "Transparence totale",
+        "desc": "Des prix clairs et des conditions compréhensibles, sans surprises."
+      },
+      "quality": {
+        "title": "Qualité et sécurité",
+        "desc": "Des voitures récentes, entretenues et contrôlées régulièrement."
+      },
+      "service": {
+        "title": "Un service proche",
+        "desc": "Un support rapide via WhatsApp et téléphone, à tout moment."
+      }
+    }
+  },
   "faq": {
+    "metaTitle": "Questions fréquentes",
+    "metaDescription": "Réponses aux questions les plus fréquentes sur la location de voitures chez nous : documents requis, caution, paiement, modification, annulation et livraison.",
     "title": "Questions fréquentes",
     "subtitle": "Tout ce qu'il faut savoir avant de louer votre voiture chez nous.",
     "items": {
@@ -280,7 +384,12 @@
     "hoursTitle": "Horaires d'ouverture",
     "findUs": "Nous trouver",
     "openMap": "Ouvrir dans Maps",
-    "browseCars": "Voir les voitures"
+    "browseCars": "Voir les voitures",
+    "mapTitle": "Notre emplacement sur la carte",
+    "mapAlt": "Carte de l'emplacement de l'agence",
+    "directContact": "Contact direct",
+    "callNow": "Appeler maintenant",
+    "whatsappNow": "Écrivez-nous sur WhatsApp"
   },
   "hours": {
     "closed": "Fermé",
@@ -298,7 +407,9 @@
     "tagline": "Votre agence de confiance pour la location de voitures.",
     "rights": "Tous droits réservés.",
     "explore": "Explorer",
+    "company": "L'agence",
     "contact": "Contact",
+    "follow": "Suivez-nous",
     "phone": "Téléphone",
     "email": "E-mail",
     "address": "Adresse"

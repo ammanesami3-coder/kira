@@ -20,7 +20,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [];
 
   // Static public routes (home / catalog / contact), one URL per locale.
-  const staticRoutes = ["", "/cars", "/contact"] as const;
+  const staticRoutes = ["", "/cars", "/about", "/faq", "/contact"] as const;
   for (const locale of siteConfig.locales) {
     for (const route of staticRoutes) {
       entries.push({

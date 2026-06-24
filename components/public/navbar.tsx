@@ -17,6 +17,8 @@ export async function Navbar() {
   const links = [
     { href: "/", label: t("home") },
     { href: "/cars", label: t("cars") },
+    { href: "/about", label: t("about") },
+    { href: "/faq", label: t("faq") },
     { href: "/contact", label: t("contact") },
   ] as const;
 

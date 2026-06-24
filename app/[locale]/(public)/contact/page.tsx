@@ -11,6 +11,7 @@ import { getAgencySettings } from "@/server/queries";
 import type { Json } from "@/types/database.types";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Button } from "@/components/ui/button";
+import { LocationMap } from "@/components/public/location-map";
 
 // Static contact info from the agency settings singleton; revalidate hourly.
 export const revalidate = 3600;
@@ -71,12 +72,13 @@ export default async function ContactPage({ params }: Props) {
       ? (settings?.address_ar ?? settings?.address)
       : settings?.address;
   const waDigits = settings?.whatsapp_number?.replace(/\D/g, "");
-  const mapHref =
+  const mapQuery =
     settings?.lat != null && settings?.lng != null
-      ? `https://www.google.com/maps/search/?api=1&query=${settings.lat},${settings.lng}`
-      : address
-        ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
-        : null;
+      ? `${settings.lat},${settings.lng}`
+      : (address ?? null);
+  const mapHref = mapQuery
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
+    : null;
 
   const rows = hoursRows(settings?.opening_hours ?? null, (k) =>
     tHours(`days.${k}`),
@@ -97,13 +99,38 @@ export default async function ContactPage({ params }: Props) {
     <section className="mx-auto max-w-5xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
       <JsonLd data={[businessLd, breadcrumbLd]} />
 
-      <header className="mb-12 max-w-2xl">
+      <header className="mb-10 max-w-2xl">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
           {t("title")}
         </h1>
         <p className="text-muted-foreground mt-3 text-pretty">
           {t("subtitle")}
         </p>
+        {(waDigits || settings?.phone) && (
+          <div className="mt-6 flex flex-wrap gap-3">
+            {waDigits && (
+              <Button asChild size="lg">
+                <a
+                  href={`https://wa.me/${waDigits}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="gap-2"
+                >
+                  <MessageCircle className="size-4" aria-hidden />
+                  {t("whatsappNow")}
+                </a>
+              </Button>
+            )}
+            {settings?.phone && (
+              <Button asChild size="lg" variant="outline">
+                <a href={`tel:${settings.phone}`} className="gap-2">
+                  <Phone className="size-4" aria-hidden />
+                  {t("callNow")}
+                </a>
+              </Button>
+            )}
+          </div>
+        )}
       </header>
 
       <div className="grid gap-10 md:grid-cols-2">
@@ -149,15 +176,6 @@ export default async function ContactPage({ params }: Props) {
               </ContactRow>
             )}
           </ul>
-
-          {mapHref && (
-            <Button asChild variant="outline">
-              <a href={mapHref} target="_blank" rel="noopener noreferrer">
-                <MapPin className="size-4" aria-hidden />
-                {t("openMap")}
-              </a>
-            </Button>
-          )}
         </div>
 
         {rows.length > 0 && (
@@ -188,6 +206,24 @@ export default async function ContactPage({ params }: Props) {
           </div>
         )}
       </div>
+
+      {mapQuery && (
+        <div className="mt-12 space-y-4">
+          <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <MapPin className="size-5" aria-hidden />
+            {t("mapTitle")}
+          </h2>
+          <LocationMap query={mapQuery} title={t("mapAlt")} />
+          {mapHref && (
+            <Button asChild variant="outline">
+              <a href={mapHref} target="_blank" rel="noopener noreferrer">
+                <MapPin className="size-4" aria-hidden />
+                {t("openMap")}
+              </a>
+            </Button>
+          )}
+        </div>
+      )}
     </section>
   );
 }

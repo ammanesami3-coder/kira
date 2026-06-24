@@ -5,6 +5,8 @@ import { Link } from "@/i18n/navigation";
 import type { CarWithImages } from "@/server/queries";
 import { Button } from "@/components/ui/button";
 import { CarCard } from "@/components/public/car-card";
+import { Reveal } from "@/components/motion/reveal";
+import { Stagger, StaggerItem } from "@/components/motion/stagger";
 
 /** Featured grid on the home page. Renders nothing when the fleet is empty. */
 export function FeaturedCars({
@@ -22,7 +24,7 @@ export function FeaturedCars({
   return (
     <section className="bg-muted/40 border-y">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
-        <div className="flex flex-wrap items-end justify-between gap-4">
+        <Reveal className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
               {t("title")}
@@ -35,13 +37,15 @@ export function FeaturedCars({
               <Arrow className="size-4" aria-hidden />
             </Link>
           </Button>
-        </div>
+        </Reveal>
 
-        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <Stagger className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {cars.map((car) => (
-            <CarCard key={car.id} car={car} />
+            <StaggerItem key={car.id}>
+              <CarCard car={car} />
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </div>
     </section>
   );

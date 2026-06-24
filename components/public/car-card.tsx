@@ -30,7 +30,7 @@ export function CarCard({
   const name = carName(car, locale);
 
   return (
-    <article className="group bg-card focus-within:ring-ring/50 relative flex flex-col overflow-hidden rounded-xl border shadow-sm transition-shadow focus-within:ring-2 hover:shadow-md">
+    <article className="group bg-card focus-within:ring-ring/50 relative flex flex-col overflow-hidden rounded-xl border shadow-sm transition duration-300 focus-within:ring-2 hover:-translate-y-1 hover:shadow-md">
       <div className="bg-muted relative aspect-[4/3] overflow-hidden">
         {image ? (
           <Image
@@ -40,6 +40,9 @@ export function CarCard({
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             priority={priority}
+            // Shared element for the catalog ↔ detail View Transition: the same
+            // name on the detail gallery's main image makes it morph in place.
+            style={{ viewTransitionName: `car-${car.slug}` }}
           />
         ) : (
           <div className="text-muted-foreground flex h-full items-center justify-center">

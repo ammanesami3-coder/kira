@@ -46,7 +46,7 @@ export function Hero({ imageUrl }: { imageUrl: string | null }) {
               priority
               fetchPriority="high"
               sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
+              className="ken-burns object-cover"
             />
           ) : (
             <div className="bg-primary/10 size-full" />

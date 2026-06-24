@@ -84,11 +84,18 @@ function openingHoursSpec(hours: Json): OpeningHoursSpec[] {
  * AutoRental business entity for the home & contact pages. AutoRental is a
  * subtype of LocalBusiness, so it inherits NAP, geo, hours and social links.
  */
+export interface AggregateRatingInput {
+  ratingValue: number;
+  reviewCount: number;
+  bestRating?: number;
+}
+
 export function autoRentalJsonLd(
   settings: AgencySettings | null,
   brand: Branding,
   locale: Locale,
   description: string,
+  aggregateRating?: AggregateRatingInput,
 ) {
   const social = settings?.social_links;
   const sameAs =
@@ -138,6 +145,17 @@ export function autoRentalJsonLd(
   }
 
   if (sameAs.length > 0) node.sameAs = sameAs;
+
+  // AggregateRating (Rich Result). Only emitted when ratings exist; Google
+  // requires both a value and a count, and the count must be > 0.
+  if (aggregateRating && aggregateRating.reviewCount > 0) {
+    node.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: aggregateRating.ratingValue,
+      reviewCount: aggregateRating.reviewCount,
+      bestRating: aggregateRating.bestRating ?? 5,
+    };
+  }
 
   // Drop undefined keys so the serialized JSON-LD stays clean.
   const cleaned: Record<string, Json> = {};

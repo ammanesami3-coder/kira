@@ -133,3 +133,60 @@
       transparent 45%
     );
 }
+
+/*
+ * ──────────────────────────────────────────────────────────────
+ * Motion & page transitions
+ * ──────────────────────────────────────────────────────────────
+ * All effects below are transform/opacity only (GPU-composited, no layout
+ * cost → no CLS) and fully disabled under prefers-reduced-motion.
+ */
+
+/* Smooth scrolling for in-page anchor links (footer/nav → sections). */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* The navbar is sticky (h-16). Offset anchored sections so their heading is
+   not hidden underneath when navigated to via a hash link. */
+section[id] {
+  scroll-margin-top: 5rem;
+}
+
+/* Hero "ken-burns": a very slow zoom/pan on the LCP image. transform-only, so
+   it never triggers layout/paint and cannot shift the page (CLS-safe). The
+   image is already `priority`, so this does not delay LCP. */
+@utility ken-burns {
+  animation: kira-ken-burns 24s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes kira-ken-burns {
+  from {
+    transform: scale(1.04);
+  }
+  to {
+    transform: scale(1.12) translate3d(1.5%, -1.5%, 0);
+  }
+}
+
+/* View Transitions API (Next experimental.viewTransition). Slightly calmer
+   than the browser default crossfade. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.32s;
+}
+
+/* Respect reduced-motion: stop the hero loop and make page transitions
+   instant (no crossfade / morph). */
+@media (prefers-reduced-motion: reduce) {
+  .ken-burns {
+    animation: none !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

@@ -9,10 +9,18 @@ import { getAgencySettings, getAvailableCars } from "@/server/queries";
 import { primaryImage } from "@/lib/display";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Hero } from "@/components/public/hero";
+import { TrustBadges } from "@/components/public/trust-badges";
+import { HowItWorks } from "@/components/public/how-it-works";
+import { FleetCategories } from "@/components/public/fleet-categories";
 import { ValueProps } from "@/components/public/value-props";
 import { FeaturedCars } from "@/components/public/featured-cars";
-import { AboutSection } from "@/components/public/about-section";
+import { Stats } from "@/components/public/stats";
+import {
+  AGGREGATE_RATING,
+  Testimonials,
+} from "@/components/public/testimonials";
 import { FaqSection, FAQ_KEYS } from "@/components/public/faq-section";
+import { CtaBand } from "@/components/public/cta-band";
 
 // ISR: the landing page is content, not per-user. Revalidate hourly so a new
 // car / branding edit appears without a redeploy, while serving from cache.
@@ -60,13 +68,14 @@ export default async function HomePage({ params }: Props) {
   const heroImage =
     cars.map((c) => primaryImage(c.car_images)).find(Boolean)?.url ?? null;
 
-  // Structured data: the rental business + the FAQ (also fed to AI answer
-  // engines). Both validate clean on the Rich Results Test.
+  // Structured data: the rental business (with its aggregate rating) + the FAQ.
+  // Both validate clean on the Rich Results Test.
   const businessLd = autoRentalJsonLd(
     settings,
     brand,
     locale as Locale,
     clampDescription(settings?.seo_description || t("subtitle")),
+    AGGREGATE_RATING,
   );
   const faqLd = faqJsonLd(
     FAQ_KEYS.map((key) => ({
@@ -79,10 +88,15 @@ export default async function HomePage({ params }: Props) {
     <>
       <JsonLd data={[businessLd, faqLd]} />
       <Hero imageUrl={heroImage} />
-      <ValueProps />
+      <TrustBadges />
+      <HowItWorks />
+      <FleetCategories locale={locale} />
       <FeaturedCars cars={featured} locale={locale} />
+      <ValueProps />
+      <Stats carsCount={cars.length} />
+      <Testimonials />
       <FaqSection />
-      <AboutSection locale={locale} />
+      <CtaBand locale={locale} />
     </>
   );
 }

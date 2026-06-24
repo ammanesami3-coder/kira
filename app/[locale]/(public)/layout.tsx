@@ -2,6 +2,7 @@ import { setRequestLocale } from "next-intl/server";
 
 import { Navbar } from "@/components/public/navbar";
 import { Footer } from "@/components/public/footer";
+import { MotionProvider } from "@/components/motion/motion-config";
 
 /**
  * Chrome for the public-facing site (navbar + footer). The admin dashboard
@@ -23,10 +24,10 @@ export default async function PublicLayout({
   setRequestLocale(locale);
 
   return (
-    <>
+    <MotionProvider>
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />
-    </>
+    </MotionProvider>
   );
 }

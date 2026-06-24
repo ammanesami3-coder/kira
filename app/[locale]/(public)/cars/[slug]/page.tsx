@@ -191,7 +191,11 @@ function CarDetail({
       </Button>
 
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
-        <CarGallery images={images} name={name} />
+        <CarGallery
+          images={images}
+          name={name}
+          viewTransitionName={`car-${car.slug}`}
+        />
 
         <div className="flex flex-col gap-6">
           <header className="space-y-2">
