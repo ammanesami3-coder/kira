@@ -151,7 +151,25 @@ export async function createBooking(
   // Fulfilment (PDF → Storage → WhatsApp) runs AFTER the response so the
   // guest gets an instant confirmation. It is idempotent and never throws,
   // so a slow/down gateway can't delay or fail the booking.
-  after(() => fulfillBooking(inserted.id));
+  // TEMP instrumentation: surface the fulfilment outcome (note) in the
+  // Vercel runtime logs so we can see which branch a silent failure hit.
+  after(async () => {
+    try {
+      const result = await fulfillBooking(inserted.id);
+      console.log(
+        `[fulfillBooking] ${inserted.reference ?? inserted.id} →`,
+        JSON.stringify(result),
+        `| gatewayUrlSet=${Boolean(process.env.WA_GATEWAY_URL)}`,
+        `apiKeySet=${Boolean(process.env.WA_GATEWAY_API_KEY)}`,
+        `agencyNumSet=${Boolean(process.env.AGENCY_WHATSAPP_NUMBER)}`,
+      );
+    } catch (err) {
+      console.error(
+        `[fulfillBooking] ${inserted.reference ?? inserted.id} THREW`,
+        err,
+      );
+    }
+  });
 
   return {
     ok: true,
