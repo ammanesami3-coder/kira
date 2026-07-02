@@ -27,7 +27,7 @@ All requests authenticated with header `x-api-key: <WA_GATEWAY_API_KEY>`.
 | ------ | ---------------- | -------------------------------------------------------------------- |
 | `POST` | `/send-document` | `{ to, fileUrl, filename, caption? }` → `200 {ok:true}` or `4xx/5xx` |
 | `GET`  | `/status`        | `{ connected: boolean }`                                             |
-| `GET`  | `/qr`            | HTML/PNG of the current pairing QR (first-time login)                |
+| `GET`  | `/qr?key=<key>`  | HTML/PNG of the current pairing QR (first-time login; key-protected) |
 
 - `to`: recipient phone, digits only, international format (e.g. `2126…`).
 - `fileUrl`: a publicly fetchable URL of the PDF (Kira passes a Supabase signed
@@ -191,7 +191,7 @@ CMD ["npm", "start"]
    (or `pnpm install && pnpm start` under `pm2`/systemd for auto-restart).
 4. Put HTTPS in front: Caddy/Nginx + Let's Encrypt, or a **Cloudflare Tunnel**
    (no open ports needed) → public URL e.g. `https://wa.<domain>`.
-5. Open `https://wa.<domain>/qr` and **scan with the agency's WhatsApp**
+5. Open `https://wa.<domain>/qr?key=<API_KEY>` and **scan with the agency's WhatsApp**
    (WhatsApp → Linked devices → Link a device). Once `/status` returns
    `{connected:true}` you're done.
 6. In Vercel set `WA_GATEWAY_URL=https://wa.<domain>`, the matching

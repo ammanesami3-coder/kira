@@ -141,8 +141,13 @@ Summary:
    `WA_GATEWAY_API_KEY` in Vercel) and `PORT`.
 3. Put it behind HTTPS (Caddy/Nginx + Let's Encrypt, or Cloudflare Tunnel) at
    e.g. `https://wa.sindibadcar.ma` → that URL is `WA_GATEWAY_URL`.
-4. **Scan the QR once** with the agency's WhatsApp number (`GET /qr`). The
-   session is saved to disk (`auth_info_baileys/`) and survives restarts.
+4. **Scan the QR once** with the agency's WhatsApp number
+   (`GET /qr?key=<API_KEY>`). The session is saved to disk
+   (`auth_info_baileys/`) and survives restarts.
+   > **One instance = one WhatsApp number.** A second agency on the same host
+   > needs its **own** gateway instance: unique `PORT`, unique `AUTH_DIR`
+   > (or Docker volume), unique `API_KEY`. Never point two instances at the
+   > same auth dir — they fight over the session (disconnect code 440).
 5. Set `WA_GATEWAY_URL`, `WA_GATEWAY_API_KEY`, `AGENCY_WHATSAPP_NUMBER` in
    Vercel and redeploy.
 
