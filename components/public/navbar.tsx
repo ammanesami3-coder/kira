@@ -7,6 +7,8 @@ import { getAgencySettings } from "@/server/queries";
 import { Button } from "@/components/ui/button";
 import { BrandLogo } from "@/components/public/brand";
 import { LocaleSwitcher } from "@/components/public/locale-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { Magnetic } from "@/components/motion/magnetic";
 
 export async function Navbar() {
   const t = await getTranslations("nav");
@@ -23,7 +25,7 @@ export async function Navbar() {
   ] as const;
 
   return (
-    <header className="bg-background/80 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 w-full border-b backdrop-blur">
+    <header className="bg-background/80 supports-[backdrop-filter]:bg-background/55 border-border/60 sticky top-0 z-40 w-full border-b shadow-[0_1px_2px_rgb(0_0_0/0.03),0_8px_24px_-20px_rgb(0_0_0/0.25)] backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
@@ -41,10 +43,13 @@ export async function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <LocaleSwitcher />
-          <Button asChild size="sm" className="hidden sm:inline-flex">
-            <Link href="/cars">{t("book")}</Link>
-          </Button>
+          <Magnetic strength={0.2} className="hidden sm:inline-block">
+            <Button asChild size="sm">
+              <Link href="/cars">{t("book")}</Link>
+            </Button>
+          </Magnetic>
         </div>
       </div>
     </header>

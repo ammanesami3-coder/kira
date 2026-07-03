@@ -39,10 +39,16 @@ export function FeaturedCars({
           </Button>
         </Reveal>
 
-        <Stagger className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {cars.map((car) => (
-            <StaggerItem key={car.id}>
-              <CarCard car={car} />
+        {/* Asymmetric bento: the first car is a 2×2 showcase on desktop, the
+            rest flow around it. `grid-flow-dense` backfills so the grid never
+            leaves holes when fewer cars exist. */}
+        <Stagger className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-flow-dense lg:grid-cols-3">
+          {cars.map((car, i) => (
+            <StaggerItem
+              key={car.id}
+              className={i === 0 ? "lg:col-span-2 lg:row-span-2" : undefined}
+            >
+              <CarCard car={car} featured={i === 0} />
             </StaggerItem>
           ))}
         </Stagger>

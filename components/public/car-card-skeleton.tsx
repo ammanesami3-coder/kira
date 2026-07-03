@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 /** Loading placeholder matching CarCard's footprint (prevents CLS). */
 export function CarCardSkeleton() {
   return (
-    <div className="bg-card flex flex-col overflow-hidden rounded-xl border shadow-sm">
+    <div className="bg-card flex flex-col overflow-hidden rounded-2xl border shadow-[0_1px_2px_rgb(0_0_0/0.05),0_8px_24px_-12px_rgb(0_0_0/0.12)]">
       <Skeleton className="aspect-[4/3] rounded-none" />
       <div className="flex flex-col gap-4 p-4">
         <div className="space-y-2">

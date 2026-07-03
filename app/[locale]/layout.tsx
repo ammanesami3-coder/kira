@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
-import { Plus_Jakarta_Sans, Tajawal } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 
@@ -10,22 +9,11 @@ import { routing } from "@/i18n/routing";
 import { siteConfig, localeDirection, type Locale } from "@/config/site.config";
 import { ogLocale } from "@/lib/seo";
 import { resolveBranding } from "@/lib/branding";
+import { latinFonts, arabicFonts } from "@/lib/fonts";
 import { getAgencySettings } from "@/server/queries";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import "../globals.css";
-
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-jakarta",
-});
-
-const tajawal = Tajawal({
-  subsets: ["arabic"],
-  weight: ["400", "500", "700"],
-  display: "swap",
-  variable: "--font-tajawal",
-});
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -98,14 +86,21 @@ export default async function LocaleLayout({
 
   const dir = localeDirection[locale as Locale];
 
-  // Brand colors come from the agency settings (owner-editable), falling back
-  // to env defaults. Injected as inline custom properties so an edit in the
-  // dashboard re-themes the entire site with no redeploy.
+  // Brand colors + fonts come from the agency settings (owner-editable),
+  // falling back to env/whitelist defaults. Injected as inline custom
+  // properties so an edit in the dashboard re-themes the entire site with no
+  // redeploy. Only raw `--brand-*` / `--font-*` inputs are injected — final
+  // tokens like `--primary` are derived per mode in globals.css, and an
+  // inline value would override the `.dark` variants there.
   const settings = await getAgencySettings().catch(() => null);
   const brand = resolveBranding(settings, locale as Locale);
+  const fontLatin = latinFonts[brand.fontLatin];
+  const fontArabic = arabicFonts[brand.fontArabic];
   const themeStyle = {
-    "--primary": brand.primaryColor,
-    "--secondary": brand.secondaryColor,
+    "--brand-primary": brand.primaryColor,
+    "--brand-secondary": brand.secondaryColor,
+    "--font-latin": `var(${fontLatin.cssVar})`,
+    "--font-arabic": `var(${fontArabic.cssVar})`,
   } as React.CSSProperties;
 
   return (
@@ -113,14 +108,16 @@ export default async function LocaleLayout({
       lang={locale}
       dir={dir}
       style={themeStyle}
-      className={`${jakarta.variable} ${tajawal.variable}`}
+      className={`${fontLatin.variable} ${fontArabic.variable}`}
       suppressHydrationWarning
     >
       <body className="flex min-h-dvh flex-col">
-        <NextIntlClientProvider>
-          {children}
-          <Toaster />
-        </NextIntlClientProvider>
+        <ThemeProvider>
+          <NextIntlClientProvider>
+            {children}
+            <Toaster />
+          </NextIntlClientProvider>
+        </ThemeProvider>
         {/* Field Core Web Vitals (LCP/CLS/INP) + privacy-light page analytics.
             No-ops in dev / outside Vercel. */}
         <SpeedInsights />

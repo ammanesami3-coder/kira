@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { signOut } from "@/server/auth";
 import { Button } from "@/components/ui/button";
 import { BrandLogo } from "@/components/public/brand";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 interface NavItem {
   href: string;
@@ -87,6 +88,12 @@ export function AdminSidebar({
 
   const footer = (
     <div className="space-y-1 border-t pt-3">
+      <div className="flex items-center justify-between px-3 py-1">
+        <span className="text-muted-foreground text-sm font-medium">
+          {t("theme")}
+        </span>
+        <ThemeToggle />
+      </div>
       <Button
         asChild
         variant="ghost"
@@ -130,7 +137,7 @@ export function AdminSidebar({
       {open && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div
-            className="absolute inset-0 bg-black/50"
+            className="absolute inset-0 bg-black/45 backdrop-blur-sm"
             onClick={() => setOpen(false)}
             aria-hidden
           />

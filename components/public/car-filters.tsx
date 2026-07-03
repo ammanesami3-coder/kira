@@ -180,8 +180,9 @@ export function CarFilters() {
 
   return (
     <>
-      {/* Mobile: a "Filters" button opening a dialog; sort stays inline */}
-      <div className="flex items-center justify-between gap-3 lg:hidden">
+      {/* Mobile: a sticky glass bar floating under the navbar (h-16) while
+          the results scroll beneath it; filters open a dialog, sort inline. */}
+      <div className="glass sticky top-18 z-30 flex items-center justify-between gap-3 rounded-2xl p-2.5 lg:hidden">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" size="sm">
@@ -205,15 +206,15 @@ export function CarFilters() {
         <SortSelect value={sort} onChange={(v) => setParam("sort", v)} />
       </div>
 
-      {/* Desktop: persistent sidebar */}
+      {/* Desktop: persistent sticky sidebar as a glass panel */}
       <aside className="hidden lg:block">
-        <div className="sticky top-20 space-y-5">
+        <div className="glass sticky top-20 space-y-5 rounded-2xl p-5">
           <div className="flex items-center gap-2">
             <SlidersHorizontal className="size-4" aria-hidden />
             <h2 className="font-semibold">{t("catalog.filters")}</h2>
           </div>
           {controls}
-          <div className="border-t pt-5">
+          <div className="border-foreground/10 border-t pt-5">
             <Label htmlFor="f-sort" className="mb-1.5 block">
               {t("catalog.sort")}
             </Label>

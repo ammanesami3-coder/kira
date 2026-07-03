@@ -7,17 +7,39 @@
  * ──────────────────────────────────────────────────────────────
  * Kira theme — "automotive premium"
  * ──────────────────────────────────────────────────────────────
- * Design tokens live as CSS variables. `--primary` and `--secondary`
- * default to the brand palette here but are OVERRIDDEN at runtime by
- * config/site.config.ts (injected as inline custom properties on <html>),
- * so changing NEXT_PUBLIC_PRIMARY_COLOR / NEXT_PUBLIC_SECONDARY_COLOR in
- * the environment re-themes the entire site with no code changes.
+ * Two-layer token system:
+ *
+ *   1. BRAND INPUTS (`--brand-primary`, `--brand-secondary`, `--font-latin`,
+ *      `--font-arabic`) — mode-independent raw values. Defaults live here;
+ *      at runtime app/[locale]/layout.tsx overrides them with an inline
+ *      `style` on <html> from the owner-editable `agency_settings` row.
+ *      Only these are ever injected inline: an inline custom property beats
+ *      any class selector, so injecting final tokens (e.g. `--primary`)
+ *      would break the `.dark` overrides below.
+ *
+ *   2. DERIVED TOKENS (`--primary`, `--primary-foreground`, …) — computed
+ *      from the brand inputs per mode. `:root` and `.dark` both live on
+ *      <html> (next-themes attribute="class"), so `.dark`, declared later
+ *      at equal specificity, wins there.
+ *
+ * OKLCH relative color syntax auto-derives legible foregrounds and a
+ * dark-mode lift for any admin-picked color. Each derived declaration is
+ * preceded by a static fallback: browsers without relative-color support
+ * drop the OKLCH declaration at parse time and keep the fallback.
  *
  * `--ring` and `--accent-foreground` reference `--primary` so they follow
  * the brand color automatically.
  */
 :root {
   --radius: 0.625rem;
+
+  color-scheme: light;
+
+  /* Brand inputs — overridden at runtime from agency_settings */
+  --brand-primary: #0f3d3e;
+  --brand-secondary: #c8a24b;
+  --font-latin: var(--font-jakarta);
+  --font-arabic: var(--font-tajawal);
 
   --background: #ffffff;
   --foreground: #0b1220;
@@ -28,11 +50,20 @@
   --popover: #ffffff;
   --popover-foreground: #0b1220;
 
-  /* Brand — overridden from env */
-  --primary: #0f3d3e;
+  /* Brand — light mode uses the raw brand colors */
+  --primary: var(--brand-primary);
+  /* Auto-contrast: near-white text on dark brands, near-black on light ones
+     (the *1000 factor turns the lightness delta into a hard step, clamped
+     into [0.02, 0.98]). A whisper of the brand hue is kept (c ≤ 0.03). */
   --primary-foreground: #f7faf9;
-  --secondary: #c8a24b;
+  --primary-foreground: oklch(
+    from var(--primary) clamp(0.02, (0.66 - l) * 1000, 0.98) min(c, 0.03) h
+  );
+  --secondary: var(--brand-secondary);
   --secondary-foreground: #1a1407;
+  --secondary-foreground: oklch(
+    from var(--secondary) clamp(0.02, (0.66 - l) * 1000, 0.98) min(c, 0.03) h
+  );
 
   /* Neutrals */
   --muted: #f2f4f4;
@@ -49,6 +80,8 @@
 }
 
 .dark {
+  color-scheme: dark;
+
   --background: #0a0f0f;
   --foreground: #f5f7f7;
 
@@ -58,10 +91,21 @@
   --popover: #0f1717;
   --popover-foreground: #f5f7f7;
 
+  /* Dark mode lifts dark brand colors to stay vivid on the near-black
+     background (already-light brands pass through untouched). The
+     foreground step-function then lands on dark text automatically. */
   --primary: #2f8f8f;
+  --primary: oklch(from var(--brand-primary) max(l, 0.68) c h);
   --primary-foreground: #03100f;
-  --secondary: #c8a24b;
+  --primary-foreground: oklch(
+    from var(--primary) clamp(0.02, (0.66 - l) * 1000, 0.98) min(c, 0.03) h
+  );
+  --secondary: var(--brand-secondary);
+  --secondary: oklch(from var(--brand-secondary) max(l, 0.68) c h);
   --secondary-foreground: #1a1407;
+  --secondary-foreground: oklch(
+    from var(--secondary) clamp(0.02, (0.66 - l) * 1000, 0.98) min(c, 0.03) h
+  );
 
   --muted: #182121;
   --muted-foreground: #9bb0ad;
@@ -102,11 +146,12 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  /* Jakarta carries Latin, Tajawal carries Arabic; the browser falls
-     through to whichever has the needed glyphs. */
+  /* The selected Latin font carries Latin glyphs, the selected Arabic font
+     carries Arabic; the browser falls through to whichever has the needed
+     glyphs. `--font-latin`/`--font-arabic` are brand inputs (see :root),
+     re-pointed at runtime by the layout's inline style. */
   --font-sans:
-    var(--font-jakarta), var(--font-tajawal), ui-sans-serif, system-ui,
-    sans-serif;
+    var(--font-latin), var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
@@ -117,6 +162,23 @@
     @apply bg-background text-foreground font-sans antialiased;
     text-rendering: optimizeLegibility;
   }
+}
+
+/*
+ * Glassmorphism surface: translucent card color + blur + hairline border +
+ * micro-layered depth. Derived from the theme tokens, so it adapts to
+ * light/dark and to the admin-picked brand automatically.
+ */
+@utility glass {
+  background: color-mix(in srgb, var(--card) 72%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
+  box-shadow:
+    inset 0 1px 0 0 color-mix(in srgb, var(--background) 45%, transparent),
+    0 1px 1px rgb(0 0 0 / 0.04),
+    0 4px 10px -2px rgb(0 0 0 / 0.06),
+    0 16px 32px -12px rgb(0 0 0 / 0.14);
 }
 
 /* Subtle premium hero background utility */

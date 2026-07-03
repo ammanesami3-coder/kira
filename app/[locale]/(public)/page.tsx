@@ -5,11 +5,11 @@ import { type Locale } from "@/config/site.config";
 import { clampDescription, localizedAlternates } from "@/lib/seo";
 import { resolveBranding } from "@/lib/branding";
 import { autoRentalJsonLd, faqJsonLd } from "@/lib/structured-data";
+import { aggregateFromReviews, parseReviews } from "@/lib/reviews";
 import { getAgencySettings, getAvailableCars } from "@/server/queries";
 import { primaryImage } from "@/lib/display";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Hero } from "@/components/public/hero";
-import { TrustBadges } from "@/components/public/trust-badges";
 import { HowItWorks } from "@/components/public/how-it-works";
 import { FleetCategories } from "@/components/public/fleet-categories";
 import { ValueProps } from "@/components/public/value-props";
@@ -68,6 +68,13 @@ export default async function HomePage({ params }: Props) {
   const heroImage =
     cars.map((c) => primaryImage(c.car_images)).find(Boolean)?.url ?? null;
 
+  // Social proof: the owner-curated Google reviews drive BOTH the visible
+  // testimonials and the AggregateRating JSON-LD from one derivation, so the
+  // structured data can never drift from what users see. Falls back to the
+  // built-in testimonials until the owner curates real reviews.
+  const curatedReviews = parseReviews(settings?.reviews);
+  const rating = aggregateFromReviews(curatedReviews) ?? AGGREGATE_RATING;
+
   // Structured data: the rental business (with its aggregate rating) + the FAQ.
   // Both validate clean on the Rich Results Test.
   const businessLd = autoRentalJsonLd(
@@ -75,7 +82,7 @@ export default async function HomePage({ params }: Props) {
     brand,
     locale as Locale,
     clampDescription(settings?.seo_description || t("subtitle")),
-    AGGREGATE_RATING,
+    rating,
   );
   const faqLd = faqJsonLd(
     FAQ_KEYS.map((key) => ({
@@ -87,14 +94,17 @@ export default async function HomePage({ params }: Props) {
   return (
     <>
       <JsonLd data={[businessLd, faqLd]} />
-      <Hero imageUrl={heroImage} />
-      <TrustBadges />
+      <Hero imageUrl={heroImage} carsCount={cars.length} />
       <HowItWorks />
       <FleetCategories locale={locale} />
       <FeaturedCars cars={featured} locale={locale} />
       <ValueProps />
       <Stats carsCount={cars.length} />
-      <Testimonials />
+      <Testimonials
+        reviews={curatedReviews}
+        googleMapsLink={settings?.google_maps_link ?? null}
+        rating={rating}
+      />
       <FaqSection />
       <CtaBand locale={locale} />
     </>

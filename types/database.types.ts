@@ -51,6 +51,8 @@ export interface Database {
           logo_url: string | null;
           primary_color: string;
           secondary_color: string;
+          font_latin: string;
+          font_arabic: string;
           phone: string | null;
           whatsapp_number: string | null;
           email: string | null;
@@ -65,6 +67,8 @@ export interface Database {
           seo_title: string | null;
           seo_description: string | null;
           og_image_url: string | null;
+          google_maps_link: string | null;
+          reviews: Json;
           created_at: string;
           updated_at: string;
         };
@@ -76,6 +80,8 @@ export interface Database {
           logo_url?: string | null;
           primary_color?: string;
           secondary_color?: string;
+          font_latin?: string;
+          font_arabic?: string;
           phone?: string | null;
           whatsapp_number?: string | null;
           email?: string | null;
@@ -90,6 +96,8 @@ export interface Database {
           seo_title?: string | null;
           seo_description?: string | null;
           og_image_url?: string | null;
+          google_maps_link?: string | null;
+          reviews?: Json;
           created_at?: string;
           updated_at?: string;
         };
@@ -101,6 +109,8 @@ export interface Database {
           logo_url?: string | null;
           primary_color?: string;
           secondary_color?: string;
+          font_latin?: string;
+          font_arabic?: string;
           phone?: string | null;
           whatsapp_number?: string | null;
           email?: string | null;
@@ -115,6 +125,8 @@ export interface Database {
           seo_title?: string | null;
           seo_description?: string | null;
           og_image_url?: string | null;
+          google_maps_link?: string | null;
+          reviews?: Json;
           created_at?: string;
           updated_at?: string;
         };

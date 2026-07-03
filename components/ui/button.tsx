@@ -10,7 +10,10 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
+          // Primary CTA: a brand gradient (primary → primary/secondary blend)
+          // that slides on hover. background-position only — paint-cheap, no
+          // layout — with bg-primary kept as the non-hover/fallback base.
+          "bg-primary text-primary-foreground shadow-xs bg-[linear-gradient(120deg,var(--primary),color-mix(in_srgb,var(--primary)_78%,var(--secondary)),var(--primary))] bg-[length:220%_100%] bg-[position:0%_0%] hover:bg-[position:100%_0%] transition-[background-position,box-shadow,transform,opacity] duration-500",
         destructive:
           "bg-destructive text-destructive-foreground shadow-xs hover:bg-destructive/90",
         outline:

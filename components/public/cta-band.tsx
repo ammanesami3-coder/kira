@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/motion/reveal";
+import { Magnetic } from "@/components/motion/magnetic";
 
 /**
  * Closing call-to-action band. Two clear next steps: browse the fleet or get
@@ -30,12 +31,14 @@ export function CtaBand({ locale }: { locale: string }) {
             {t("subtitle")}
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Button asChild size="lg" variant="secondary">
-              <Link href="/cars" className="gap-2">
-                {t("primary")}
-                <Arrow className="size-4" aria-hidden />
-              </Link>
-            </Button>
+            <Magnetic>
+              <Button asChild size="lg" variant="secondary">
+                <Link href="/cars" className="gap-2">
+                  {t("primary")}
+                  <Arrow className="size-4" aria-hidden />
+                </Link>
+              </Button>
+            </Magnetic>
             <Button
               asChild
               size="lg"

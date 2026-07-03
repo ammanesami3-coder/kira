@@ -9,6 +9,7 @@
   },
   "common": {
     "language": "اللغة",
+    "toggleTheme": "تبديل المظهر (فاتح/داكن)",
     "arabic": "العربية",
     "french": "الفرنسية",
     "loading": "جارٍ التحميل…",
@@ -28,6 +29,7 @@
     "ctaSecondary": "تواصل معنا",
     "soon": "الموقع قيد الإنشاء — المزيد من المميزات قريبًا.",
     "heroImageAlt": "سيارة فاخرة للكراء",
+    "fleetChip": "سيارة جاهزة للحجز",
     "valueProps": {
       "title": "لماذا تختارنا",
       "subtitle": "تجربة كراء سلسة من البداية إلى النهاية.",
@@ -92,6 +94,7 @@
     "title": "ماذا يقول عملاؤنا",
     "subtitle": "تجارب حقيقية من زبائن وثقوا بنا.",
     "ratingLabel": "{rating} من 5 — بناءً على {count} تقييم",
+    "googleCta": "اكتب مراجعة على Google",
     "items": {
       "t1": {
         "name": "يوسف الإدريسي",
@@ -423,7 +426,8 @@
       "bookings": "الحجوزات",
       "settings": "الإعدادات",
       "signOut": "تسجيل الخروج",
-      "viewSite": "عرض الموقع"
+      "viewSite": "عرض الموقع",
+      "theme": "المظهر"
     },
     "common": {
       "save": "حفظ",
@@ -608,6 +612,21 @@
       "logoUrl": "رابط الشعار",
       "primaryColor": "اللون الأساسي",
       "secondaryColor": "اللون الثانوي",
+      "typography": "الخطوط",
+      "fontLatin": "الخط اللاتيني (الفرنسية)",
+      "fontArabic": "الخط العربي",
+      "fontHint": "يُطبَّق الخط على الموقع بالكامل فور الحفظ.",
+      "fontPreview": "معاينة",
+      "reviews": "مراجعات Google",
+      "googleMapsLink": "رابط Google Maps",
+      "googleMapsLinkHint": "الصق رابط صفحة نشاطك على خرائط Google — يُستعمل لزر «اكتب مراجعة» في الموقع.",
+      "reviewsEmpty": "لا مراجعات منسّقة بعد — يعرض الموقع شهادات افتراضية حتى تضيف مراجعات حقيقية.",
+      "reviewAuthor": "اسم الزبون",
+      "reviewRating": "التقييم",
+      "reviewQuote": "نص المراجعة",
+      "reviewDate": "التاريخ (اختياري)",
+      "addReview": "إضافة مراجعة",
+      "removeReview": "حذف",
       "phone": "الهاتف",
       "whatsappNumber": "رقم الواتساب",
       "email": "البريد الإلكتروني",

@@ -12,6 +12,7 @@ import { type Locale } from "@/config/site.config";
 import { CATEGORIES } from "@/lib/catalog";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { Magnetic } from "@/components/motion/magnetic";
 import {
   Dialog,
   DialogContent,
@@ -66,7 +67,7 @@ export function QuickSearch() {
   }
 
   return (
-    <div className="bg-card/95 supports-[backdrop-filter]:bg-card/80 rounded-2xl border p-4 shadow-lg backdrop-blur sm:p-5">
+    <div className="glass rounded-2xl p-4 sm:p-5">
       <p className="mb-3 text-sm font-semibold">{t("quickSearch.title")}</p>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto]">
         <div className="space-y-1.5">
@@ -125,10 +126,12 @@ export function QuickSearch() {
         </div>
 
         <div className="flex items-end">
-          <Button onClick={onSubmit} className="w-full lg:w-auto" size="lg">
-            <Search className="size-4" aria-hidden />
-            {t("quickSearch.submit")}
-          </Button>
+          <Magnetic strength={0.15} className="w-full lg:w-auto">
+            <Button onClick={onSubmit} className="w-full" size="lg">
+              <Search className="size-4" aria-hidden />
+              {t("quickSearch.submit")}
+            </Button>
+          </Magnetic>
         </div>
       </div>
     </div>

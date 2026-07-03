@@ -384,6 +384,8 @@ export async function updateAgencySettings(
     logo_url: emptyToNull(d.logo_url),
     primary_color: d.primary_color,
     secondary_color: d.secondary_color,
+    font_latin: d.font_latin,
+    font_arabic: d.font_arabic,
     phone: emptyToNull(d.phone),
     whatsapp_number: emptyToNull(d.whatsapp_number),
     email: emptyToNull(d.email),
@@ -398,6 +400,14 @@ export async function updateAgencySettings(
     seo_title: emptyToNull(d.seo_title),
     seo_description: emptyToNull(d.seo_description),
     og_image_url: emptyToNull(d.og_image_url),
+    google_maps_link: emptyToNull(d.google_maps_link),
+    // Persist in the canonical AgencyReview shape (empty date dropped).
+    reviews: d.reviews.map((r) => ({
+      author: r.author,
+      rating: r.rating,
+      quote: r.quote,
+      ...(r.date ? { date: r.date } : {}),
+    })) as Json,
     updated_at: new Date().toISOString(),
   };
 

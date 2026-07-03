@@ -9,6 +9,7 @@
   },
   "common": {
     "language": "Langue",
+    "toggleTheme": "Basculer le thème (clair/sombre)",
     "arabic": "Arabe",
     "french": "Français",
     "loading": "Chargement…",
@@ -28,6 +29,7 @@
     "ctaSecondary": "Nous contacter",
     "soon": "Site en construction — d'autres fonctionnalités arrivent bientôt.",
     "heroImageAlt": "Voiture premium en location",
+    "fleetChip": "véhicules prêts à réserver",
     "valueProps": {
       "title": "Pourquoi nous choisir",
       "subtitle": "Une expérience de location fluide du début à la fin.",
@@ -92,6 +94,7 @@
     "title": "Ce que disent nos clients",
     "subtitle": "Des expériences réelles de clients qui nous ont fait confiance.",
     "ratingLabel": "{rating} sur 5 — sur la base de {count} avis",
+    "googleCta": "Laisser un avis sur Google",
     "items": {
       "t1": {
         "name": "Youssef El Idrissi",
@@ -423,7 +426,8 @@
       "bookings": "Réservations",
       "settings": "Paramètres",
       "signOut": "Déconnexion",
-      "viewSite": "Voir le site"
+      "viewSite": "Voir le site",
+      "theme": "Thème"
     },
     "common": {
       "save": "Enregistrer",
@@ -608,6 +612,21 @@
       "logoUrl": "URL du logo",
       "primaryColor": "Couleur principale",
       "secondaryColor": "Couleur secondaire",
+      "typography": "Typographie",
+      "fontLatin": "Police latine (français)",
+      "fontArabic": "Police arabe",
+      "fontHint": "La police s'applique à tout le site dès l'enregistrement.",
+      "fontPreview": "Aperçu",
+      "reviews": "Avis Google",
+      "googleMapsLink": "Lien Google Maps",
+      "googleMapsLinkHint": "Collez le lien de votre fiche Google Maps — il alimente le bouton « Laisser un avis » sur le site.",
+      "reviewsEmpty": "Aucun avis sélectionné pour l'instant — le site affiche des témoignages par défaut jusqu'à l'ajout d'avis réels.",
+      "reviewAuthor": "Nom du client",
+      "reviewRating": "Note",
+      "reviewQuote": "Texte de l'avis",
+      "reviewDate": "Date (optionnel)",
+      "addReview": "Ajouter un avis",
+      "removeReview": "Supprimer",
       "phone": "Téléphone",
       "whatsappNumber": "Numéro WhatsApp",
       "email": "E-mail",

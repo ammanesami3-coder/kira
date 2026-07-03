@@ -11,23 +11,36 @@
 
 import type { AgencySettings } from "@/types/database.types";
 import { siteConfig, type Locale } from "@/config/site.config";
+import {
+  defaultArabicFont,
+  defaultLatinFont,
+  isArabicFontId,
+  isLatinFontId,
+  type ArabicFontId,
+  type LatinFontId,
+} from "@/config/fonts.config";
 
 export interface Branding {
   name: string;
   logo: string;
   primaryColor: string;
   secondaryColor: string;
+  fontLatin: LatinFontId;
+  fontArabic: ArabicFontId;
 }
 
-type BrandingSettings = Pick<
-  AgencySettings,
-  | "name"
-  | "name_ar"
-  | "name_fr"
-  | "logo_url"
-  | "primary_color"
-  | "secondary_color"
-> | null;
+type BrandingSettings =
+  | (Pick<
+      AgencySettings,
+      | "name"
+      | "name_ar"
+      | "name_fr"
+      | "logo_url"
+      | "primary_color"
+      | "secondary_color"
+    > &
+      Partial<Pick<AgencySettings, "font_latin" | "font_arabic">>)
+  | null;
 
 function localizedName(settings: BrandingSettings, locale: Locale): string {
   if (!settings) return siteConfig.name;
@@ -45,5 +58,13 @@ export function resolveBranding(
     logo: settings?.logo_url || siteConfig.logo,
     primaryColor: settings?.primary_color || siteConfig.colors.primary,
     secondaryColor: settings?.secondary_color || siteConfig.colors.secondary,
+    // Narrowed against the whitelist: a stale/invalid DB value silently
+    // falls back to the default pair instead of breaking the layout.
+    fontLatin: isLatinFontId(settings?.font_latin)
+      ? settings.font_latin
+      : defaultLatinFont,
+    fontArabic: isArabicFontId(settings?.font_arabic)
+      ? settings.font_arabic
+      : defaultArabicFont,
   };
 }
