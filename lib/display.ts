@@ -57,6 +57,21 @@ export function galleryImages(images: CarImage[]): CarImage[] {
   });
 }
 
+/**
+ * Hosts covered by next.config `images.remotePatterns`. The owner may paste
+ * an arbitrary image URL in the dashboard (hero image, …); optimizing an
+ * unlisted host would throw at request time, so callers render those with
+ * `unoptimized` instead of crashing the page.
+ */
+export function isOptimizableHost(url: string): boolean {
+  try {
+    const { hostname } = new URL(url);
+    return hostname.endsWith(".supabase.co") || hostname === "placehold.co";
+  } catch {
+    return false;
+  }
+}
+
 const localeTag: Record<Locale, string> = {
   ar: "ar-MA",
   fr: "fr-MA",

@@ -6,9 +6,10 @@ import { BadgeCheck, HeartHandshake, ShieldCheck } from "lucide-react";
 import { type Locale } from "@/config/site.config";
 import { clampDescription, localePath, localizedAlternates } from "@/lib/seo";
 import { resolveBranding } from "@/lib/branding";
+import { parseDesign } from "@/lib/design";
 import { autoRentalJsonLd, breadcrumbJsonLd } from "@/lib/structured-data";
 import { getAgencySettings, getAvailableCars } from "@/server/queries";
-import { primaryImage } from "@/lib/display";
+import { isOptimizableHost, primaryImage } from "@/lib/display";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Badge } from "@/components/ui/badge";
 import { Stats } from "@/components/public/stats";
@@ -58,8 +59,14 @@ export default async function AboutPage({ params }: Props) {
   ]);
 
   const brand = resolveBranding(settings, locale as Locale);
+  const design = parseDesign(settings?.design);
+
+  // Same visual as the landing hero: the owner-picked image (admin →
+  // settings → design) wins; otherwise the first car with a photo.
   const image =
-    cars.map((c) => primaryImage(c.car_images)).find(Boolean)?.url ?? null;
+    design.heroImageUrl ??
+    cars.map((c) => primaryImage(c.car_images)).find(Boolean)?.url ??
+    null;
 
   const businessLd = autoRentalJsonLd(
     settings,
@@ -101,6 +108,7 @@ export default async function AboutPage({ params }: Props) {
                 fill
                 priority
                 fetchPriority="high"
+                unoptimized={!isOptimizableHost(image)}
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
               />
@@ -142,7 +150,7 @@ export default async function AboutPage({ params }: Props) {
         </Stagger>
       </section>
 
-      <Stats carsCount={cars.length} />
+      <Stats carsCount={cars.length} overrides={design.stats} />
       <CtaBand locale={locale} />
     </>
   );

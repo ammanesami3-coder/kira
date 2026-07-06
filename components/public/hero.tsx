@@ -1,15 +1,9 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import {
-  Headset,
-  RefreshCw,
-  ShieldCheck,
-  Sparkles,
-  Umbrella,
-} from "lucide-react";
+import { Headset, RefreshCw, ShieldCheck, Umbrella } from "lucide-react";
 
 import { siteConfig } from "@/config/site.config";
-import { Badge } from "@/components/ui/badge";
+import { isOptimizableHost } from "@/lib/display";
 import { QuickSearch } from "@/components/public/quick-search";
 import { Reveal } from "@/components/motion/reveal";
 
@@ -19,20 +13,6 @@ const TRUST_ITEMS = [
   { key: "support", Icon: Headset },
   { key: "flexible", Icon: RefreshCw },
 ] as const;
-
-/**
- * Hosts covered by next.config `images.remotePatterns`. The owner may paste
- * an arbitrary hero URL in the dashboard; optimizing an unlisted host would
- * throw at request time, so those render unoptimized instead of crashing.
- */
-function isOptimizableHost(url: string): boolean {
-  try {
-    const { hostname } = new URL(url);
-    return hostname.endsWith(".supabase.co") || hostname === "placehold.co";
-  } catch {
-    return false;
-  }
-}
 
 /**
  * Landing hero — asymmetric bento grid:
@@ -96,14 +76,6 @@ export function Hero({
 
         {/* Headline cell */}
         <div className="flex flex-col gap-6 lg:order-1 lg:col-span-7 lg:justify-center lg:pe-8">
-          <Badge
-            variant="secondary"
-            className="glass w-fit gap-1.5 px-3 py-1 text-xs"
-          >
-            <Sparkles className="size-3.5" aria-hidden />
-            {t("badge")}
-          </Badge>
-
           <h1 className="text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl">
             {t("title", { name: siteConfig.name })}
           </h1>
