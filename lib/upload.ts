@@ -15,13 +15,10 @@ export interface UploadedImage {
   storage_path: string;
 }
 
-export async function uploadCarImage(
-  file: File,
-  carId: string,
-): Promise<UploadedImage> {
+async function uploadToBucket(file: File, folder: string) {
   const supabase = createClient();
   const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
-  const path = `${carId}/${crypto.randomUUID()}.${ext}`;
+  const path = `${folder}/${crypto.randomUUID()}.${ext}`;
 
   const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
     cacheControl: "3600",
@@ -32,4 +29,20 @@ export async function uploadCarImage(
 
   const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
   return { url: data.publicUrl, storage_path: path };
+}
+
+export async function uploadCarImage(
+  file: File,
+  carId: string,
+): Promise<UploadedImage> {
+  return uploadToBucket(file, carId);
+}
+
+/**
+ * Branding assets (hero image, …) share the public bucket under a reserved
+ * `branding/` prefix — same RLS (owner-only writes), and the resulting
+ * Supabase URL is already allowed by next/image `remotePatterns`.
+ */
+export async function uploadBrandingImage(file: File): Promise<UploadedImage> {
+  return uploadToBucket(file, "branding");
 }

@@ -3,6 +3,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { type Locale } from "@/config/site.config";
 import { resolveBranding } from "@/lib/branding";
+import { parseDesign } from "@/lib/design";
 import { getAgencySettings } from "@/server/queries";
 import { Button } from "@/components/ui/button";
 import { BrandLogo } from "@/components/public/brand";
@@ -15,6 +16,7 @@ export async function Navbar() {
   const locale = (await getLocale()) as Locale;
   const settings = await getAgencySettings().catch(() => null);
   const brand = resolveBranding(settings, locale);
+  const design = parseDesign(settings?.design);
 
   const links = [
     { href: "/", label: t("home") },
@@ -31,7 +33,12 @@ export async function Navbar() {
           href="/"
           className="flex items-center gap-2 font-semibold tracking-tight"
         >
-          <BrandLogo size="md" name={brand.name} logo={brand.logo} />
+          <BrandLogo
+            size="md"
+            name={brand.name}
+            logo={brand.logo}
+            height={design.logoHeightHeader}
+          />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">

@@ -26,7 +26,7 @@ export function FleetCategories({ locale }: { locale: string }) {
   const Arrow = locale === "ar" ? ArrowLeft : ArrowRight;
 
   return (
-    <section className="bg-muted/40 border-y">
+    <section data-sec="fleet" className="bg-muted/40 border-y">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
         <Reveal className="flex flex-wrap items-end justify-between gap-4">
           <div className="max-w-2xl">

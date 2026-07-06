@@ -21,6 +21,20 @@ const TRUST_ITEMS = [
 ] as const;
 
 /**
+ * Hosts covered by next.config `images.remotePatterns`. The owner may paste
+ * an arbitrary hero URL in the dashboard; optimizing an unlisted host would
+ * throw at request time, so those render unoptimized instead of crashing.
+ */
+function isOptimizableHost(url: string): boolean {
+  try {
+    const { hostname } = new URL(url);
+    return hostname.endsWith(".supabase.co") || hostname === "placehold.co";
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Landing hero — asymmetric bento grid:
  *
  *   ┌───────────────────────────┬──────────────┐
@@ -47,7 +61,10 @@ export function Hero({
   const tTrust = useTranslations("trust");
 
   return (
-    <section className="hero-grid relative overflow-hidden border-b">
+    <section
+      data-sec="hero"
+      className="hero-grid relative overflow-hidden border-b"
+    >
       <div className="mx-auto grid max-w-7xl gap-5 px-4 py-10 sm:px-6 md:py-16 lg:grid-cols-12 lg:gap-6 lg:px-8">
         {/* Media cell — LCP. First on mobile; spans both text rows on desktop. */}
         <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border shadow-xl lg:order-2 lg:col-span-5 lg:row-span-2 lg:aspect-auto">
@@ -58,6 +75,7 @@ export function Hero({
               fill
               priority
               fetchPriority="high"
+              unoptimized={!isOptimizableHost(imageUrl)}
               sizes="(max-width: 1024px) 100vw, 42vw"
               className="ken-burns object-cover"
             />

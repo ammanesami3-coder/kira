@@ -22,7 +22,7 @@ export function FeaturedCars({
   if (cars.length === 0) return null;
 
   return (
-    <section className="bg-muted/40 border-y">
+    <section data-sec="featured" className="bg-muted/40 border-y">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
         <Reveal className="flex flex-wrap items-end justify-between gap-4">
           <div>

@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { type Locale } from "@/config/site.config";
 import { clampDescription, localizedAlternates } from "@/lib/seo";
 import { resolveBranding } from "@/lib/branding";
+import { parseDesign } from "@/lib/design";
 import { autoRentalJsonLd, faqJsonLd } from "@/lib/structured-data";
 import { aggregateFromReviews, parseReviews } from "@/lib/reviews";
 import { getAgencySettings, getAvailableCars } from "@/server/queries";
@@ -62,11 +63,15 @@ export default async function HomePage({ params }: Props) {
   ]);
 
   const brand = resolveBranding(settings, locale as Locale);
+  const design = parseDesign(settings?.design);
   const featured = cars.slice(0, 6);
 
-  // First car with an image drives the hero LCP visual.
+  // Hero LCP visual: the owner-picked image (admin → settings → design)
+  // wins; otherwise the first car with a photo drives it.
   const heroImage =
-    cars.map((c) => primaryImage(c.car_images)).find(Boolean)?.url ?? null;
+    design.heroImageUrl ??
+    cars.map((c) => primaryImage(c.car_images)).find(Boolean)?.url ??
+    null;
 
   // Social proof: the owner-curated Google reviews drive BOTH the visible
   // testimonials and the AggregateRating JSON-LD from one derivation, so the
@@ -99,7 +104,7 @@ export default async function HomePage({ params }: Props) {
       <FleetCategories locale={locale} />
       <FeaturedCars cars={featured} locale={locale} />
       <ValueProps />
-      <Stats carsCount={cars.length} />
+      <Stats carsCount={cars.length} overrides={design.stats} />
       <Testimonials
         reviews={curatedReviews}
         googleMapsLink={settings?.google_maps_link ?? null}

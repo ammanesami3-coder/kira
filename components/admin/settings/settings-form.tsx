@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { Plus, Star, Trash2 } from "lucide-react";
+import { Loader2, Plus, Star, Trash2, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 
 import type { z } from "zod";
@@ -29,6 +29,13 @@ import {
 } from "@/config/fonts.config";
 import { allFontVariables, arabicFonts, latinFonts } from "@/lib/fonts";
 import { parseReviews } from "@/lib/reviews";
+import {
+  DESIGN_SECTION_IDS,
+  DESIGN_STAT_KEYS,
+  parseDesign,
+  type SiteDesign,
+} from "@/lib/design";
+import { uploadBrandingImage } from "@/lib/upload";
 import { cn } from "@/lib/utils";
 import type { AgencySettings } from "@/types/database.types";
 import { Button } from "@/components/ui/button";
@@ -49,6 +56,25 @@ function asRecord(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value)
     ? (value as Record<string, unknown>)
     : {};
+}
+
+/** Form shape for the design blob: nulls/"" mean "use the default". */
+function designDefaults(d: SiteDesign): AgencySettingsInput["design"] {
+  return {
+    hero_image_url: d.heroImageUrl ?? "",
+    logo_height_header: d.logoHeightHeader,
+    logo_height_footer: d.logoHeightFooter,
+    stats: { ...d.stats },
+    sections: Object.fromEntries(
+      DESIGN_SECTION_IDS.map((id) => [
+        id,
+        {
+          heading: d.sections[id]?.heading ?? "",
+          text: d.sections[id]?.text ?? "",
+        },
+      ]),
+    ),
+  };
 }
 
 function defaults(s: AgencySettings | null): AgencySettingsInput {
@@ -86,6 +112,7 @@ function defaults(s: AgencySettings | null): AgencySettingsInput {
       ...r,
       date: r.date ?? "",
     })),
+    design: designDefaults(parseDesign(s?.design)),
   };
 }
 
@@ -96,6 +123,7 @@ export function SettingsForm({
 }) {
   const t = useTranslations("admin.settings");
   const tCommon = useTranslations("admin.common");
+  const tStats = useTranslations("stats");
   const router = useRouter();
 
   const {
@@ -233,6 +261,117 @@ export function SettingsForm({
             </Field>
           )}
         />
+      </Section>
+
+      {/* Site design — hero image, logo sizes, stats figures, section colors */}
+      <Section title={t("design")}>
+        <Controller
+          control={control}
+          name="design.hero_image_url"
+          render={({ field }) => (
+            <Field
+              label={t("heroImage")}
+              hint={t("heroImageHint")}
+              className="sm:col-span-2"
+            >
+              <HeroImageInput
+                value={field.value ?? ""}
+                onChange={field.onChange}
+              />
+            </Field>
+          )}
+        />
+
+        <Field label={t("logoHeader")} hint={t("logoSizeHint")}>
+          <Input
+            type="number"
+            dir="ltr"
+            min={16}
+            max={200}
+            placeholder="88"
+            {...register("design.logo_height_header", {
+              setValueAs: (v) => (v === "" || v == null ? null : Number(v)),
+            })}
+          />
+        </Field>
+        <Field label={t("logoFooter")} hint={t("logoSizeHint")}>
+          <Input
+            type="number"
+            dir="ltr"
+            min={16}
+            max={200}
+            placeholder="32"
+            {...register("design.logo_height_footer", {
+              setValueAs: (v) => (v === "" || v == null ? null : Number(v)),
+            })}
+          />
+        </Field>
+
+        <div className="space-y-3 sm:col-span-2">
+          <div className="space-y-1">
+            <Label>{t("statsTitle")}</Label>
+            <p className="text-muted-foreground text-xs">{t("statsHint")}</p>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {DESIGN_STAT_KEYS.map((key) => (
+              <Field key={key} label={tStats(key)}>
+                <Input
+                  type="number"
+                  dir="ltr"
+                  min={0}
+                  placeholder={key === "cars" ? t("statsAuto") : undefined}
+                  {...register(`design.stats.${key}`, {
+                    setValueAs: (v) =>
+                      v === "" || v == null ? null : Number(v),
+                  })}
+                />
+              </Field>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-3 sm:col-span-2">
+          <div className="space-y-1">
+            <Label>{t("sectionColors")}</Label>
+            <p className="text-muted-foreground text-xs">
+              {t("sectionColorsHint")}
+            </p>
+          </div>
+          <div className="divide-y rounded-xl border">
+            {DESIGN_SECTION_IDS.map((id) => (
+              <div
+                key={id}
+                className="grid gap-3 p-3.5 sm:grid-cols-[minmax(8rem,1fr)_auto_auto] sm:items-center"
+              >
+                <span className="text-sm font-medium">
+                  {t(`sections.${id}`)}
+                </span>
+                <Controller
+                  control={control}
+                  name={`design.sections.${id}.heading`}
+                  render={({ field }) => (
+                    <OptionalColorPicker
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      label={t("headingColor")}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name={`design.sections.${id}.text`}
+                  render={({ field }) => (
+                    <OptionalColorPicker
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      label={t("textColor")}
+                    />
+                  )}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
       </Section>
 
       {/* Contact */}
@@ -495,6 +634,160 @@ function ColorPicker({
         onChange={(e) => onChange(e.target.value)}
         className="border-0 font-mono text-sm uppercase shadow-none focus-visible:ring-0"
       />
+    </div>
+  );
+}
+
+/** Expand #rgb → #rrggbb for the native color input; fallback while editing. */
+function toLongHex(value: string, fallback = "#000000"): string {
+  if (/^#[0-9a-fA-F]{6}$/.test(value)) return value;
+  if (/^#[0-9a-fA-F]{3}$/.test(value)) {
+    return `#${[...value.slice(1)].map((c) => c + c).join("")}`;
+  }
+  return fallback;
+}
+
+/**
+ * Hero image control: URL field + one-click upload to Supabase Storage
+ * (`car-images/branding/…`, owner-only writes) + live preview. Uploading
+ * keeps the URL on the Supabase host, which next/image already allows.
+ */
+function HeroImageInput({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (next: string) => void;
+}) {
+  const t = useTranslations("admin.settings");
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const { url } = await uploadBrandingImage(file);
+      onChange(url);
+    } catch {
+      toast.error(t("uploadError"));
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex gap-2">
+        <Input
+          dir="ltr"
+          placeholder="https://…"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        />
+        <Button
+          type="button"
+          variant="outline"
+          disabled={uploading}
+          onClick={() => fileRef.current?.click()}
+          className="shrink-0 gap-2"
+        >
+          {uploading ? (
+            <Loader2 className="size-4 animate-spin" aria-hidden />
+          ) : (
+            <Upload className="size-4" aria-hidden />
+          )}
+          {uploading ? t("uploading") : t("upload")}
+        </Button>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={onFile}
+        />
+      </div>
+      {value && (
+        <div className="relative w-fit">
+          {/* eslint-disable-next-line @next/next/no-img-element -- admin-only preview of an arbitrary URL */}
+          <img
+            src={value}
+            alt=""
+            className="h-32 rounded-lg border object-cover"
+          />
+          <button
+            type="button"
+            aria-label={t("removeImage")}
+            onClick={() => onChange("")}
+            className="bg-background/90 text-muted-foreground hover:text-destructive absolute end-2 top-2 rounded-full border p-1 shadow-sm transition-colors"
+          >
+            <X className="size-3.5" aria-hidden />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Optional color: empty string = "theme default". Swatch opens the native
+ * picker; the clear button reverts to the default.
+ */
+function OptionalColorPicker({
+  value,
+  onChange,
+  label,
+}: {
+  value: string;
+  onChange: (next: string) => void;
+  label: string;
+}) {
+  const t = useTranslations("admin.settings");
+  const isSet = value.length > 0;
+  const long = toLongHex(value, "#888888");
+
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-muted-foreground w-16 shrink-0 text-xs">
+        {label}
+      </span>
+      <label
+        className={cn(
+          "ring-border relative size-7 shrink-0 cursor-pointer overflow-hidden rounded-full shadow-sm ring-1 ring-inset",
+          !isSet && "border-muted-foreground/40 border border-dashed",
+        )}
+        style={isSet ? { backgroundColor: long } : undefined}
+        title={label}
+      >
+        <input
+          type="color"
+          value={long}
+          onChange={(e) => onChange(e.target.value)}
+          className="absolute inset-0 size-full cursor-pointer opacity-0"
+        />
+      </label>
+      <Input
+        dir="ltr"
+        value={value}
+        maxLength={7}
+        spellCheck={false}
+        placeholder={t("colorAuto")}
+        onChange={(e) => onChange(e.target.value)}
+        className="h-8 w-24 font-mono text-xs uppercase"
+      />
+      <button
+        type="button"
+        aria-label={t("resetColor")}
+        onClick={() => onChange("")}
+        className={cn(
+          "text-muted-foreground hover:text-destructive rounded-md p-1 transition-colors",
+          !isSet && "invisible",
+        )}
+      >
+        <X className="size-3.5" aria-hidden />
+      </button>
     </div>
   );
 }

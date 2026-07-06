@@ -15,7 +15,10 @@ export function CtaBand({ locale }: { locale: string }) {
   const Arrow = locale === "ar" ? ArrowLeft : ArrowRight;
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+    <section
+      data-sec="cta"
+      className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-24 lg:px-8"
+    >
       <Reveal
         className="bg-primary relative overflow-hidden rounded-3xl px-6 py-14 text-center sm:px-12 md:py-20"
         style={{

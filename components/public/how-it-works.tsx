@@ -20,6 +20,7 @@ export function HowItWorks() {
   return (
     <section
       id="how-it-works"
+      data-sec="howItWorks"
       className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-24 lg:px-8"
     >
       <Reveal className="mx-auto max-w-2xl text-center">

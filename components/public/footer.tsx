@@ -4,6 +4,7 @@ import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { type Locale } from "@/config/site.config";
 import { resolveBranding } from "@/lib/branding";
+import { parseDesign } from "@/lib/design";
 import { getAgencySettings } from "@/server/queries";
 import { BrandLogo } from "@/components/public/brand";
 import { SocialLinks } from "@/components/public/social-links";
@@ -18,6 +19,7 @@ export async function Footer() {
   const locale = (await getLocale()) as Locale;
   const settings = await getAgencySettings().catch(() => null);
   const brand = resolveBranding(settings, locale);
+  const design = parseDesign(settings?.design);
 
   const year = new Date().getFullYear();
   const address =
@@ -36,11 +38,16 @@ export async function Footer() {
   const waDigits = settings?.whatsapp_number?.replace(/\D/g, "");
 
   return (
-    <footer className="bg-muted/40 mt-24 border-t">
+    <footer data-sec="footer" className="bg-muted/40 mt-24 border-t">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
         <div className="space-y-4">
           <Link href="/" className="flex items-center gap-2 font-semibold">
-            <BrandLogo size="sm" name={brand.name} logo={brand.logo} />
+            <BrandLogo
+              size="sm"
+              name={brand.name}
+              logo={brand.logo}
+              height={design.logoHeightFooter}
+            />
           </Link>
           <p className="text-muted-foreground max-w-xs text-sm">
             {t("footer.tagline")}

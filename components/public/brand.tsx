@@ -18,12 +18,15 @@ export function BrandLogo({
   size = "md",
   name = siteConfig.name,
   logo = siteConfig.logo,
+  height,
 }: {
   size?: "md" | "sm";
   /** Display name — defaults to the env value; pass the agency setting. */
   name?: string;
   /** Logo image URL — defaults to the env value; pass the agency setting. */
   logo?: string;
+  /** Owner-picked logo height in px (agency_settings.design); null = size default. */
+  height?: number | null;
 }) {
   const isMd = size === "md";
 
@@ -33,7 +36,8 @@ export function BrandLogo({
       <img
         src={logo}
         alt={name}
-        className={`${isMd ? "h-22" : "h-8"} w-auto max-w-[180px] object-contain`}
+        style={height ? { height } : undefined}
+        className={`${height ? "" : isMd ? "h-22" : "h-8"} w-auto max-w-[220px] object-contain`}
       />
     );
   }

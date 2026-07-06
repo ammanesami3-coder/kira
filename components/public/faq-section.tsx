@@ -26,6 +26,7 @@ export function FaqSection() {
   return (
     <section
       aria-labelledby="faq-heading"
+      data-sec="faq"
       className="mx-auto max-w-3xl px-4 py-16 sm:px-6 md:py-24 lg:px-8"
     >
       <Reveal className="mx-auto mb-10 max-w-2xl text-center">

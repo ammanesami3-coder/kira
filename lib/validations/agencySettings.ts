@@ -11,6 +11,53 @@ const hexColor = z
   .string()
   .regex(/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/, "must be a hex color");
 
+/** Optional hex in form state: "" means "use the theme default". */
+const optionalHex = hexColor.optional().or(z.literal(""));
+
+/** Heading/text overrides for one public-site section (see lib/design.ts). */
+const sectionColorsSchema = z.object({
+  heading: optionalHex,
+  text: optionalHex,
+});
+
+/** Positive integer or null ("" is mapped to null by the form). */
+const optionalInt = (min: number, max: number) =>
+  z.number().int().min(min).max(max).nullish();
+
+/**
+ * Owner-editable site design (persisted as `agency_settings.design` jsonb).
+ * Section keys mirror DESIGN_SECTION_IDS in lib/design.ts.
+ */
+export const siteDesignSchema = z.object({
+  hero_image_url: z.url().nullish().or(z.literal("")),
+  logo_height_header: optionalInt(16, 200),
+  logo_height_footer: optionalInt(16, 200),
+  stats: z
+    .object({
+      cars: optionalInt(0, 1_000_000),
+      clients: optionalInt(0, 1_000_000),
+      years: optionalInt(0, 1_000),
+      satisfaction: optionalInt(0, 100),
+    })
+    .default({}),
+  sections: z
+    .object({
+      hero: sectionColorsSchema.optional(),
+      howItWorks: sectionColorsSchema.optional(),
+      fleet: sectionColorsSchema.optional(),
+      featured: sectionColorsSchema.optional(),
+      valueProps: sectionColorsSchema.optional(),
+      stats: sectionColorsSchema.optional(),
+      testimonials: sectionColorsSchema.optional(),
+      faq: sectionColorsSchema.optional(),
+      cta: sectionColorsSchema.optional(),
+      footer: sectionColorsSchema.optional(),
+    })
+    .default({}),
+});
+
+export type SiteDesignInput = z.infer<typeof siteDesignSchema>;
+
 /** One owner-curated showcase review (mirrors lib/reviews.ts AgencyReview). */
 export const agencyReviewSchema = z.object({
   author: z.string().min(1).max(80),
@@ -50,6 +97,7 @@ export const agencySettingsSchema = z.object({
   og_image_url: z.url().nullish().or(z.literal("")),
   google_maps_link: z.url().nullish().or(z.literal("")),
   reviews: z.array(agencyReviewSchema).max(12).default([]),
+  design: siteDesignSchema.default({ stats: {}, sections: {} }),
 });
 
 export type AgencySettingsInput = z.infer<typeof agencySettingsSchema>;

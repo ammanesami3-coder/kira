@@ -69,6 +69,7 @@ export interface Database {
           og_image_url: string | null;
           google_maps_link: string | null;
           reviews: Json;
+          design: Json;
           created_at: string;
           updated_at: string;
         };
@@ -98,6 +99,7 @@ export interface Database {
           og_image_url?: string | null;
           google_maps_link?: string | null;
           reviews?: Json;
+          design?: Json;
           created_at?: string;
           updated_at?: string;
         };
@@ -127,6 +129,7 @@ export interface Database {
           og_image_url?: string | null;
           google_maps_link?: string | null;
           reviews?: Json;
+          design?: Json;
           created_at?: string;
           updated_at?: string;
         };

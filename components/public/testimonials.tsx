@@ -51,7 +51,10 @@ export function Testimonials({
   const curated = reviews.length > 0;
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+    <section
+      data-sec="testimonials"
+      className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-24 lg:px-8"
+    >
       <Reveal className="mx-auto max-w-2xl text-center">
         <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
           {t("title")}

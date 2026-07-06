@@ -1,6 +1,15 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Clock,
+  HelpCircle,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+} from "lucide-react";
 
 import { Link } from "@/i18n/navigation";
 import { type Locale } from "@/config/site.config";
@@ -12,6 +21,8 @@ import type { Json } from "@/types/database.types";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Button } from "@/components/ui/button";
 import { LocationMap } from "@/components/public/location-map";
+import { ContactForm } from "@/components/public/contact-form";
+import { SocialLinks } from "@/components/public/social-links";
 
 // Static contact info from the agency settings singleton; revalidate hourly.
 export const revalidate = 3600;
@@ -83,6 +94,17 @@ export default async function ContactPage({ params }: Props) {
   const rows = hoursRows(settings?.opening_hours ?? null, (k) =>
     tHours(`days.${k}`),
   );
+
+  // SocialLinks renders null for an empty set; mirror that check so the
+  // "follow us" heading never appears above nothing.
+  const socials = settings?.social_links;
+  const hasSocials =
+    !!socials &&
+    typeof socials === "object" &&
+    !Array.isArray(socials) &&
+    Object.values(socials).some(
+      (v) => typeof v === "string" && /^https?:\/\//.test(v),
+    );
 
   const businessLd = autoRentalJsonLd(
     settings,
@@ -176,6 +198,16 @@ export default async function ContactPage({ params }: Props) {
               </ContactRow>
             )}
           </ul>
+
+          {hasSocials && (
+            <div className="space-y-3">
+              <h2 className="text-sm font-semibold">{t("follow")}</h2>
+              <SocialLinks
+                links={socials ?? null}
+                className="flex flex-wrap gap-2"
+              />
+            </div>
+          )}
         </div>
 
         {rows.length > 0 && (
@@ -207,6 +239,13 @@ export default async function ContactPage({ params }: Props) {
         )}
       </div>
 
+      <div className="mt-12">
+        <ContactForm
+          whatsappDigits={waDigits || null}
+          email={settings?.email ?? null}
+        />
+      </div>
+
       {mapQuery && (
         <div className="mt-12 space-y-4">
           <h2 className="flex items-center gap-2 text-xl font-semibold">
@@ -224,6 +263,31 @@ export default async function ContactPage({ params }: Props) {
           )}
         </div>
       )}
+
+      {/* Common questions teaser — deflects routine asks before a call */}
+      <div className="bg-muted/40 mt-12 flex flex-col items-start gap-4 rounded-2xl border p-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3">
+          <span className="bg-primary/10 text-primary flex size-10 shrink-0 items-center justify-center rounded-xl">
+            <HelpCircle className="size-5" aria-hidden />
+          </span>
+          <div>
+            <h2 className="font-semibold">{t("faqTitle")}</h2>
+            <p className="text-muted-foreground mt-1 text-sm text-pretty">
+              {t("faqText")}
+            </p>
+          </div>
+        </div>
+        <Button asChild variant="outline" className="shrink-0 gap-2">
+          <Link href="/faq">
+            {t("faqCta")}
+            {locale === "ar" ? (
+              <ArrowLeft className="size-4" aria-hidden />
+            ) : (
+              <ArrowRight className="size-4" aria-hidden />
+            )}
+          </Link>
+        </Button>
+      </div>
     </section>
   );
 }

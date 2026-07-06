@@ -22,7 +22,9 @@ import {
   deleteCarImageSchema,
   deleteBlockedPeriodSchema,
   agencySettingsSchema,
+  type SiteDesignInput,
 } from "@/lib/validations";
+import { DESIGN_SECTION_IDS, DESIGN_STAT_KEYS } from "@/lib/design";
 
 /**
  * Admin (owner) data access for the dashboard. Reads are consumed by
@@ -56,6 +58,47 @@ async function ownerClientOrNull() {
 
 function emptyToNull(value: string | null | undefined): string | null {
   return value && value.length > 0 ? value : null;
+}
+
+/**
+ * Canonical `design` jsonb: only explicitly-set overrides are persisted
+ * ("" / null form values are dropped), so `parseDesign` treats every absent
+ * key as "use the built-in default".
+ */
+function toDesignJson(d: SiteDesignInput): Json {
+  const design: Record<string, Json> = {};
+
+  const heroImage = emptyToNull(d.hero_image_url);
+  if (heroImage) design.hero_image_url = heroImage;
+  if (d.logo_height_header != null) {
+    design.logo_height_header = d.logo_height_header;
+  }
+  if (d.logo_height_footer != null) {
+    design.logo_height_footer = d.logo_height_footer;
+  }
+
+  const stats: Record<string, number> = {};
+  for (const key of DESIGN_STAT_KEYS) {
+    const value = d.stats[key];
+    if (value != null) stats[key] = value;
+  }
+  if (Object.keys(stats).length > 0) design.stats = stats;
+
+  const sections: Record<string, Json> = {};
+  for (const id of DESIGN_SECTION_IDS) {
+    const colors = d.sections[id];
+    const heading = emptyToNull(colors?.heading);
+    const text = emptyToNull(colors?.text);
+    if (heading || text) {
+      sections[id] = {
+        ...(heading ? { heading } : {}),
+        ...(text ? { text } : {}),
+      };
+    }
+  }
+  if (Object.keys(sections).length > 0) design.sections = sections;
+
+  return design;
 }
 
 /* ── Reads (TanStack query functions) ────────────────────────────── */
@@ -408,6 +451,7 @@ export async function updateAgencySettings(
       quote: r.quote,
       ...(r.date ? { date: r.date } : {}),
     })) as Json,
+    design: toDesignJson(d.design),
     updated_at: new Date().toISOString(),
   };
 
