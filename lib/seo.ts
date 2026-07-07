@@ -40,12 +40,31 @@ export function localizedAlternates(locale: Locale, path = "") {
 
 /**
  * `openGraph.locale` / `alternateLocale` expects underscore region tags.
- * Kira targets Morocco, so map ar → ar_MA, fr → fr_MA.
+ * Kira targets Morocco, so map ar → ar_MA, fr → fr_MA. English maps to
+ * en_US because en_MA is not a recognised Open Graph locale.
  */
 export const ogLocale: Record<Locale, string> = {
   ar: "ar_MA",
   fr: "fr_MA",
+  en: "en_US",
 };
+
+/**
+ * Shared per-locale Open Graph fields for page-level `generateMetadata`.
+ * Next.js merges metadata shallowly: a page's `openGraph` object replaces the
+ * layout's wholesale, silently dropping `type`, `locale` and
+ * `alternateLocale`. Spread this into every page-level `openGraph` so those
+ * tags survive.
+ */
+export function ogLocaleDefaults(locale: Locale) {
+  return {
+    type: "website" as const,
+    locale: ogLocale[locale],
+    alternateLocale: siteConfig.locales
+      .filter((l) => l !== locale)
+      .map((l) => ogLocale[l]),
+  };
+}
 
 /** Clamp a description to the 150–160 char SEO sweet spot without cutting words. */
 export function clampDescription(text: string, max = 160): string {

@@ -3,14 +3,14 @@
 import { useMemo } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { format, parseISO, subDays } from "date-fns";
-import { ar as arLocale, fr as frLocale } from "date-fns/locale";
+import { ar as arLocale, fr as frLocale, enUS } from "date-fns/locale";
 import type { DateRange as DayPickerRange, Matcher } from "react-day-picker";
 
 import { type Locale } from "@/config/site.config";
 import type { DateRange } from "@/server/availability";
 import { Calendar } from "@/components/ui/calendar";
 
-const dateFnsLocale = { ar: arLocale, fr: frLocale } as const;
+const dateFnsLocale = { ar: arLocale, fr: frLocale, en: enUS } as const;
 
 /**
  * Interactive range picker for the booking flow. Past days and every day of

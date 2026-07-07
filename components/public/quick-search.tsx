@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { format } from "date-fns";
-import { ar as arLocale, fr as frLocale } from "date-fns/locale";
+import { ar as arLocale, fr as frLocale, enUS } from "date-fns/locale";
 import type { DateRange } from "react-day-picker";
 import { CalendarDays, Search } from "lucide-react";
 
@@ -30,7 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const dateFnsLocale = { ar: arLocale, fr: frLocale } as const;
+const dateFnsLocale = { ar: arLocale, fr: frLocale, en: enUS } as const;
 const ANY = "any";
 
 /**

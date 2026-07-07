@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { format, parseISO } from "date-fns";
-import { ar as arLocale, fr as frLocale } from "date-fns/locale";
+import { ar as arLocale, fr as frLocale, enUS } from "date-fns/locale";
 import { CheckCircle2, Copy } from "lucide-react";
 import { useState } from "react";
 
@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { BookingCar } from "./types";
 
-const dateFnsLocale = { ar: arLocale, fr: frLocale } as const;
+const dateFnsLocale = { ar: arLocale, fr: frLocale, en: enUS } as const;
 
 /**
  * Post-submit confirmation screen. Renders only data the guest already

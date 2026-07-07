@@ -6,8 +6,8 @@ import { useEffect } from "react";
  * Last-resort error boundary. It only renders when the root layout itself
  * fails, which means NO providers, theme, fonts or globals.css are available.
  * It must therefore render its own <html>/<body> and rely on inline styles
- * only, and cannot use next-intl — so the copy is bilingual (ar + fr) static
- * text, defaulting to the Arabic-first market direction.
+ * only, and cannot use next-intl — so the copy is static trilingual
+ * (ar + fr + en) text, defaulting to the Arabic-first market direction.
  */
 export default function GlobalError({
   error,
@@ -50,6 +50,9 @@ export default function GlobalError({
         </p>
         <p style={{ color: "#5b6b6b", margin: 0 }} lang="fr" dir="ltr">
           Un problème inattendu est survenu. Veuillez réessayer.
+        </p>
+        <p style={{ color: "#5b6b6b", margin: 0 }} lang="en" dir="ltr">
+          An unexpected problem occurred. Please try again.
         </p>
         <button
           onClick={reset}

@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { format, parseISO, addDays, subDays } from "date-fns";
-import { ar as arLocale, fr as frLocale } from "date-fns/locale";
+import { ar as arLocale, fr as frLocale, enUS } from "date-fns/locale";
 import type { DateRange as DayPickerRange, Matcher } from "react-day-picker";
 import { Trash2, CalendarPlus } from "lucide-react";
 
@@ -29,7 +29,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/admin/page-header";
 
-const dateFnsLocale = { ar: arLocale, fr: frLocale } as const;
+const dateFnsLocale = { ar: arLocale, fr: frLocale, en: enUS } as const;
 
 interface CarInfo {
   id: string;

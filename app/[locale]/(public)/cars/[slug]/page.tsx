@@ -22,6 +22,7 @@ import {
   clampDescription,
   localePath,
   localizedAlternates,
+  ogLocaleDefaults,
 } from "@/lib/seo";
 import { breadcrumbJsonLd, carJsonLd } from "@/lib/structured-data";
 import { routing } from "@/i18n/routing";
@@ -82,8 +83,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: name,
       description,
-      type: "website",
       url: `/${locale}/cars/${slug}`,
+      ...ogLocaleDefaults(locale as Locale),
     },
     twitter: { card: "summary_large_image", title: name, description },
   };

@@ -6,7 +6,11 @@ import { useLocale } from "next-intl";
 
 import type { Locale } from "@/config/site.config";
 
-const localeTag: Record<Locale, string> = { ar: "ar-MA", fr: "fr-MA" };
+const localeTag: Record<Locale, string> = {
+  ar: "ar-MA",
+  fr: "fr-MA",
+  en: "en-MA",
+};
 
 /**
  * Count-up statistic. Renders the final, localized value on the server (so it

@@ -11,7 +11,7 @@ import {
 
 import { PDF_FONT_FAMILY, registerPdfFonts } from "./fonts";
 
-export type PdfLocale = "ar" | "fr";
+export type PdfLocale = "ar" | "fr" | "en";
 
 /** Logo as a decoded image buffer (prefetched in `lib/pdf.ts`). */
 export interface PdfLogo {
@@ -132,6 +132,32 @@ const STR: Record<PdfLocale, Record<LabelKey, string>> = {
     extrasTotal: "Total des options",
     total: "Total",
     footer: "Bon généré automatiquement. Merci de votre confiance.",
+    contact: "Contact",
+  },
+  en: {
+    bookingVoucher: "Booking voucher",
+    reference: "Reference",
+    issuedAt: "Issued on",
+    customer: "Customer details",
+    name: "Name",
+    phone: "Phone",
+    email: "Email",
+    car: "Vehicle",
+    pricePerDay: "Price per day",
+    deposit: "Deposit",
+    rental: "Rental details",
+    from: "From",
+    to: "To",
+    days: "Number of days",
+    pickup: "Pickup location",
+    dropoff: "Return location",
+    extras: "Extras",
+    notes: "Notes",
+    subtotal: "Subtotal",
+    extrasTotal: "Extras total",
+    total: "Total",
+    footer:
+      "This voucher was generated automatically. Thank you for choosing us.",
     contact: "Contact",
   },
 };

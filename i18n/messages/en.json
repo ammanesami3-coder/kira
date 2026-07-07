@@ -1,0 +1,707 @@
+{
+  "nav": {
+    "home": "Home",
+    "cars": "Cars",
+    "about": "About us",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "book": "Book now"
+  },
+  "common": {
+    "language": "Language",
+    "toggleTheme": "Toggle theme (light/dark)",
+    "arabic": "Arabic",
+    "french": "French",
+    "english": "English",
+    "loading": "Loading…",
+    "search": "Search",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "close": "Close",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "home": {
+    "title": "Discover the road with {name}",
+    "subtitle": "A modern fleet of premium and economy cars, with fast no-signup booking and transparent prices.",
+    "ctaPrimary": "Browse cars",
+    "ctaSecondary": "Contact us",
+    "soon": "Site under construction — more features coming soon.",
+    "heroImageAlt": "Premium rental car",
+    "fleetChip": "cars ready to book",
+    "valueProps": {
+      "title": "Why choose us",
+      "subtitle": "A smooth rental experience from start to finish.",
+      "noSignup": {
+        "title": "Book without an account",
+        "desc": "Reserve your car in minutes — no account, no hassle."
+      },
+      "transparent": {
+        "title": "Transparent prices",
+        "desc": "Clear daily rates with no hidden fees."
+      },
+      "fleet": {
+        "title": "Modern fleet",
+        "desc": "Recent, carefully maintained cars for every taste."
+      },
+      "support": {
+        "title": "Fast support",
+        "desc": "Our team is ready to help you on WhatsApp and by phone."
+      }
+    },
+    "featured": {
+      "title": "Featured cars",
+      "subtitle": "A selection of our most requested vehicles.",
+      "viewAll": "View all cars"
+    },
+    "about": {
+      "badge": "About the agency",
+      "title": "Your trusted partner on the road",
+      "body": "We deliver a premium car rental experience in Morocco: a diverse fleet from economy to luxury, clear prices, and fast service with no hassle. Every booking is quickly confirmed via WhatsApp.",
+      "cta": "Contact us"
+    }
+  },
+  "howItWorks": {
+    "title": "How to book your car",
+    "subtitle": "Three simple steps between you and the road.",
+    "step1": {
+      "title": "Choose your car",
+      "desc": "Browse our fleet and pick the car that fits your trip and budget."
+    },
+    "step2": {
+      "title": "Pick your dates",
+      "desc": "Select pickup and return dates and check availability instantly."
+    },
+    "step3": {
+      "title": "Get your car",
+      "desc": "We confirm your request via WhatsApp and you pick up your car wherever suits you."
+    }
+  },
+  "fleet": {
+    "title": "Browse by category",
+    "subtitle": "Find the perfect car by type.",
+    "cta": "View all cars",
+    "browse": "Browse",
+    "items": {
+      "economy": "Economy cars for everyday trips at the lowest cost.",
+      "suv": "Power and space for every kind of road.",
+      "luxury": "A premium driving experience for special occasions.",
+      "van": "Generous space for families and groups."
+    }
+  },
+  "testimonials": {
+    "title": "What our customers say",
+    "subtitle": "Real experiences from customers who trusted us.",
+    "ratingLabel": "{rating} out of 5 — based on {count} reviews",
+    "googleCta": "Write a review on Google",
+    "items": {
+      "t1": {
+        "name": "Youssef El Idrissi",
+        "location": "Casablanca",
+        "quote": "Fast service and a spotless car — the WhatsApp confirmation was instant. I will definitely book again."
+      },
+      "t2": {
+        "name": "Salma Benomar",
+        "location": "Marrakech",
+        "quote": "Clear prices with no surprises, and the car was in excellent condition. Highly recommended."
+      },
+      "t3": {
+        "name": "Karim El Alaoui",
+        "location": "Rabat",
+        "quote": "Booked in minutes without signing up, and the airport delivery was right on time."
+      },
+      "t4": {
+        "name": "Nadia El Fassi",
+        "location": "Tangier",
+        "quote": "Professional team and responsive support. The best rental experience I have had in Morocco."
+      }
+    }
+  },
+  "stats": {
+    "title": "Numbers we are proud of",
+    "subtitle": "Trust renewed with every trip.",
+    "cars": "cars in the fleet",
+    "clients": "happy customers",
+    "years": "years of experience",
+    "satisfaction": "satisfaction rate"
+  },
+  "trust": {
+    "title": "Book and drive with confidence",
+    "secure": "Safe and reliable booking",
+    "insurance": "Full insurance available",
+    "support": "Round-the-clock support",
+    "flexible": "Easy, flexible cancellation"
+  },
+  "cta": {
+    "title": "Ready to hit the road?",
+    "subtitle": "Book your car now in minutes — no signup, transparent prices.",
+    "primary": "Browse cars",
+    "secondary": "Contact us"
+  },
+  "aboutPage": {
+    "metaTitle": "About us",
+    "metaDescription": "Get to know {name}: our story, our values and our commitment to the best car rental experience in Morocco, with transparent prices and fast service.",
+    "badge": "About us",
+    "title": "Passionate about the road, committed to your service",
+    "lead": "We believe renting a car should be simple, fast and transparent. That is why we built a hassle-free booking experience that puts your comfort first.",
+    "p1": "We started from a simple idea: offer a modern, carefully maintained fleet for every taste and budget, with clear prices and no hidden fees. Today we serve thousands of customers across Morocco with ever-renewed trust.",
+    "p2": "From economy to luxury, our team is ready to help you at every step — from choosing the car to delivering it wherever suits you, with instant confirmation via WhatsApp.",
+    "valuesTitle": "Our values",
+    "values": {
+      "transparency": {
+        "title": "Full transparency",
+        "desc": "Clear prices and understandable terms with no surprises."
+      },
+      "quality": {
+        "title": "Quality and safety",
+        "desc": "Recent cars under regular maintenance and inspection."
+      },
+      "service": {
+        "title": "Close-by service",
+        "desc": "Fast support on WhatsApp and by phone, any time."
+      }
+    }
+  },
+  "faq": {
+    "metaTitle": "FAQ",
+    "metaDescription": "Answers to the most common questions about renting a car with us: required documents, deposit, payment, changes, cancellation and delivery.",
+    "title": "Frequently asked questions",
+    "subtitle": "Everything you need to know before renting your car with us.",
+    "items": {
+      "account": {
+        "q": "Do I need an account to book?",
+        "a": "No. Booking is guest-only: pick the car and the dates, fill in your details in minutes — no signup, no account."
+      },
+      "documents": {
+        "q": "What documents do I need to rent a car?",
+        "a": "You need a valid driving licence and a national ID card or passport. The minimum age is usually 21 with a licence held for at least one year."
+      },
+      "deposit": {
+        "q": "Is there a security deposit?",
+        "a": "Yes, a refundable deposit is required and varies by car category. It is fully returned when the car comes back in good condition."
+      },
+      "payment": {
+        "q": "How are booking confirmation and payment handled?",
+        "a": "After you send your request we contact you via WhatsApp or phone to confirm availability and arrange payment and pickup. Your dates stay temporarily held until confirmation."
+      },
+      "cancel": {
+        "q": "Can I change or cancel my booking?",
+        "a": "Yes — contact us via WhatsApp or phone with your reference number and we will change or cancel your booking according to the cancellation terms."
+      },
+      "delivery": {
+        "q": "Do you offer delivery and pickup?",
+        "a": "Yes — pick up at the agency, at the airport, or at an address you choose. Enter the pickup location in the booking form and we will confirm the details."
+      }
+    }
+  },
+  "quickSearch": {
+    "title": "Find your car",
+    "category": "Category",
+    "anyCategory": "All categories",
+    "dates": "Rental dates",
+    "selectDates": "Select dates",
+    "submit": "Search"
+  },
+  "catalog": {
+    "title": "Our fleet",
+    "subtitle": "Choose the right car for your trip from our full selection.",
+    "filters": "Filters",
+    "results": "{count, plural, =0 {No cars} one {# car} other {# cars}}",
+    "category": "Category",
+    "transmission": "Transmission",
+    "seats": "Seats",
+    "priceRange": "Price per day",
+    "minPrice": "Min",
+    "maxPrice": "Max",
+    "sort": "Sort",
+    "any": "All",
+    "seatsPlus": "{count}+ seats",
+    "clear": "Clear filters",
+    "empty": {
+      "title": "No matching cars",
+      "desc": "Try adjusting or clearing the filters to see more.",
+      "action": "Clear filters"
+    },
+    "datesFilter": "Available for {from} → {to}",
+    "clearDates": "Clear dates"
+  },
+  "sort": {
+    "newest": "Newest",
+    "priceAsc": "Price: low to high",
+    "priceDesc": "Price: high to low"
+  },
+  "categories": {
+    "economy": "Economy",
+    "sedan": "Sedan",
+    "suv": "SUV",
+    "luxury": "Luxury",
+    "van": "Van",
+    "pickup": "Pickup",
+    "sport": "Sport"
+  },
+  "transmission": {
+    "manual": "Manual",
+    "automatic": "Automatic"
+  },
+  "fuel": {
+    "diesel": "Diesel",
+    "gasoline": "Petrol",
+    "hybrid": "Hybrid",
+    "electric": "Electric"
+  },
+  "features": {
+    "climatisation": "Air conditioning",
+    "bluetooth": "Bluetooth",
+    "usb": "USB port",
+    "carplay": "Apple CarPlay",
+    "gps": "GPS navigation",
+    "cruise_control": "Cruise control",
+    "4x4": "4x4",
+    "cuir": "Leather seats",
+    "toit_ouvrant": "Sunroof",
+    "9_places": "9 seats",
+    "sport_mode": "Sport mode"
+  },
+  "car": {
+    "perDay": "/ day",
+    "perWeek": "/ week",
+    "from": "From",
+    "book": "Book now",
+    "viewDetails": "Details",
+    "specs": "Specifications",
+    "features": "Features",
+    "description": "Description",
+    "availability": "Availability calendar",
+    "availabilityHint": "Booked or blocked dates are disabled in the calendar.",
+    "deposit": "Deposit",
+    "year": "Year",
+    "seats": "Seats",
+    "doors": "Doors",
+    "fuel": "Fuel",
+    "transmission": "Transmission",
+    "category": "Category",
+    "brand": "Brand",
+    "model": "Model",
+    "legendAvailable": "Available",
+    "legendUnavailable": "Unavailable",
+    "galleryThumb": "View image {n}",
+    "openImage": "Enlarge image",
+    "weekPrice": "Weekly rate available",
+    "backToCatalog": "Back to fleet",
+    "noImage": "No image"
+  },
+  "book": {
+    "title": "Book {name}",
+    "subtitle": "Complete the details below to send your booking request — no signup needed.",
+    "back": "Back to the car",
+    "contact": "Contact us",
+    "summary": "Booking summary",
+    "deposit": "Deposit",
+    "dates": "Rental dates",
+    "datesHint": "Pick the pickup date then the return date. Booked dates are disabled.",
+    "pickup": "Pickup",
+    "dropoff": "Return",
+    "clearDates": "Clear dates",
+    "form": {
+      "heading": "Your details",
+      "name": "Full name",
+      "namePlaceholder": "e.g. John Smith",
+      "phone": "Phone number",
+      "phonePlaceholder": "+212600000000",
+      "email": "Email",
+      "optional": "optional",
+      "emailPlaceholder": "you@example.com",
+      "pickupLocation": "Pickup location",
+      "pickupLocationPlaceholder": "e.g. Mohammed V Airport, Casablanca",
+      "dropoffLocation": "Return location",
+      "dropoffLocationPlaceholder": "Same as pickup if left empty",
+      "note": "Note",
+      "notePlaceholder": "Any special request? (optional)",
+      "extras": "Optional extras",
+      "submit": "Confirm booking",
+      "submitting": "Sending…"
+    },
+    "price": {
+      "title": "Price details",
+      "base": "Car rental",
+      "perDayLine": "{price} × {days}",
+      "days": "{count, plural, =0 {0 days} one {# day} other {# days}}",
+      "extras": "Extras",
+      "total": "Total",
+      "selectDatesFirst": "Select dates to see the total price."
+    },
+    "errors": {
+      "title": "Could not complete the booking",
+      "DATES_UNAVAILABLE": "Sorry, the selected dates are no longer available. Please choose other dates.",
+      "CAR_NOT_AVAILABLE": "This car is currently not available for booking.",
+      "RATE_LIMITED": "Too many attempts in a short time. Please try again in a moment.",
+      "INVALID_INPUT": "Check the information you entered and try again.",
+      "CAPTCHA_FAILED": "Security check failed. Refresh the page and try again.",
+      "DB_ERROR": "An unexpected error occurred. Please try again later.",
+      "generic": "Something went wrong. Please try again."
+    },
+    "validation": {
+      "nameMin": "Please enter your full name.",
+      "phoneInvalid": "Invalid phone number. Use a format like +212600000000.",
+      "emailInvalid": "Invalid email address.",
+      "datesRequired": "Please select pickup and return dates.",
+      "pickupRequired": "Please enter the pickup location."
+    },
+    "confirmation": {
+      "badge": "Request received",
+      "title": "Thank you, {name}!",
+      "subtitle": "Your booking request has been recorded. We will contact you shortly to confirm it.",
+      "reference": "Reference number",
+      "car": "Car",
+      "dates": "Dates",
+      "pickup": "Pickup location",
+      "dropoff": "Return location",
+      "total": "Total",
+      "status": "Status",
+      "statusPending": "Awaiting confirmation",
+      "copy": "Copy",
+      "copied": "Copied",
+      "contactNote": "Keep your reference number. For any question, reach us by phone or WhatsApp.",
+      "browseMore": "Browse more cars",
+      "home": "Home page"
+    }
+  },
+  "bookingExtras": {
+    "full_insurance": "Full insurance",
+    "additional_driver": "Additional driver",
+    "gps": "GPS navigation",
+    "child_seat": "Child seat",
+    "perDay": "/ day",
+    "perBooking": "/ booking"
+  },
+  "contactPage": {
+    "title": "Contact us",
+    "subtitle": "We are here to help you rent your car. Reach us on WhatsApp, by phone, or visit us at the agency.",
+    "reach": "Ways to reach us",
+    "phone": "Phone",
+    "whatsapp": "WhatsApp",
+    "whatsappCta": "Message us on WhatsApp",
+    "email": "Email",
+    "address": "Address",
+    "hoursTitle": "Opening hours",
+    "findUs": "Find us",
+    "openMap": "Open in Maps",
+    "browseCars": "Browse cars",
+    "mapTitle": "Our location on the map",
+    "mapAlt": "Map of the agency location",
+    "directContact": "Direct contact",
+    "callNow": "Call now",
+    "whatsappNow": "Message us on WhatsApp",
+    "follow": "Follow us",
+    "formTitle": "Send us a message",
+    "formHintWhatsapp": "Fill in the form and WhatsApp will open with your message ready — we reply as fast as possible.",
+    "formHintEmail": "Fill in the form and your email app will open with your message ready.",
+    "formName": "Full name",
+    "formPhone": "Phone number",
+    "formMessage": "Your message",
+    "formPlaceholder": "e.g. I would like to rent a car from 10 to 15 August…",
+    "formSendWhatsapp": "Send via WhatsApp",
+    "formSendEmail": "Send via email",
+    "formIntro": "Hello, I am {name}.",
+    "formSubject": "Information request — car rental",
+    "faqTitle": "Have a question?",
+    "faqText": "Find answers to the most common questions about documents, deposit and cancellation on our FAQ page.",
+    "faqCta": "FAQ"
+  },
+  "hours": {
+    "closed": "Closed",
+    "days": {
+      "mon": "Monday",
+      "tue": "Tuesday",
+      "wed": "Wednesday",
+      "thu": "Thursday",
+      "fri": "Friday",
+      "sat": "Saturday",
+      "sun": "Sunday"
+    }
+  },
+  "footer": {
+    "tagline": "Your trusted car rental agency.",
+    "rights": "All rights reserved.",
+    "explore": "Explore",
+    "company": "Agency",
+    "contact": "Contact",
+    "follow": "Follow us",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address"
+  },
+  "admin": {
+    "title": "Dashboard",
+    "nav": {
+      "overview": "Overview",
+      "cars": "Cars",
+      "availability": "Availability",
+      "bookings": "Bookings",
+      "settings": "Settings",
+      "signOut": "Sign out",
+      "viewSite": "View site",
+      "theme": "Theme"
+    },
+    "common": {
+      "save": "Save",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "deleting": "Deleting…",
+      "edit": "Edit",
+      "create": "Create",
+      "search": "Search",
+      "all": "All",
+      "actions": "Actions",
+      "loading": "Loading…",
+      "error": "Something went wrong. Try again.",
+      "yes": "Yes",
+      "no": "No",
+      "back": "Back",
+      "optional": "optional",
+      "none": "None"
+    },
+    "login": {
+      "title": "Dashboard sign-in",
+      "subtitle": "This area is reserved for the agency owner.",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "invalidCredentials": "Invalid credentials.",
+      "genericError": "Could not sign in. Try again."
+    },
+    "overview": {
+      "title": "Overview",
+      "subtitle": "A quick summary of the agency status.",
+      "totalCars": "Total cars",
+      "availableCars": "Available cars",
+      "upcomingBookings": "Upcoming bookings",
+      "pendingBookings": "Bookings awaiting confirmation",
+      "recentBookings": "Latest bookings",
+      "noBookings": "No bookings yet.",
+      "viewAll": "View all"
+    },
+    "cars": {
+      "title": "Cars",
+      "subtitle": "Add, edit and delete fleet cars and their photos.",
+      "new": "New car",
+      "edit": "Edit car",
+      "create": "Add car",
+      "searchPlaceholder": "Search by name or brand…",
+      "empty": "No cars yet. Add your first car.",
+      "noResults": "No matching results.",
+      "colName": "Car",
+      "colCategory": "Category",
+      "colPrice": "Price/day",
+      "colStatus": "Status",
+      "available": "Visible",
+      "unavailable": "Hidden",
+      "deleteTitle": "Delete car",
+      "deleteConfirm": "This will be permanently deleted along with all its photos and blocked periods. Are you sure?",
+      "created": "Car added.",
+      "updated": "Car updated.",
+      "deleted": "Car deleted.",
+      "saveError": "Could not save. Check the fields.",
+      "slugTaken": "This slug is already in use."
+    },
+    "carForm": {
+      "basics": "Basic information",
+      "specs": "Specifications",
+      "pricing": "Pricing",
+      "content": "Description & features",
+      "name": "Name",
+      "nameAr": "Name in Arabic",
+      "slug": "Slug",
+      "slugHint": "Used in the page URL. Lowercase letters and dashes only.",
+      "generate": "Generate",
+      "brand": "Brand",
+      "model": "Model",
+      "year": "Year",
+      "category": "Category",
+      "transmission": "Transmission",
+      "fuelType": "Fuel type",
+      "seats": "Seats",
+      "doors": "Doors",
+      "pricePerDay": "Price per day",
+      "pricePerWeek": "Price per week",
+      "deposit": "Deposit",
+      "features": "Features",
+      "featuresHint": "Separate them with commas.",
+      "description": "Description",
+      "descriptionAr": "Description in Arabic",
+      "descriptionFr": "Description in French",
+      "isAvailable": "Visible and bookable",
+      "sortOrder": "Display order",
+      "images": "Photos"
+    },
+    "images": {
+      "title": "Photos",
+      "upload": "Upload photos",
+      "uploading": "Uploading…",
+      "dragHint": "Choose one or more images (JPG/PNG/WebP).",
+      "empty": "No photos yet.",
+      "primary": "Primary",
+      "setPrimary": "Make primary",
+      "remove": "Remove",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "uploadError": "Could not upload the image.",
+      "saveFirst": "Save the car first to add photos."
+    },
+    "availability": {
+      "title": "Availability management",
+      "subtitle": "Control car visibility and block dates manually.",
+      "carsList": "Cars",
+      "toggleHint": "Hiding a car removes it immediately from the public site.",
+      "available": "Visible",
+      "unavailable": "Hidden",
+      "selectCar": "Select a car to manage its dates.",
+      "blockedPeriods": "Blocked periods",
+      "addBlock": "Block a period",
+      "blockReason": "Reason",
+      "blockReasonPlaceholder": "Maintenance, phone booking…",
+      "blockNote": "Note",
+      "from": "From",
+      "to": "To",
+      "noBlocks": "No blocked periods.",
+      "bookedDates": "Booked dates (confirmed bookings)",
+      "noBooked": "No confirmed bookings.",
+      "deleteBlock": "Delete block",
+      "blockAdded": "Period blocked.",
+      "blockRemoved": "Block removed.",
+      "overlap": "The period overlaps with another booking or block.",
+      "selectRange": "Select the start and end dates in the calendar.",
+      "statusUpdated": "Availability status updated."
+    },
+    "bookings": {
+      "title": "Bookings",
+      "subtitle": "Incoming requests and their details — for the agency owner only.",
+      "filterStatus": "Filter by status",
+      "empty": "No bookings.",
+      "noResults": "No bookings with this status.",
+      "colRef": "Reference",
+      "colCustomer": "Customer",
+      "colCar": "Car",
+      "colDates": "Dates",
+      "colTotal": "Total",
+      "colStatus": "Status",
+      "colDate": "Requested on",
+      "details": "Booking details",
+      "customer": "Customer",
+      "phone": "Phone",
+      "email": "Email",
+      "dates": "Dates",
+      "days": "Days",
+      "pickup": "Pickup",
+      "dropoff": "Return",
+      "total": "Total",
+      "notes": "Notes",
+      "extras": "Extras",
+      "changeStatus": "Change status",
+      "whatsapp": "WhatsApp",
+      "sent": "Sent",
+      "notSent": "Not sent",
+      "resend": "Resend PDF/WhatsApp",
+      "resending": "Sending…",
+      "viewPdf": "View PDF",
+      "statusUpdated": "Status updated.",
+      "conflict": "Another confirmed booking conflicts with these dates.",
+      "resent": "Reprocessed successfully.",
+      "resendPartial": "PDF generated, but WhatsApp delivery failed (it will be retried)."
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Agency identity, contact and SEO — reflected on the public site.",
+      "identity": "Identity",
+      "branding": "Branding",
+      "contact": "Contact",
+      "localization": "Language & currency",
+      "hours": "Opening hours",
+      "seo": "SEO",
+      "name": "Name",
+      "nameAr": "Name in Arabic",
+      "nameFr": "Name in French",
+      "logoUrl": "Logo URL",
+      "primaryColor": "Primary color",
+      "secondaryColor": "Secondary color",
+      "typography": "Fonts",
+      "fontLatin": "Latin font (French/English)",
+      "fontArabic": "Arabic font",
+      "fontHint": "The font is applied to the whole site as soon as you save.",
+      "fontPreview": "Preview",
+      "reviews": "Google reviews",
+      "googleMapsLink": "Google Maps link",
+      "googleMapsLinkHint": "Paste your Google Maps business page link — used for the “Write a review” button on the site.",
+      "reviewsEmpty": "No curated reviews yet — the site shows default testimonials until you add real ones.",
+      "reviewAuthor": "Customer name",
+      "reviewRating": "Rating",
+      "reviewQuote": "Review text",
+      "reviewDate": "Date (optional)",
+      "addReview": "Add review",
+      "removeReview": "Remove",
+      "phone": "Phone",
+      "whatsappNumber": "WhatsApp number",
+      "email": "Email",
+      "address": "Address",
+      "addressAr": "Address in Arabic",
+      "currency": "Currency",
+      "locales": "Enabled languages",
+      "seoTitle": "SEO title",
+      "seoDescription": "SEO description",
+      "ogImage": "Share image (OG)",
+      "openingHours": "Opening hours",
+      "hoursHint": "JSON format. Example key: mon with value 09:00-18:00",
+      "saved": "Settings saved.",
+      "saveError": "Could not save. Check the fields.",
+      "design": "Site design",
+      "heroImage": "Homepage hero image",
+      "heroImageHint": "The large image at the top of the homepage. Leave empty to use the first car photo; direct upload is preferred (stored on Supabase).",
+      "upload": "Upload image",
+      "uploading": "Uploading…",
+      "uploadError": "Image upload failed",
+      "removeImage": "Remove image",
+      "logoHeader": "Logo height in the header (px)",
+      "logoFooter": "Logo height in the footer (px)",
+      "logoSizeHint": "Height in pixels. Leave empty for the default size.",
+      "statsTitle": "Statistics section figures",
+      "statsHint": "The figures shown in the “Numbers we are proud of” section. Leave a field empty for the default value (the car count is computed automatically from the fleet).",
+      "statsAuto": "Auto",
+      "sectionColors": "Text colors per section",
+      "sectionColorsHint": "Heading and body text color for each section of the site. Leave a color empty to use the theme colors. The same color applies in both light and dark modes.",
+      "headingColor": "Headings",
+      "textColor": "Text",
+      "colorAuto": "Auto",
+      "resetColor": "Reset to default color",
+      "sections": {
+        "hero": "Hero",
+        "howItWorks": "How it works",
+        "fleet": "Fleet categories",
+        "featured": "Featured cars",
+        "valueProps": "Why us",
+        "stats": "Statistics",
+        "testimonials": "Testimonials",
+        "faq": "FAQ",
+        "cta": "Call-to-action band",
+        "footer": "Footer"
+      }
+    },
+    "status": {
+      "pending": "Awaiting confirmation",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    }
+  },
+  "errors": {
+    "notFoundTitle": "Page not found",
+    "notFoundMessage": "Sorry, the page you are looking for does not exist or has been moved.",
+    "serverErrorTitle": "Something went wrong",
+    "serverErrorMessage": "We ran into an unexpected problem. Try again, and if the error persists, contact us.",
+    "tryAgain": "Try again",
+    "backHome": "Back to home",
+    "browseCars": "Browse cars"
+  }
+}

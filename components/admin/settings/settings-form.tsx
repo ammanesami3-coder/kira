@@ -17,7 +17,7 @@ import {
 
 type SettingsFormValues = z.input<typeof agencySettingsSchema>;
 import { updateAgencySettings } from "@/server/admin";
-import { locales as ALL_LOCALES } from "@/config/site.config";
+import { locales as ALL_LOCALES, type Locale } from "@/config/site.config";
 import {
   arabicFontIds,
   defaultArabicFont,
@@ -99,11 +99,11 @@ function defaults(s: AgencySettings | null): AgencySettingsInput {
     currency: s?.currency ?? "MAD",
     opening_hours: asRecord(s?.opening_hours),
     social_links: (s?.social_links as Record<string, string>) ?? {},
-    locales: s?.locales?.filter(
-      (l): l is "ar" | "fr" => l === "ar" || l === "fr",
+    locales: s?.locales?.filter((l): l is Locale =>
+      (ALL_LOCALES as readonly string[]).includes(l),
     ).length
-      ? (s!.locales as ("ar" | "fr")[])
-      : ["ar", "fr"],
+      ? (s!.locales as Locale[])
+      : [...ALL_LOCALES],
     seo_title: s?.seo_title ?? "",
     seo_description: s?.seo_description ?? "",
     og_image_url: s?.og_image_url ?? "",

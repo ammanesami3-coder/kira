@@ -15,9 +15,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const localeLabelKey: Record<Locale, "arabic" | "french"> = {
+const localeLabelKey: Record<Locale, "arabic" | "french" | "english"> = {
   ar: "arabic",
   fr: "french",
+  en: "english",
 };
 
 export function LocaleSwitcher() {

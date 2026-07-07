@@ -1,7 +1,7 @@
 import "server-only";
 
 import { format, parseISO } from "date-fns";
-import { ar as arLocale, fr as frLocale } from "date-fns/locale";
+import { ar as arLocale, fr as frLocale, enUS } from "date-fns/locale";
 import { renderToBuffer } from "@react-pdf/renderer";
 
 import {
@@ -19,7 +19,7 @@ import { extraPrice, extrasTotal, type ExtraId } from "@/lib/booking/extras";
  * `BookingPdf` template to a Buffer ready to upload to Supabase Storage.
  */
 
-const dfLocale = { ar: arLocale, fr: frLocale } as const;
+const dfLocale = { ar: arLocale, fr: frLocale, en: enUS } as const;
 
 /** Extra labels mirrored from the i18n catalog (server has no request ctx). */
 const EXTRA_LABELS: Record<PdfLocale, Record<ExtraId, string>> = {
@@ -35,9 +35,19 @@ const EXTRA_LABELS: Record<PdfLocale, Record<ExtraId, string>> = {
     gps: "GPS",
     child_seat: "Siège bébé",
   },
+  en: {
+    full_insurance: "Full insurance",
+    additional_driver: "Additional driver",
+    gps: "GPS navigation",
+    child_seat: "Child seat",
+  },
 };
 
-const localeTag: Record<PdfLocale, string> = { ar: "ar-MA", fr: "fr-MA" };
+const localeTag: Record<PdfLocale, string> = {
+  ar: "ar-MA",
+  fr: "fr-MA",
+  en: "en-MA",
+};
 
 function money(amount: number, currency: string, locale: PdfLocale): string {
   return new Intl.NumberFormat(localeTag[locale], {
@@ -133,7 +143,11 @@ export async function generateBookingPdf(
   const { booking, car, agency } = input;
 
   const agencyName =
-    (locale === "ar" ? agency?.name_ar : agency?.name_fr) ||
+    (locale === "ar"
+      ? agency?.name_ar
+      : locale === "fr"
+        ? agency?.name_fr
+        : null) ||
     agency?.name ||
     siteConfig.name;
 

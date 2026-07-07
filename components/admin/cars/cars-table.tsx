@@ -134,11 +134,11 @@ export function CarsTable({
       ) : filtered.length === 0 ? (
         <EmptyState message={t("noResults")} />
       ) : (
-        <div className="overflow-hidden rounded-lg border">
+        <div className="overflow-x-auto rounded-lg border">
           <table className="w-full text-sm">
             <thead className="bg-muted/50 text-muted-foreground text-xs">
               <tr>
-                <th className="px-4 py-3 text-start font-medium">
+                <th className="w-full px-4 py-3 text-start font-medium">
                   {t("colName")}
                 </th>
                 <th className="hidden px-4 py-3 text-start font-medium sm:table-cell">
@@ -160,7 +160,10 @@ export function CarsTable({
                 const img = primaryImage(car.car_images);
                 return (
                   <tr key={car.id} className="hover:bg-muted/30">
-                    <td className="px-4 py-3">
+                    {/* w-full + max-w-0: absorb the free width and let the
+                        name truncate instead of pushing the actions column
+                        out of the clipped container on small screens. */}
+                    <td className="w-full max-w-0 px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="bg-muted relative size-12 shrink-0 overflow-hidden rounded-md">
                           {img && (
@@ -189,7 +192,7 @@ export function CarsTable({
                     <td className="hidden px-4 py-3 md:table-cell">
                       {formatPrice(car.price_per_day, currency, locale)}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         <Switch
                           checked={car.is_available}
@@ -201,12 +204,13 @@ export function CarsTable({
                         />
                         <Badge
                           variant={car.is_available ? "secondary" : "outline"}
+                          className="hidden sm:inline-flex"
                         >
                           {car.is_available ? t("available") : t("unavailable")}
                         </Badge>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 whitespace-nowrap">
                       <div className="flex items-center justify-end gap-1">
                         <Button asChild variant="ghost" size="icon">
                           <Link href={`/admin/cars/${car.id}`}>

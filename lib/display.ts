@@ -75,6 +75,7 @@ export function isOptimizableHost(url: string): boolean {
 const localeTag: Record<Locale, string> = {
   ar: "ar-MA",
   fr: "fr-MA",
+  en: "en-MA",
 };
 
 /** Currency amount formatted for the locale (no fractional dirhams). */

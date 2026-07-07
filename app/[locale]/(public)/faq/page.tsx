@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { type Locale } from "@/config/site.config";
-import { clampDescription, localePath, localizedAlternates } from "@/lib/seo";
+import {
+  clampDescription,
+  localePath,
+  localizedAlternates,
+  ogLocaleDefaults,
+} from "@/lib/seo";
 import { breadcrumbJsonLd, faqJsonLd } from "@/lib/structured-data";
 import { JsonLd } from "@/components/seo/json-ld";
 import { FaqSection, FAQ_KEYS } from "@/components/public/faq-section";
@@ -22,7 +27,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     alternates: localizedAlternates(locale as Locale, "/faq"),
-    openGraph: { title, description, url: `/${locale}/faq` },
+    openGraph: {
+      title,
+      description,
+      url: `/${locale}/faq`,
+      ...ogLocaleDefaults(locale as Locale),
+    },
     twitter: { card: "summary_large_image", title, description },
   };
 }

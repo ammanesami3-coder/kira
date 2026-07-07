@@ -13,7 +13,12 @@ import {
 
 import { Link } from "@/i18n/navigation";
 import { type Locale } from "@/config/site.config";
-import { clampDescription, localePath, localizedAlternates } from "@/lib/seo";
+import {
+  clampDescription,
+  localePath,
+  localizedAlternates,
+  ogLocaleDefaults,
+} from "@/lib/seo";
 import { resolveBranding } from "@/lib/branding";
 import { autoRentalJsonLd, breadcrumbJsonLd } from "@/lib/structured-data";
 import { getAgencySettings } from "@/server/queries";
@@ -40,7 +45,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     alternates: localizedAlternates(locale as Locale, "/contact"),
-    openGraph: { title, description, url: `/${locale}/contact` },
+    openGraph: {
+      title,
+      description,
+      url: `/${locale}/contact`,
+      ...ogLocaleDefaults(locale as Locale),
+    },
     twitter: { card: "summary_large_image", title, description },
   };
 }

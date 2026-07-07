@@ -89,9 +89,9 @@ export const agencySettingsSchema = z.object({
   opening_hours: z.record(z.string(), z.unknown()).default({}),
   social_links: z.record(z.string(), z.string()).default({}),
   locales: z
-    .array(z.enum(["ar", "fr"]))
+    .array(z.enum(["ar", "fr", "en"]))
     .min(1)
-    .default(["ar", "fr"]),
+    .default(["ar", "fr", "en"]),
   seo_title: z.string().max(70).nullish(),
   seo_description: z.string().max(160).nullish(),
   og_image_url: z.url().nullish().or(z.literal("")),

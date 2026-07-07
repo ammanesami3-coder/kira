@@ -5,7 +5,12 @@ import { CalendarDays, X } from "lucide-react";
 
 import { Link } from "@/i18n/navigation";
 import { type Locale } from "@/config/site.config";
-import { clampDescription, localePath, localizedAlternates } from "@/lib/seo";
+import {
+  clampDescription,
+  localePath,
+  localizedAlternates,
+  ogLocaleDefaults,
+} from "@/lib/seo";
 import { breadcrumbJsonLd } from "@/lib/structured-data";
 import { parseFilters, type RawSearchParams } from "@/lib/catalog";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -33,7 +38,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     alternates: localizedAlternates(locale as Locale, "/cars"),
-    openGraph: { title, description, url: `/${locale}/cars` },
+    openGraph: {
+      title,
+      description,
+      url: `/${locale}/cars`,
+      ...ogLocaleDefaults(locale as Locale),
+    },
     twitter: { card: "summary_large_image", title, description },
   };
 }

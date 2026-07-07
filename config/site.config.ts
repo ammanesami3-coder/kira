@@ -9,9 +9,9 @@
  * imported by client components too. Server-only secrets must never live here.
  */
 
-export type Locale = "ar" | "fr";
+export type Locale = "ar" | "fr" | "en";
 
-export const locales = ["ar", "fr"] as const;
+export const locales = ["ar", "fr", "en"] as const;
 
 function env(key: string, fallback: string): string {
   const value = process.env[key];
@@ -43,4 +43,5 @@ export type SiteConfig = typeof siteConfig;
 export const localeDirection: Record<Locale, "rtl" | "ltr"> = {
   ar: "rtl",
   fr: "ltr",
+  en: "ltr",
 };

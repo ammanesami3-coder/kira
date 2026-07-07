@@ -4,7 +4,12 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { BadgeCheck, HeartHandshake, ShieldCheck } from "lucide-react";
 
 import { type Locale } from "@/config/site.config";
-import { clampDescription, localePath, localizedAlternates } from "@/lib/seo";
+import {
+  clampDescription,
+  localePath,
+  localizedAlternates,
+  ogLocaleDefaults,
+} from "@/lib/seo";
 import { resolveBranding } from "@/lib/branding";
 import { parseDesign } from "@/lib/design";
 import { autoRentalJsonLd, breadcrumbJsonLd } from "@/lib/structured-data";
@@ -42,7 +47,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     alternates: localizedAlternates(locale as Locale, "/about"),
-    openGraph: { title, description, url: `/${locale}/about` },
+    openGraph: {
+      title,
+      description,
+      url: `/${locale}/about`,
+      ...ogLocaleDefaults(locale as Locale),
+    },
     twitter: { card: "summary_large_image", title, description },
   };
 }
