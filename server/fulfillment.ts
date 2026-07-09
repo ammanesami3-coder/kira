@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isKiraBotEnabled, sendDocumentViaKiraBot } from "@/lib/kira-bot";
 import { generateBookingPdf, type PdfAgency } from "@/lib/pdf";
 import {
   agencyWhatsappNumber,
@@ -142,6 +143,37 @@ export async function fulfillBooking(
     `${car.name} · ${booking.start_date} ← ${booking.end_date}\n` +
     `المجموع: ${Number(booking.total_price)} ${currency}`;
 
+  // ── 2a. Kira Bot path (behind KIRA_BOT_ENABLED) ──────────────────────
+  // External message from the platform number → the agency's number, so it
+  // rings as a real lock-screen notification (the legacy self-to-self path
+  // is silent). Recipient comes from the DB row only — never the client.
+  // Any failure falls through to the unchanged legacy path below; the
+  // booking itself can never fail here.
+  if (isKiraBotEnabled() && (await agencyOptedIntoBot(admin))) {
+    const botTo = agency?.whatsapp_number?.replace(/[^0-9]/g, "") || null;
+    if (botTo) {
+      const botResult = await sendDocumentViaKiraBot({
+        to: botTo,
+        fileUrl: pdfUrl!,
+        filename: `${booking.reference}.pdf`,
+        caption,
+        idempotencyKey: booking.reference,
+      });
+      if (botResult.ok) {
+        await admin
+          .from("bookings")
+          .update({ whatsapp_sent: true })
+          .eq("id", booking.id);
+        return { pdfReady: true, whatsappSent: true, note: "kira_bot" };
+      }
+      console.warn(
+        `[kira-bot] ${booking.reference} → ${botResult.reason}` +
+          (botResult.detail ? ` (${botResult.detail})` : "") +
+          " — falling back to legacy gateway",
+      );
+    }
+  }
+
   if (!isGatewayConfigured() || !to) {
     await emailFallback(agency, booking, agencyName, caption, pdfUrl);
     return {
@@ -169,6 +201,28 @@ export async function fulfillBooking(
   // Gateway down/disconnected → leave for retry, try the optional email path.
   await emailFallback(agency, booking, agencyName, caption, pdfUrl);
   return { pdfReady: true, whatsappSent: false, note: `wa_${result.reason}` };
+}
+
+/**
+ * Per-agency opt-in (`agency_settings.notify_via_bot`) for gradual rollout.
+ * Queried only when KIRA_BOT_ENABLED=true so the legacy path never depends on
+ * the new column. A missing column (migration not applied yet) or query error
+ * counts as opted-in — the env flag remains the master switch.
+ */
+async function agencyOptedIntoBot(
+  admin: ReturnType<typeof createAdminClient>,
+): Promise<boolean> {
+  try {
+    const { data, error } = await admin
+      .from("agency_settings")
+      .select("notify_via_bot")
+      .limit(1)
+      .maybeSingle();
+    if (error || !data) return true;
+    return data.notify_via_bot !== false;
+  } catch {
+    return true;
+  }
 }
 
 async function emailFallback(

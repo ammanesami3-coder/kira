@@ -70,6 +70,7 @@ export interface Database {
           google_maps_link: string | null;
           reviews: Json;
           design: Json;
+          notify_via_bot: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -100,6 +101,7 @@ export interface Database {
           google_maps_link?: string | null;
           reviews?: Json;
           design?: Json;
+          notify_via_bot?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -130,6 +132,7 @@ export interface Database {
           google_maps_link?: string | null;
           reviews?: Json;
           design?: Json;
+          notify_via_bot?: boolean;
           created_at?: string;
           updated_at?: string;
         };
