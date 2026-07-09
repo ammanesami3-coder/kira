@@ -47,9 +47,23 @@ export type KiraBotResult =
       detail?: string;
     };
 
+/**
+ * Env values pasted into Vercel often carry surrounding quotes (copied from a
+ * dotenv file, e.g. `KIRA_BOT_ENABLED="true"`) or a trailing newline — either
+ * makes a strict string comparison fail silently. Strip both before use.
+ */
+function cleanEnv(value: string | undefined): string {
+  return (value ?? "")
+    .trim()
+    .replace(/^["']+|["']+$/g, "")
+    .trim();
+}
+
+const TRUTHY_FLAGS = new Set(["true", "1", "yes", "on"]);
+
 function botConfig(): { url: string; secret: string } | null {
-  const url = process.env.KIRA_BOT_URL;
-  const secret = process.env.KIRA_BOT_HMAC_SECRET;
+  const url = cleanEnv(process.env.KIRA_BOT_URL);
+  const secret = cleanEnv(process.env.KIRA_BOT_HMAC_SECRET);
   if (!url || !secret) return null;
   return { url: url.replace(/\/+$/, ""), secret };
 }
@@ -57,10 +71,38 @@ function botConfig(): { url: string; secret: string } | null {
 /**
  * Master switch for the new notification path. `KIRA_BOT_ENABLED=false` (or
  * unset, or missing config) restores the legacy behavior instantly — an env
- * change only, no code deploy.
+ * change only, no code deploy. Accepts true/1/yes/on, case-insensitive,
+ * quotes and whitespace tolerated.
  */
 export function isKiraBotEnabled(): boolean {
-  return process.env.KIRA_BOT_ENABLED === "true" && botConfig() !== null;
+  return (
+    TRUTHY_FLAGS.has(cleanEnv(process.env.KIRA_BOT_ENABLED).toLowerCase()) &&
+    botConfig() !== null
+  );
+}
+
+/**
+ * Log-safe snapshot of the bot configuration, for diagnosing why a booking
+ * was routed to the bot vs. the legacy gateway. `rawFlag` is JSON-encoded so
+ * stray quotes/whitespace in the env value are visible in Vercel logs. The
+ * HMAC secret is reported as present/absent only — never its value.
+ */
+export function kiraBotDiagnostics(): {
+  rawFlag: string;
+  flagIsTruthy: boolean;
+  url: string | null;
+  secretSet: boolean;
+  enabled: boolean;
+} {
+  return {
+    rawFlag: JSON.stringify(process.env.KIRA_BOT_ENABLED ?? null),
+    flagIsTruthy: TRUTHY_FLAGS.has(
+      cleanEnv(process.env.KIRA_BOT_ENABLED).toLowerCase(),
+    ),
+    url: botConfig()?.url ?? null,
+    secretSet: cleanEnv(process.env.KIRA_BOT_HMAC_SECRET).length > 0,
+    enabled: isKiraBotEnabled(),
+  };
 }
 
 function sign(secret: string, timestamp: string, body: string): string {

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createAdminClient } from "@/lib/supabase/admin";
-import { isKiraBotEnabled, sendDocumentViaKiraBot } from "@/lib/kira-bot";
+import { kiraBotDiagnostics, sendDocumentViaKiraBot } from "@/lib/kira-bot";
 import { generateBookingPdf, type PdfAgency } from "@/lib/pdf";
 import {
   agencyWhatsappNumber,
@@ -146,32 +146,43 @@ export async function fulfillBooking(
   // ── 2a. Kira Bot path (behind KIRA_BOT_ENABLED) ──────────────────────
   // External message from the platform number → the agency's number, so it
   // rings as a real lock-screen notification (the legacy self-to-self path
-  // is silent). Recipient comes from the DB row only — never the client.
-  // Any failure falls through to the unchanged legacy path below; the
-  // booking itself can never fail here.
-  if (isKiraBotEnabled() && (await agencyOptedIntoBot(admin))) {
-    const botTo = agency?.whatsapp_number?.replace(/[^0-9]/g, "") || null;
-    if (botTo) {
-      const botResult = await sendDocumentViaKiraBot({
-        to: botTo,
-        fileUrl: pdfUrl!,
-        filename: `${booking.reference}.pdf`,
-        caption,
-        idempotencyKey: booking.reference,
-      });
-      if (botResult.ok) {
-        await admin
-          .from("bookings")
-          .update({ whatsapp_sent: true })
-          .eq("id", booking.id);
-        return { pdfReady: true, whatsappSent: true, note: "kira_bot" };
-      }
-      console.warn(
-        `[kira-bot] ${booking.reference} → ${botResult.reason}` +
-          (botResult.detail ? ` (${botResult.detail})` : "") +
-          " — falling back to legacy gateway",
-      );
+  // is silent). Recipient comes from the DB row or server env — never the
+  // client. Any failure falls through to the unchanged legacy path below;
+  // the booking itself can never fail here.
+  const botDiag = kiraBotDiagnostics();
+  const botOptedIn = botDiag.enabled ? await agencyOptedIntoBot(admin) : null;
+  const botTo =
+    (agency?.whatsapp_number ?? "").replace(/[^0-9]/g, "") ||
+    agencyWhatsappNumber() ||
+    null;
+  console.log(
+    `[kira-bot] ${booking.reference} route decision`,
+    JSON.stringify({
+      ...botDiag,
+      optedIn: botOptedIn,
+      hasRecipient: botTo !== null,
+    }),
+  );
+  if (botDiag.enabled && botOptedIn && botTo) {
+    const botResult = await sendDocumentViaKiraBot({
+      to: botTo,
+      fileUrl: pdfUrl!,
+      filename: `${booking.reference}.pdf`,
+      caption,
+      idempotencyKey: booking.reference,
+    });
+    if (botResult.ok) {
+      await admin
+        .from("bookings")
+        .update({ whatsapp_sent: true })
+        .eq("id", booking.id);
+      return { pdfReady: true, whatsappSent: true, note: "kira_bot" };
     }
+    console.warn(
+      `[kira-bot] ${booking.reference} → ${botResult.reason}` +
+        (botResult.detail ? ` (${botResult.detail})` : "") +
+        " — falling back to legacy gateway",
+    );
   }
 
   if (!isGatewayConfigured() || !to) {
