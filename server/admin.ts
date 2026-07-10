@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { ActionResult } from "@/server/mutations";
 import type {
   Booking,
@@ -135,6 +136,44 @@ export async function listBookings(): Promise<Booking[]> {
   return data ?? [];
 }
 
+/**
+ * DANGER ZONE — wipe every booking (used to clear test bookings before
+ * go-live). Deletes all rows, then best-effort empties the `booking-pdfs`
+ * bucket via the service-role client (storage objects aren't covered by
+ * the owner's RLS grant). Irreversible; the UI double-confirms.
+ */
+export async function deleteAllBookings(): Promise<
+  ActionResult<{ deleted: number }>
+> {
+  const supabase = await ownerClientOrNull();
+  if (!supabase) return { ok: false, error: "UNAUTHORIZED" };
+
+  const { data, error } = await supabase
+    .from("bookings")
+    .delete()
+    .not("id", "is", null)
+    .select("id");
+  if (error) return { ok: false, error: "DB_ERROR", code: error.code };
+
+  try {
+    const admin = createAdminClient();
+    const { data: objects } = await admin.storage
+      .from("booking-pdfs")
+      .list("", { limit: 1000 });
+    const paths = (objects ?? [])
+      .map((o) => o.name)
+      .filter((n) => n.length > 0);
+    if (paths.length > 0) {
+      await admin.storage.from("booking-pdfs").remove(paths);
+    }
+  } catch {
+    // PDFs are orphaned but harmless; the bookings themselves are gone.
+  }
+
+  revalidatePath("/", "layout");
+  return { ok: true, data: { deleted: data?.length ?? 0 } };
+}
+
 export async function listBlockedPeriods(
   carId: string,
 ): Promise<BlockedPeriod[]> {
@@ -183,6 +222,8 @@ export async function createCar(
       ...parsed.data,
       name_ar: emptyToNull(parsed.data.name_ar),
       price_per_week: parsed.data.price_per_week ?? null,
+      price_per_15_days: parsed.data.price_per_15_days ?? null,
+      price_per_month: parsed.data.price_per_month ?? null,
       description: emptyToNull(parsed.data.description),
       description_ar: emptyToNull(parsed.data.description_ar),
       description_fr: emptyToNull(parsed.data.description_fr),
@@ -216,6 +257,8 @@ export async function updateCar(
       ...fields,
       name_ar: emptyToNull(fields.name_ar),
       price_per_week: fields.price_per_week ?? null,
+      price_per_15_days: fields.price_per_15_days ?? null,
+      price_per_month: fields.price_per_month ?? null,
       description: emptyToNull(fields.description),
       description_ar: emptyToNull(fields.description_ar),
       description_fr: emptyToNull(fields.description_fr),

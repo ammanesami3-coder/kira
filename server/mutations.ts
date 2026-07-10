@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { fulfillBooking } from "@/server/fulfillment";
 import type { Json } from "@/types/database.types";
 import { extrasTotal } from "@/lib/booking/extras";
+import { baseRentalPrice } from "@/lib/booking/pricing";
 import { rateLimit, pruneRateLimits } from "@/lib/rate-limit";
 import { verifyTurnstile } from "@/lib/turnstile";
 import {
@@ -93,9 +94,13 @@ export async function createBooking(
   const admin = createAdminClient();
 
   // The car must exist and be publicly available to book.
+  // `*` (not an explicit column list) so booking creation keeps working even
+  // if the price-tier migration hasn't been applied to this deployment yet —
+  // missing tier columns simply come back undefined and pricing falls back
+  // to the daily rate.
   const { data: car, error: carError } = await admin
     .from("cars")
-    .select("id, price_per_day, is_available")
+    .select("*")
     .eq("id", data.car_id)
     .maybeSingle();
   if (carError) return { ok: false, error: "DB_ERROR" };
@@ -117,10 +122,15 @@ export async function createBooking(
     };
   }
 
-  // Authoritative pricing — recomputed server-side from the car price and
-  // the shared extras catalog. The client total is for display only.
+  // Authoritative pricing — recomputed server-side from the car's tiered
+  // rates and the shared extras catalog. The client total is display only.
   const totalDays = daysBetween(data.start_date, data.end_date);
-  const basePrice = totalDays * Number(car.price_per_day);
+  const basePrice = baseRentalPrice(totalDays, {
+    pricePerDay: Number(car.price_per_day),
+    pricePerWeek: car.price_per_week,
+    pricePer15Days: car.price_per_15_days,
+    pricePerMonth: car.price_per_month,
+  });
   const totalPrice = basePrice + extrasTotal(data.extras, totalDays);
 
   const { data: inserted, error: insertError } = await admin

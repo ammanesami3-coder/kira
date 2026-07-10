@@ -10,6 +10,9 @@ export interface BookingCar {
   year: number;
   category: string;
   pricePerDay: number;
+  pricePerWeek: number | null;
+  pricePer15Days: number | null;
+  pricePerMonth: number | null;
   deposit: number;
   image: { url: string; alt: string } | null;
 }

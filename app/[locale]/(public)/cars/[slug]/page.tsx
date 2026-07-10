@@ -227,12 +227,38 @@ function CarDetail({
                   </span>
                 </p>
               </div>
-              {car.price_per_week != null && (
-                <Badge variant="outline" className="gap-1">
-                  {formatPrice(car.price_per_week, siteConfig.currency, locale)}
-                  {t("car.perWeek")}
-                </Badge>
-              )}
+              <div className="flex flex-wrap justify-end gap-1.5">
+                {car.price_per_week != null && (
+                  <Badge variant="outline" className="gap-1">
+                    {formatPrice(
+                      car.price_per_week,
+                      siteConfig.currency,
+                      locale,
+                    )}
+                    {t("car.perWeek")}
+                  </Badge>
+                )}
+                {car.price_per_15_days != null && (
+                  <Badge variant="outline" className="gap-1">
+                    {formatPrice(
+                      car.price_per_15_days,
+                      siteConfig.currency,
+                      locale,
+                    )}
+                    {t("car.per15Days")}
+                  </Badge>
+                )}
+                {car.price_per_month != null && (
+                  <Badge variant="outline" className="gap-1">
+                    {formatPrice(
+                      car.price_per_month,
+                      siteConfig.currency,
+                      locale,
+                    )}
+                    {t("car.perMonth")}
+                  </Badge>
+                )}
+              </div>
             </div>
 
             <p className="text-muted-foreground mt-3 flex items-center gap-1.5 text-sm">

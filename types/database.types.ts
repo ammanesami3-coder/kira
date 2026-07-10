@@ -154,6 +154,8 @@ export interface Database {
           doors: number;
           price_per_day: number;
           price_per_week: number | null;
+          price_per_15_days: number | null;
+          price_per_month: number | null;
           deposit: number;
           features: string[];
           description: string | null;
@@ -179,6 +181,8 @@ export interface Database {
           doors: number;
           price_per_day: number;
           price_per_week?: number | null;
+          price_per_15_days?: number | null;
+          price_per_month?: number | null;
           deposit?: number;
           features?: string[];
           description?: string | null;
@@ -204,6 +208,8 @@ export interface Database {
           doors?: number;
           price_per_day?: number;
           price_per_week?: number | null;
+          price_per_15_days?: number | null;
+          price_per_month?: number | null;
           deposit?: number;
           features?: string[];
           description?: string | null;

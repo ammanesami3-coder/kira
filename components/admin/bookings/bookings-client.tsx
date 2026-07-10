@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Eye, Send, FileText, Loader2 } from "lucide-react";
+import { Eye, Send, FileText, Loader2, Trash2 } from "lucide-react";
 
 import { type Locale } from "@/config/site.config";
 import { carName, formatPrice } from "@/lib/display";
@@ -13,7 +13,7 @@ import {
   updateBookingStatus,
   retryBookingFulfillment,
 } from "@/server/mutations";
-import { listBookings } from "@/server/admin";
+import { deleteAllBookings, listBookings } from "@/server/admin";
 import type { Booking, BookingStatus } from "@/types/database.types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -64,6 +64,7 @@ export function BookingsClient({
 
   const [filter, setFilter] = useState<BookingStatus | "all">("all");
   const [selected, setSelected] = useState<Booking | null>(null);
+  const [confirmWipe, setConfirmWipe] = useState(false);
 
   const { data: bookings = [] } = useQuery({
     queryKey: adminKeys.bookings,
@@ -117,6 +118,22 @@ export function BookingsClient({
     onSettled: () => qc.invalidateQueries({ queryKey: adminKeys.bookings }),
   });
 
+  const wipe = useMutation({
+    mutationFn: () => deleteAllBookings(),
+    onSuccess: (res) => {
+      if (res.ok) {
+        toast.success(t("deletedAll", { count: res.data.deleted }));
+        setConfirmWipe(false);
+        setSelected(null);
+        qc.setQueryData<Booking[]>(adminKeys.bookings, []);
+      } else {
+        toast.error(tCommon("error"));
+      }
+    },
+    onError: () => toast.error(tCommon("error")),
+    onSettled: () => qc.invalidateQueries({ queryKey: adminKeys.bookings }),
+  });
+
   const resend = useMutation({
     mutationFn: (id: string) => retryBookingFulfillment(id),
     onSuccess: (res) => {
@@ -136,26 +153,71 @@ export function BookingsClient({
         title={t("title")}
         description={t("subtitle")}
         action={
-          <div className="w-44">
-            <Select
-              value={filter}
-              onValueChange={(v) => setFilter(v as BookingStatus | "all")}
-            >
-              <SelectTrigger className="w-full" size="sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{tCommon("all")}</SelectItem>
-                {STATUSES.map((s) => (
-                  <SelectItem key={s} value={s}>
-                    {tStatus(s)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="flex items-center gap-2">
+            {bookings.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-destructive hover:text-destructive"
+                onClick={() => setConfirmWipe(true)}
+              >
+                <Trash2 className="size-4" />
+                {t("deleteAll")}
+              </Button>
+            )}
+            <div className="w-44">
+              <Select
+                value={filter}
+                onValueChange={(v) => setFilter(v as BookingStatus | "all")}
+              >
+                <SelectTrigger className="w-full" size="sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{tCommon("all")}</SelectItem>
+                  {STATUSES.map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {tStatus(s)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         }
       />
+
+      <Dialog open={confirmWipe} onOpenChange={setConfirmWipe}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("deleteAllTitle")}</DialogTitle>
+            <DialogDescription>
+              {t("deleteAllWarning", { count: bookings.length })}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setConfirmWipe(false)}
+              disabled={wipe.isPending}
+            >
+              {tCommon("cancel")}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => wipe.mutate()}
+              disabled={wipe.isPending}
+            >
+              {wipe.isPending ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <Trash2 className="size-4" />
+              )}
+              {t("deleteAllConfirm")}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {bookings.length === 0 ? (
         <Empty message={t("empty")} />

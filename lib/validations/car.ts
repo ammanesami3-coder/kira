@@ -36,6 +36,8 @@ export const carSchema = z.object({
   doors: z.coerce.number().int().min(1).max(10),
   price_per_day: z.coerce.number().nonnegative(),
   price_per_week: z.coerce.number().nonnegative().nullish(),
+  price_per_15_days: z.coerce.number().nonnegative().nullish(),
+  price_per_month: z.coerce.number().nonnegative().nullish(),
   deposit: z.coerce.number().nonnegative().default(0),
   features: z.array(z.string()).default([]),
   description: z.string().nullish(),

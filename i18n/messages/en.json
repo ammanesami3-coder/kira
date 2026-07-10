@@ -266,6 +266,8 @@
   "car": {
     "perDay": "/ day",
     "perWeek": "/ week",
+    "per15Days": "/ 15 days",
+    "perMonth": "/ month",
     "from": "From",
     "book": "Book now",
     "viewDetails": "Details",
@@ -527,6 +529,9 @@
       "doors": "Doors",
       "pricePerDay": "Price per day",
       "pricePerWeek": "Price per week",
+      "pricePer15Days": "Price for 15 days",
+      "pricePerMonth": "Price per month",
+      "priceTierHint": "Optional — applied automatically based on the rental length",
       "deposit": "Deposit",
       "features": "Features",
       "featuresHint": "Separate them with commas.",
@@ -610,7 +615,12 @@
       "statusUpdated": "Status updated.",
       "conflict": "Another confirmed booking conflicts with these dates.",
       "resent": "Reprocessed successfully.",
-      "resendPartial": "PDF generated, but WhatsApp delivery failed (it will be retried)."
+      "resendPartial": "PDF generated, but WhatsApp delivery failed (it will be retried).",
+      "deleteAll": "Delete all",
+      "deleteAllTitle": "Delete all bookings?",
+      "deleteAllWarning": "{count} booking(s) will be permanently deleted, along with their PDFs. This cannot be undone.",
+      "deleteAllConfirm": "Yes, delete everything",
+      "deletedAll": "Deleted {count} booking(s)"
     },
     "settings": {
       "title": "Settings",

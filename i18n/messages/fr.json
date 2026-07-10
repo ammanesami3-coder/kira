@@ -266,6 +266,8 @@
   "car": {
     "perDay": "/ jour",
     "perWeek": "/ semaine",
+    "per15Days": "/ 15 jours",
+    "perMonth": "/ mois",
     "from": "À partir de",
     "book": "Réserver",
     "viewDetails": "Détails",
@@ -527,6 +529,9 @@
       "doors": "Portes",
       "pricePerDay": "Prix par jour",
       "pricePerWeek": "Prix par semaine",
+      "pricePer15Days": "Prix pour 15 jours",
+      "pricePerMonth": "Prix par mois",
+      "priceTierHint": "Optionnel — appliqué automatiquement selon la durée",
       "deposit": "Caution",
       "features": "Options",
       "featuresHint": "Séparez par des virgules.",
@@ -610,7 +615,12 @@
       "statusUpdated": "Statut mis à jour.",
       "conflict": "Une autre réservation confirmée chevauche ces dates.",
       "resent": "Traitement relancé.",
-      "resendPartial": "PDF généré, mais l'envoi WhatsApp a échoué (réessai ultérieur)."
+      "resendPartial": "PDF généré, mais l'envoi WhatsApp a échoué (réessai ultérieur).",
+      "deleteAll": "Tout supprimer",
+      "deleteAllTitle": "Supprimer toutes les réservations ?",
+      "deleteAllWarning": "{count} réservation(s) seront définitivement supprimées, ainsi que leurs PDF. Cette action est irréversible.",
+      "deleteAllConfirm": "Oui, tout supprimer",
+      "deletedAll": "{count} réservation(s) supprimée(s)"
     },
     "settings": {
       "title": "Paramètres",

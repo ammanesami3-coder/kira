@@ -46,6 +46,12 @@ export default async function BookPage({ params }: Props) {
     year: car.year,
     category: car.category,
     pricePerDay: Number(car.price_per_day),
+    pricePerWeek:
+      car.price_per_week != null ? Number(car.price_per_week) : null,
+    pricePer15Days:
+      car.price_per_15_days != null ? Number(car.price_per_15_days) : null,
+    pricePerMonth:
+      car.price_per_month != null ? Number(car.price_per_month) : null,
     deposit: Number(car.deposit),
     image: primary
       ? { url: primary.url, alt: imageAlt(primary, name, locale as Locale) }

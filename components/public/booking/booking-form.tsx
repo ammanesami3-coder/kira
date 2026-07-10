@@ -18,6 +18,7 @@ import {
   extrasTotal,
   type ExtraId,
 } from "@/lib/booking/extras";
+import { baseRentalPrice, dailyRate } from "@/lib/booking/pricing";
 import {
   bookingInputSchema,
   type BookingInput,
@@ -96,7 +97,9 @@ export function BookingForm({
     startDate && endDate
       ? differenceInCalendarDays(parseISO(endDate), parseISO(startDate))
       : 0;
-  const basePrice = totalDays * car.pricePerDay;
+  const basePrice = baseRentalPrice(totalDays, car);
+  const effectiveRate =
+    totalDays > 0 ? dailyRate(totalDays, car) : car.pricePerDay;
   const extrasSum = extrasTotal(extras as ExtraId[], totalDays);
   const totalPrice = basePrice + extrasSum;
 
@@ -385,7 +388,7 @@ export function BookingForm({
                       <span className="block text-xs">
                         {t("price.perDayLine", {
                           price: formatPrice(
-                            car.pricePerDay,
+                            effectiveRate,
                             siteConfig.currency,
                             locale,
                           ),

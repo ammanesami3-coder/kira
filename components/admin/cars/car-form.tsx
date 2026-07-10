@@ -57,6 +57,8 @@ function defaults(car: Car | null): CarInput {
     doors: car?.doors ?? 4,
     price_per_day: car?.price_per_day ?? 0,
     price_per_week: car?.price_per_week ?? null,
+    price_per_15_days: car?.price_per_15_days ?? null,
+    price_per_month: car?.price_per_month ?? null,
     deposit: car?.deposit ?? 0,
     features: car?.features ?? [],
     description: car?.description ?? "",
@@ -256,11 +258,29 @@ export function CarForm({ car }: { car: Car | null }) {
           <Field label={t("pricePerDay")} error={errors.price_per_day?.message}>
             <Input type="number" step="0.01" {...register("price_per_day")} />
           </Field>
-          <Field label={t("pricePerWeek")}>
+          <Field label={t("pricePerWeek")} hint={t("priceTierHint")}>
             <Input
               type="number"
               step="0.01"
               {...register("price_per_week", {
+                setValueAs: (v) => (v === "" || v == null ? null : Number(v)),
+              })}
+            />
+          </Field>
+          <Field label={t("pricePer15Days")} hint={t("priceTierHint")}>
+            <Input
+              type="number"
+              step="0.01"
+              {...register("price_per_15_days", {
+                setValueAs: (v) => (v === "" || v == null ? null : Number(v)),
+              })}
+            />
+          </Field>
+          <Field label={t("pricePerMonth")} hint={t("priceTierHint")}>
+            <Input
+              type="number"
+              step="0.01"
+              {...register("price_per_month", {
                 setValueAs: (v) => (v === "" || v == null ? null : Number(v)),
               })}
             />
