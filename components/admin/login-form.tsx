@@ -7,11 +7,25 @@ import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 
 import { useRouter } from "@/i18n/navigation";
+import { routing } from "@/i18n/routing";
 import { loginSchema, type LoginInput } from "@/lib/validations";
 import { signIn } from "@/server/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
+/**
+ * `redirectedFrom` (set by proxy.ts) carries the locale prefix (/fr/admin),
+ * but the next-intl router prefixes the active locale itself — strip it so
+ * we don't navigate to /fr/fr/admin.
+ */
+function stripLocalePrefix(path: string): string {
+  for (const locale of routing.locales) {
+    if (path === `/${locale}`) return "/";
+    if (path.startsWith(`/${locale}/`)) return path.slice(locale.length + 1);
+  }
+  return path;
+}
 
 export function LoginForm() {
   const t = useTranslations("admin.login");
@@ -40,8 +54,9 @@ export function LoginForm() {
       return;
     }
     // Cookies were set server-side; navigate into the dashboard.
-    const target = searchParams.get("redirectedFrom");
-    router.replace(target && target.includes("/admin") ? target : "/admin");
+    const raw = searchParams.get("redirectedFrom");
+    const target = raw ? stripLocalePrefix(raw) : null;
+    router.replace(target?.startsWith("/admin") ? target : "/admin");
     router.refresh();
   }
 
