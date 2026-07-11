@@ -61,3 +61,14 @@ export const REVEAL_VIEWPORT = {
   amount: 0.2,
   margin: "0px 0px -10% 0px",
 } as const;
+
+/**
+ * Viewport config for stagger grids. Grids grow arbitrarily tall on mobile
+ * (one column × N cards), so requiring a fraction of the whole container to
+ * be visible can never fire — reveal as soon as any part enters instead.
+ */
+export const STAGGER_VIEWPORT = {
+  once: true,
+  amount: "some",
+  margin: "0px 0px -10% 0px",
+} as const;

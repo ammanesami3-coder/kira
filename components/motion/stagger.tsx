@@ -3,7 +3,7 @@
 import { motion } from "motion/react";
 
 import {
-  REVEAL_VIEWPORT,
+  STAGGER_VIEWPORT,
   staggerContainer,
   staggerItem,
 } from "@/lib/animations";
@@ -30,7 +30,7 @@ export function Stagger({
       variants={staggerContainer(stagger, delayChildren)}
       initial="hidden"
       whileInView="visible"
-      viewport={REVEAL_VIEWPORT}
+      viewport={STAGGER_VIEWPORT}
     >
       {children}
     </motion.div>
