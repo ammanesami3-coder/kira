@@ -11,7 +11,13 @@ import {
   type PdfLogo,
 } from "@/components/pdf/booking-pdf";
 import { siteConfig } from "@/config/site.config";
-import { extraPrice, extrasTotal, type ExtraId } from "@/lib/booking/extras";
+import {
+  BOOKING_EXTRAS,
+  extraPriceIn,
+  extrasTotalIn,
+  type BookingExtra,
+  type ExtraId,
+} from "@/lib/booking/extras";
 
 /**
  * Booking PDF generation with @react-pdf/renderer (pure JS, Vercel-safe — no
@@ -104,6 +110,8 @@ export interface GenerateBookingPdfInput {
     total_price: number;
     notes: string | null;
     extras: readonly ExtraId[];
+    /** Prices the extras were sold at; defaults to the built-in catalog. */
+    extrasCatalog?: readonly BookingExtra[];
   };
 }
 
@@ -155,12 +163,17 @@ export async function generateBookingPdf(
   const carSubtitle = `${car.brand} ${car.model} · ${car.year}`;
 
   const days = booking.total_days;
-  const subtotal = days * Number(car.price_per_day);
-  const extrasSum = extrasTotal(booking.extras, days);
+  const catalog = booking.extrasCatalog ?? BOOKING_EXTRAS;
+  const extrasSum = extrasTotalIn(catalog, booking.extras, days);
+  // Derive the base from the authoritative stored total so the PDF lines
+  // always add up, whatever tiered rate or extras prices applied.
+  const subtotal = Math.max(0, Number(booking.total_price) - extrasSum);
+  const effectiveDailyRate =
+    days > 0 ? subtotal / days : Number(car.price_per_day);
 
   const extras = booking.extras.map((id) => ({
     label: EXTRA_LABELS[locale][id] ?? id,
-    price: money(extraPrice(id, days), currency, locale),
+    price: money(extraPriceIn(catalog, id, days), currency, locale),
   }));
 
   const data: BookingPdfData = {
@@ -196,7 +209,9 @@ export async function generateBookingPdf(
     car: {
       name: carName,
       subtitle: carSubtitle,
-      pricePerDay: money(Number(car.price_per_day), currency, locale),
+      // Effective daily rate for this booking (tiered rentals rent below
+      // the headline daily price), so rate × days = subtotal on the PDF.
+      pricePerDay: money(effectiveDailyRate, currency, locale),
       deposit: money(Number(car.deposit), currency, locale),
     },
     extras,

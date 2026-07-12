@@ -29,6 +29,7 @@ import {
 } from "@/config/fonts.config";
 import { allFontVariables, arabicFonts, latinFonts } from "@/lib/fonts";
 import { parseReviews } from "@/lib/reviews";
+import { BOOKING_EXTRAS, parseExtrasOverrides } from "@/lib/booking/extras";
 import {
   DESIGN_SECTION_IDS,
   DESIGN_STAT_KEYS,
@@ -77,6 +78,25 @@ function designDefaults(d: SiteDesign): AgencySettingsInput["design"] {
   };
 }
 
+/** Form shape for the extras overrides: price null = "default price". */
+function extrasDefaults(
+  s: AgencySettings | null,
+): AgencySettingsInput["booking_extras"] {
+  const overrides = parseExtrasOverrides(s?.booking_extras);
+  return {
+    enabled: overrides.enabled,
+    items: Object.fromEntries(
+      BOOKING_EXTRAS.map(({ id }) => [
+        id,
+        {
+          enabled: overrides.items[id].enabled,
+          price: overrides.items[id].price,
+        },
+      ]),
+    ) as AgencySettingsInput["booking_extras"]["items"],
+  };
+}
+
 function defaults(s: AgencySettings | null): AgencySettingsInput {
   return {
     name: s?.name ?? "",
@@ -113,6 +133,7 @@ function defaults(s: AgencySettings | null): AgencySettingsInput {
       date: r.date ?? "",
     })),
     design: designDefaults(parseDesign(s?.design)),
+    booking_extras: extrasDefaults(s),
   };
 }
 
@@ -124,6 +145,7 @@ export function SettingsForm({
   const t = useTranslations("admin.settings");
   const tCommon = useTranslations("admin.common");
   const tStats = useTranslations("stats");
+  const tExtras = useTranslations("bookingExtras");
   const router = useRouter();
 
   const {
@@ -463,6 +485,62 @@ export function SettingsForm({
             className="font-mono text-xs"
           />
         </Field>
+      </Section>
+
+      {/* Booking extras — show/hide + price of each "option supplémentaire" */}
+      <Section title={t("extras")}>
+        <div className="space-y-1 sm:col-span-2">
+          <label className="flex items-center gap-2 text-sm font-medium">
+            <input
+              type="checkbox"
+              className="size-4"
+              {...register("booking_extras.enabled")}
+            />
+            {t("extrasSectionEnabled")}
+          </label>
+          <p className="text-muted-foreground text-xs">{t("extrasHint")}</p>
+        </div>
+
+        <div className="divide-y rounded-xl border sm:col-span-2">
+          {BOOKING_EXTRAS.map((extra) => (
+            <div
+              key={extra.id}
+              className="grid gap-3 p-3.5 sm:grid-cols-[minmax(10rem,1fr)_auto_auto] sm:items-center"
+            >
+              <span className="text-sm font-medium">{tExtras(extra.id)}</span>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  className="size-4"
+                  {...register(`booking_extras.items.${extra.id}.enabled`)}
+                />
+                {t("extraVisible")}
+              </label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  dir="ltr"
+                  min={0}
+                  step="any"
+                  placeholder={String(extra.price)}
+                  className="w-28"
+                  {...register(`booking_extras.items.${extra.id}.price`, {
+                    setValueAs: (v) =>
+                      v === "" || v == null ? null : Number(v),
+                  })}
+                />
+                <span className="text-muted-foreground text-xs">
+                  {extra.pricing === "per_day"
+                    ? tExtras("perDay")
+                    : tExtras("perBooking")}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="text-muted-foreground text-xs sm:col-span-2">
+          {t("extraPriceHint")}
+        </p>
       </Section>
 
       {/* Google reviews — Maps link + curated showcase reviews */}

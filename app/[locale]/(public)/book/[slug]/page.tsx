@@ -3,9 +3,10 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { type Locale } from "@/config/site.config";
-import { getCarBySlug } from "@/server/queries";
+import { getAgencySettings, getCarBySlug } from "@/server/queries";
 import { getUnavailableRanges } from "@/server/availability";
 import { carName, imageAlt, primaryImage } from "@/lib/display";
+import { resolveExtrasSettings } from "@/lib/booking/extras";
 import { BookingForm } from "@/components/public/booking/booking-form";
 import type { BookingCar } from "@/components/public/booking/types";
 
@@ -35,6 +36,10 @@ export default async function BookPage({ params }: Props) {
 
   const ranges = await getUnavailableRanges(car.id);
 
+  // Owner-configured extras (visibility + prices); empty = section hidden.
+  const settings = await getAgencySettings().catch(() => null);
+  const extras = resolveExtrasSettings(settings?.booking_extras);
+
   const name = carName(car, locale as Locale);
   const primary = primaryImage(car.car_images);
   const bookingCar: BookingCar = {
@@ -58,5 +63,5 @@ export default async function BookPage({ params }: Props) {
       : null,
   };
 
-  return <BookingForm car={bookingCar} ranges={ranges} />;
+  return <BookingForm car={bookingCar} ranges={ranges} extras={extras} />;
 }

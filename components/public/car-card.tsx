@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { type Locale, siteConfig } from "@/config/site.config";
 import type { CarWithImages } from "@/server/queries";
 import { carName, formatPrice, imageAlt, primaryImage } from "@/lib/display";
+import { lowestDailyRate } from "@/lib/booking/pricing";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,17 @@ export function CarCard({
   const t = useTranslations();
   const image = primaryImage(car.car_images);
   const name = carName(car, locale);
+
+  // Long-rental tiers (week / 15 days / month) can undercut the daily rate;
+  // advertise the cheapest one as a "from" price. Cars without tiers keep
+  // the plain daily price, so untiered deployments look unchanged.
+  const fromRate = lowestDailyRate({
+    pricePerDay: Number(car.price_per_day),
+    pricePerWeek: car.price_per_week,
+    pricePer15Days: car.price_per_15_days,
+    pricePerMonth: car.price_per_month,
+  });
+  const hasTierDiscount = fromRate < Number(car.price_per_day);
 
   return (
     <TiltCard className="h-full">
@@ -119,8 +131,13 @@ export function CarCard({
 
           <div className="mt-auto flex items-end justify-between gap-3 pt-2">
             <p className="leading-tight">
+              {hasTierDiscount && (
+                <span className="text-muted-foreground block text-xs">
+                  {t("car.from")}
+                </span>
+              )}
               <span className="text-lg font-bold">
-                {formatPrice(car.price_per_day, siteConfig.currency, locale)}
+                {formatPrice(fromRate, siteConfig.currency, locale)}
               </span>
               <span className="text-muted-foreground text-sm">
                 {" "}

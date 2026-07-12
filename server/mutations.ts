@@ -6,8 +6,11 @@ import { after } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { fulfillBooking } from "@/server/fulfillment";
-import type { Json } from "@/types/database.types";
-import { extrasTotal } from "@/lib/booking/extras";
+import {
+  extrasSnapshot,
+  extrasTotalIn,
+  resolveExtrasSettings,
+} from "@/lib/booking/extras";
 import { baseRentalPrice } from "@/lib/booking/pricing";
 import { rateLimit, pruneRateLimits } from "@/lib/rate-limit";
 import { verifyTurnstile } from "@/lib/turnstile";
@@ -123,7 +126,18 @@ export async function createBooking(
   }
 
   // Authoritative pricing — recomputed server-side from the car's tiered
-  // rates and the shared extras catalog. The client total is display only.
+  // rates and the owner-configured extras catalog. The client total is
+  // display only. Extras the owner disabled are silently dropped, so a
+  // forged request can never buy a hidden option.
+  const { data: settingsRow } = await admin
+    .from("agency_settings")
+    .select("*")
+    .limit(1)
+    .maybeSingle();
+  const extrasCatalog = resolveExtrasSettings(settingsRow?.booking_extras);
+  const allowedExtras = new Set(extrasCatalog.map((e) => e.id));
+  const selectedExtras = data.extras.filter((id) => allowedExtras.has(id));
+
   const totalDays = daysBetween(data.start_date, data.end_date);
   const basePrice = baseRentalPrice(totalDays, {
     pricePerDay: Number(car.price_per_day),
@@ -131,7 +145,8 @@ export async function createBooking(
     pricePer15Days: car.price_per_15_days,
     pricePerMonth: car.price_per_month,
   });
-  const totalPrice = basePrice + extrasTotal(data.extras, totalDays);
+  const totalPrice =
+    basePrice + extrasTotalIn(extrasCatalog, selectedExtras, totalDays);
 
   const { data: inserted, error: insertError } = await admin
     .from("bookings")
@@ -144,7 +159,9 @@ export async function createBooking(
       pickup_location: data.pickup_location,
       dropoff_location: data.dropoff_location ? data.dropoff_location : null,
       total_price: totalPrice,
-      extras: { selected: data.extras } as Json,
+      // Snapshot the sold prices so the PDF stays correct even if the owner
+      // later edits the extras settings.
+      extras: extrasSnapshot(extrasCatalog, selectedExtras),
       notes: data.note ? data.note : null,
       status: "pending",
     })

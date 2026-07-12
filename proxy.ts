@@ -65,6 +65,8 @@ export default async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Skip API routes, Next internals, Vercel internals and static files.
-  matcher: "/((?!api|_next|_vercel|.*\\..*).*)",
+  // Skip API routes, Next internals, Vercel internals, static files and the
+  // root-level metadata icons (extensionless routes — locale-prefixing them
+  // would 404 the favicon).
+  matcher: "/((?!api|_next|_vercel|icon|apple-icon|.*\\..*).*)",
 };

@@ -9,7 +9,11 @@ import {
   sendDocument,
 } from "@/lib/wa-gateway";
 import { sendOwnerBookingEmail } from "@/lib/email";
-import { EXTRA_IDS, type ExtraId } from "@/lib/booking/extras";
+import {
+  EXTRA_IDS,
+  parseExtrasCatalog,
+  type ExtraId,
+} from "@/lib/booking/extras";
 import { siteConfig } from "@/config/site.config";
 
 /**
@@ -75,6 +79,9 @@ export async function fulfillBooking(
 
   const car = booking.cars;
   const extras = parseExtras(booking.extras);
+  // Prices the extras were actually sold at (snapshotted on the booking);
+  // older bookings without a snapshot fall back to the default catalog.
+  const extrasCatalog = parseExtrasCatalog(booking.extras);
 
   // ── 1. PDF (skip if already generated) ──────────────────────────────
   let pdfUrl = booking.pdf_url;
@@ -97,6 +104,7 @@ export async function fulfillBooking(
           total_price: Number(booking.total_price),
           notes: booking.notes,
           extras,
+          extrasCatalog,
         },
       });
 

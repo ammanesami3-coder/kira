@@ -13,9 +13,9 @@ import { Link } from "@/i18n/navigation";
 import { siteConfig, type Locale } from "@/config/site.config";
 import { formatPrice } from "@/lib/display";
 import {
-  BOOKING_EXTRAS,
-  extraPrice,
-  extrasTotal,
+  extraPriceIn,
+  extrasTotalIn,
+  type BookingExtra,
   type ExtraId,
 } from "@/lib/booking/extras";
 import { baseRentalPrice, dailyRate } from "@/lib/booking/pricing";
@@ -47,9 +47,12 @@ const KNOWN_ERRORS = new Set([
 export function BookingForm({
   car,
   ranges,
+  extras: extrasCatalog,
 }: {
   car: BookingCar;
   ranges: DateRange[];
+  /** Owner-configured extras (resolved server-side); empty = hide section. */
+  extras: BookingExtra[];
 }) {
   const t = useTranslations("book");
   const tExtras = useTranslations("bookingExtras");
@@ -100,7 +103,11 @@ export function BookingForm({
   const basePrice = baseRentalPrice(totalDays, car);
   const effectiveRate =
     totalDays > 0 ? dailyRate(totalDays, car) : car.pricePerDay;
-  const extrasSum = extrasTotal(extras as ExtraId[], totalDays);
+  const extrasSum = extrasTotalIn(
+    extrasCatalog,
+    extras as ExtraId[],
+    totalDays,
+  );
   const totalPrice = basePrice + extrasSum;
 
   /** Sync the calendar selection into the validated form fields. */
@@ -313,37 +320,39 @@ export function BookingForm({
             </div>
           </section>
 
-          <fieldset className="space-y-3">
-            <legend className="text-lg font-semibold">
-              {t("form.extras")}
-            </legend>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {BOOKING_EXTRAS.map((extra) => (
-                <label
-                  key={extra.id}
-                  className="border-input hover:bg-muted/40 has-[:checked]:border-primary has-[:checked]:bg-primary/5 flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors"
-                >
-                  <input
-                    type="checkbox"
-                    value={extra.id}
-                    className="accent-primary mt-0.5 size-4"
-                    {...register("extras")}
-                  />
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-medium">
-                      {tExtras(extra.id)}
+          {extrasCatalog.length > 0 && (
+            <fieldset className="space-y-3">
+              <legend className="text-lg font-semibold">
+                {t("form.extras")}
+              </legend>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {extrasCatalog.map((extra) => (
+                  <label
+                    key={extra.id}
+                    className="border-input hover:bg-muted/40 has-[:checked]:border-primary has-[:checked]:bg-primary/5 flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      value={extra.id}
+                      className="accent-primary mt-0.5 size-4"
+                      {...register("extras")}
+                    />
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-sm font-medium">
+                        {tExtras(extra.id)}
+                      </span>
+                      <span className="text-muted-foreground text-xs">
+                        {formatPrice(extra.price, siteConfig.currency, locale)}
+                        {extra.pricing === "per_day"
+                          ? ` ${tExtras("perDay")}`
+                          : ` ${tExtras("perBooking")}`}
+                      </span>
                     </span>
-                    <span className="text-muted-foreground text-xs">
-                      {formatPrice(extra.price, siteConfig.currency, locale)}
-                      {extra.pricing === "per_day"
-                        ? ` ${tExtras("perDay")}`
-                        : ` ${tExtras("perBooking")}`}
-                    </span>
-                  </span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          )}
         </div>
 
         {/* ── Right: summary + price + submit (sticky) ─────────────── */}
@@ -402,25 +411,25 @@ export function BookingForm({
                   </div>
 
                   {(extras as ExtraId[]).length > 0 &&
-                    BOOKING_EXTRAS.filter((e) =>
-                      (extras as ExtraId[]).includes(e.id),
-                    ).map((e) => (
-                      <div
-                        key={e.id}
-                        className="flex items-center justify-between gap-3"
-                      >
-                        <dt className="text-muted-foreground">
-                          {tExtras(e.id)}
-                        </dt>
-                        <dd className="font-medium">
-                          {formatPrice(
-                            extraPrice(e.id, totalDays),
-                            siteConfig.currency,
-                            locale,
-                          )}
-                        </dd>
-                      </div>
-                    ))}
+                    extrasCatalog
+                      .filter((e) => (extras as ExtraId[]).includes(e.id))
+                      .map((e) => (
+                        <div
+                          key={e.id}
+                          className="flex items-center justify-between gap-3"
+                        >
+                          <dt className="text-muted-foreground">
+                            {tExtras(e.id)}
+                          </dt>
+                          <dd className="font-medium">
+                            {formatPrice(
+                              extraPriceIn(extrasCatalog, e.id, totalDays),
+                              siteConfig.currency,
+                              locale,
+                            )}
+                          </dd>
+                        </div>
+                      ))}
 
                   <div className="flex items-center justify-between gap-3 border-t pt-2">
                     <dt className="font-semibold">{t("price.total")}</dt>

@@ -40,6 +40,22 @@ export function dailyRate(days: number, car: CarPricingTiers): number {
   return rate;
 }
 
+/**
+ * Cheapest effective daily rate across all configured tiers — the "from"
+ * price shown on catalog cards. Equals `pricePerDay` when no tier is set
+ * (or none is cheaper), so cards without tiered prices look unchanged.
+ */
+export function lowestDailyRate(car: CarPricingTiers): number {
+  let lowest = Number(car.pricePerDay);
+  for (const { key, tierDays } of TIERS) {
+    const total = car[key];
+    if (total != null && Number(total) > 0) {
+      lowest = Math.min(lowest, Number(total) / tierDays);
+    }
+  }
+  return lowest;
+}
+
 /** Base rental price (before extras), rounded to 2 decimals. */
 export function baseRentalPrice(days: number, car: CarPricingTiers): number {
   if (days <= 0) return 0;

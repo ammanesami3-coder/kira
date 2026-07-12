@@ -58,6 +58,45 @@ export const siteDesignSchema = z.object({
 
 export type SiteDesignInput = z.infer<typeof siteDesignSchema>;
 
+/**
+ * Owner overrides for one booking extra: visibility + optional price
+ * (null/"" = keep the default catalog price).
+ */
+const bookingExtraItemSchema = z.object({
+  enabled: z.boolean().default(true),
+  price: z.coerce.number().min(0).max(1_000_000).nullish(),
+});
+
+const defaultExtraItem = { enabled: true, price: null };
+const defaultExtraItems = {
+  full_insurance: defaultExtraItem,
+  additional_driver: defaultExtraItem,
+  gps: defaultExtraItem,
+  child_seat: defaultExtraItem,
+};
+
+/**
+ * Owner-editable booking extras ("options supplémentaires") — persisted as
+ * `agency_settings.booking_extras` jsonb. Keys mirror EXTRA_IDS in
+ * lib/booking/extras.ts. The defaults reproduce the built-in catalog, so an
+ * untouched form saves a no-op blob.
+ */
+export const bookingExtrasSchema = z
+  .object({
+    enabled: z.boolean().default(true),
+    items: z
+      .object({
+        full_insurance: bookingExtraItemSchema.default(defaultExtraItem),
+        additional_driver: bookingExtraItemSchema.default(defaultExtraItem),
+        gps: bookingExtraItemSchema.default(defaultExtraItem),
+        child_seat: bookingExtraItemSchema.default(defaultExtraItem),
+      })
+      .default(defaultExtraItems),
+  })
+  .default({ enabled: true, items: defaultExtraItems });
+
+export type BookingExtrasInput = z.infer<typeof bookingExtrasSchema>;
+
 /** One owner-curated showcase review (mirrors lib/reviews.ts AgencyReview). */
 export const agencyReviewSchema = z.object({
   author: z.string().min(1).max(80),
@@ -98,6 +137,7 @@ export const agencySettingsSchema = z.object({
   google_maps_link: z.url().nullish().or(z.literal("")),
   reviews: z.array(agencyReviewSchema).max(12).default([]),
   design: siteDesignSchema.default({ stats: {}, sections: {} }),
+  booking_extras: bookingExtrasSchema,
 });
 
 export type AgencySettingsInput = z.infer<typeof agencySettingsSchema>;

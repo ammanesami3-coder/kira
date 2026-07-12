@@ -23,9 +23,11 @@ import {
   deleteCarImageSchema,
   deleteBlockedPeriodSchema,
   agencySettingsSchema,
+  type BookingExtrasInput,
   type SiteDesignInput,
 } from "@/lib/validations";
 import { DESIGN_SECTION_IDS, DESIGN_STAT_KEYS } from "@/lib/design";
+import { EXTRA_IDS } from "@/lib/booking/extras";
 
 /**
  * Admin (owner) data access for the dashboard. Reads are consumed by
@@ -100,6 +102,27 @@ function toDesignJson(d: SiteDesignInput): Json {
   if (Object.keys(sections).length > 0) design.sections = sections;
 
   return design;
+}
+
+/**
+ * Canonical `booking_extras` jsonb: only deviations from the built-in
+ * catalog are persisted, so an untouched form saves `{}` and
+ * `parseExtrasOverrides` keeps treating absent keys as the defaults.
+ */
+function toBookingExtrasJson(v: BookingExtrasInput): Json {
+  const items: Record<string, Json> = {};
+  for (const id of EXTRA_IDS) {
+    const item = v.items[id];
+    const out: Record<string, Json> = {};
+    if (!item.enabled) out.enabled = false;
+    if (item.price != null) out.price = item.price;
+    if (Object.keys(out).length > 0) items[id] = out;
+  }
+
+  const extras: Record<string, Json> = {};
+  if (!v.enabled) extras.enabled = false;
+  if (Object.keys(items).length > 0) extras.items = items;
+  return extras;
 }
 
 /* ── Reads (TanStack query functions) ────────────────────────────── */
@@ -495,7 +518,18 @@ export async function updateAgencySettings(
       ...(r.date ? { date: r.date } : {}),
     })) as Json,
     design: toDesignJson(d.design),
+    booking_extras: toBookingExtrasJson(d.booking_extras),
     updated_at: new Date().toISOString(),
+  };
+
+  // `booking_extras` is a later migration — if this deployment's DB doesn't
+  // have the column yet (PostgREST rejects unknown body keys), retry the
+  // save without it instead of failing the whole settings form.
+  const isMissingExtrasColumn = (code: string | undefined) =>
+    code === "PGRST204" || code === "42703";
+  const withoutExtras = (): Omit<typeof payload, "booking_extras"> => {
+    const { booking_extras: _drop, ...rest } = payload;
+    return rest;
   };
 
   // Singleton: update the existing row, or insert the first one.
@@ -506,21 +540,36 @@ export async function updateAgencySettings(
     .maybeSingle();
 
   if (existing) {
-    const { error } = await supabase
+    let { error } = await supabase
       .from("agency_settings")
       .update(payload)
       .eq("id", existing.id);
+    if (error && isMissingExtrasColumn(error.code)) {
+      ({ error } = await supabase
+        .from("agency_settings")
+        .update(withoutExtras())
+        .eq("id", existing.id));
+    }
     if (error) return { ok: false, error: "DB_ERROR", code: error.code };
     revalidatePath("/", "layout");
     return { ok: true, data: { id: existing.id } };
   }
 
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from("agency_settings")
     .insert(payload)
     .select("id")
     .single();
-  if (error) return { ok: false, error: "DB_ERROR", code: error.code };
+  if (error && isMissingExtrasColumn(error.code)) {
+    ({ data, error } = await supabase
+      .from("agency_settings")
+      .insert(withoutExtras())
+      .select("id")
+      .single());
+  }
+  if (error || !data) {
+    return { ok: false, error: "DB_ERROR", code: error?.code };
+  }
   revalidatePath("/", "layout");
   return { ok: true, data: { id: data.id } };
 }

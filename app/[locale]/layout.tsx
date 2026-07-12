@@ -40,7 +40,9 @@ export async function generateMetadata({
     },
     description,
     applicationName: brand.name,
-    icons: { icon: "/favicon.ico" },
+    // Favicon comes from the file-convention `app/icon.tsx` (generated from
+    // the agency logo) — do NOT point `icons` at a static file here; the
+    // old `/favicon.ico` reference 404'd (no public/ dir in this repo).
     // Per-page metadata overrides title/description/canonical; these are the
     // shared OG/Twitter defaults. The actual OG/Twitter image comes from the
     // file-convention `opengraph-image` (per-car, with a branded public
