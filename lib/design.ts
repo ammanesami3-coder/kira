@@ -32,6 +32,24 @@ export const DESIGN_SECTION_IDS = [
 
 export type DesignSectionId = (typeof DESIGN_SECTION_IDS)[number];
 
+/**
+ * Homepage sections the owner may reorder (`design.home_section_order`).
+ * Hero is pinned first and the footer lives in the layout, so neither is
+ * orderable. The array order here is the built-in default.
+ */
+export const HOME_SECTION_IDS = [
+  "howItWorks",
+  "fleet",
+  "featured",
+  "valueProps",
+  "stats",
+  "testimonials",
+  "faq",
+  "cta",
+] as const;
+
+export type HomeSectionId = (typeof HOME_SECTION_IDS)[number];
+
 export interface SectionColors {
   /** Hex color for headings (h1–h4) inside the section. */
   heading?: string;
@@ -60,6 +78,8 @@ export interface SiteDesign {
   stats: Record<DesignStatKey, number | null>;
   /** Per-section text color overrides; absent section = theme default. */
   sections: Partial<Record<DesignSectionId, SectionColors>>;
+  /** Homepage section order (after the hero); null = built-in order. */
+  homeSectionOrder: HomeSectionId[] | null;
 }
 
 export const EMPTY_DESIGN: SiteDesign = {
@@ -68,12 +88,43 @@ export const EMPTY_DESIGN: SiteDesign = {
   logoHeightFooter: null,
   stats: { cars: null, clients: null, years: null, satisfaction: null },
   sections: {},
+  homeSectionOrder: null,
 };
 
 const HEX_RE = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 
 function isSectionId(value: string): value is DesignSectionId {
   return (DESIGN_SECTION_IDS as readonly string[]).includes(value);
+}
+
+function isHomeSectionId(value: unknown): value is HomeSectionId {
+  return (
+    typeof value === "string" &&
+    (HOME_SECTION_IDS as readonly string[]).includes(value)
+  );
+}
+
+/**
+ * Canonical homepage order from an owner-supplied list: unknown ids are
+ * dropped, duplicates keep their first position, and any missing section is
+ * appended in built-in order so every section always renders. Returns null
+ * when the result is exactly the built-in order (i.e. "no override").
+ */
+export function normalizeHomeSectionOrder(
+  values: readonly unknown[],
+): HomeSectionId[] | null {
+  const seen = new Set<HomeSectionId>();
+  const order: HomeSectionId[] = [];
+  for (const value of values) {
+    if (isHomeSectionId(value) && !seen.has(value)) {
+      seen.add(value);
+      order.push(value);
+    }
+  }
+  for (const id of HOME_SECTION_IDS) {
+    if (!seen.has(id)) order.push(id);
+  }
+  return order.every((id, i) => id === HOME_SECTION_IDS[i]) ? null : order;
 }
 
 function asHex(value: Json | undefined): string | undefined {
@@ -138,6 +189,9 @@ export function parseDesign(value: Json | null | undefined): SiteDesign {
     logoHeightFooter: asInt(d.logo_height_footer, 16, 200),
     stats,
     sections,
+    homeSectionOrder: Array.isArray(d.home_section_order)
+      ? normalizeHomeSectionOrder(d.home_section_order)
+      : null,
   };
 }
 

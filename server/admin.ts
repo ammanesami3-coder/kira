@@ -26,7 +26,11 @@ import {
   type BookingExtrasInput,
   type SiteDesignInput,
 } from "@/lib/validations";
-import { DESIGN_SECTION_IDS, DESIGN_STAT_KEYS } from "@/lib/design";
+import {
+  DESIGN_SECTION_IDS,
+  DESIGN_STAT_KEYS,
+  normalizeHomeSectionOrder,
+} from "@/lib/design";
 import { EXTRA_IDS } from "@/lib/booking/extras";
 
 /**
@@ -100,6 +104,11 @@ function toDesignJson(d: SiteDesignInput): Json {
     }
   }
   if (Object.keys(sections).length > 0) design.sections = sections;
+
+  const homeOrder = d.home_section_order
+    ? normalizeHomeSectionOrder(d.home_section_order)
+    : null;
+  if (homeOrder) design.home_section_order = homeOrder;
 
   return design;
 }

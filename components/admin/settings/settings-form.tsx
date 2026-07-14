@@ -75,6 +75,9 @@ function designDefaults(d: SiteDesign): AgencySettingsInput["design"] {
         },
       ]),
     ),
+    // No form UI (set per-client in the DB); kept in form state so a
+    // settings save round-trips the stored order instead of erasing it.
+    home_section_order: d.homeSectionOrder,
   };
 }
 

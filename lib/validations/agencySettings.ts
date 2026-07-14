@@ -6,6 +6,7 @@ import {
   defaultLatinFont,
   latinFontIds,
 } from "@/config/fonts.config";
+import { HOME_SECTION_IDS } from "@/lib/design";
 
 const hexColor = z
   .string()
@@ -54,6 +55,10 @@ export const siteDesignSchema = z.object({
       footer: sectionColorsSchema.optional(),
     })
     .default({}),
+  home_section_order: z
+    .array(z.enum(HOME_SECTION_IDS))
+    .max(HOME_SECTION_IDS.length)
+    .nullish(),
 });
 
 export type SiteDesignInput = z.infer<typeof siteDesignSchema>;

@@ -1,3 +1,4 @@
+import { Fragment, type ReactNode } from "react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
@@ -8,7 +9,11 @@ import {
   ogLocaleDefaults,
 } from "@/lib/seo";
 import { resolveBranding } from "@/lib/branding";
-import { parseDesign } from "@/lib/design";
+import {
+  HOME_SECTION_IDS,
+  parseDesign,
+  type HomeSectionId,
+} from "@/lib/design";
 import { autoRentalJsonLd, faqJsonLd } from "@/lib/structured-data";
 import { aggregateFromReviews, parseReviews } from "@/lib/reviews";
 import { getAgencySettings, getAvailableCars } from "@/server/queries";
@@ -105,22 +110,33 @@ export default async function HomePage({ params }: Props) {
     })),
   );
 
-  return (
-    <>
-      <JsonLd data={[businessLd, faqLd]} />
-      <Hero imageUrl={heroImage} carsCount={cars.length} />
-      <HowItWorks />
-      <FleetCategories locale={locale} />
-      <FeaturedCars cars={featured} locale={locale} />
-      <ValueProps />
-      <Stats carsCount={cars.length} overrides={design.stats} />
+  // Section order below the hero is owner-configurable per deployment
+  // (design.home_section_order); the built-in order is the default.
+  const sections: Record<HomeSectionId, ReactNode> = {
+    howItWorks: <HowItWorks />,
+    fleet: <FleetCategories locale={locale} />,
+    featured: <FeaturedCars cars={featured} locale={locale} />,
+    valueProps: <ValueProps />,
+    stats: <Stats carsCount={cars.length} overrides={design.stats} />,
+    testimonials: (
       <Testimonials
         reviews={curatedReviews}
         googleMapsLink={settings?.google_maps_link ?? null}
         rating={rating}
       />
-      <FaqSection />
-      <CtaBand locale={locale} />
+    ),
+    faq: <FaqSection />,
+    cta: <CtaBand locale={locale} />,
+  };
+  const sectionOrder = design.homeSectionOrder ?? HOME_SECTION_IDS;
+
+  return (
+    <>
+      <JsonLd data={[businessLd, faqLd]} />
+      <Hero imageUrl={heroImage} carsCount={cars.length} />
+      {sectionOrder.map((id) => (
+        <Fragment key={id}>{sections[id]}</Fragment>
+      ))}
     </>
   );
 }
