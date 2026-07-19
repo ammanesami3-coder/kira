@@ -40,8 +40,9 @@ export default async function Image({
 
   const name = car ? carName(car, locale as Locale) : brand.name;
   const specs = car ? `${car.brand} · ${car.model} · ${car.year}` : "";
+  const currency = settings?.currency || siteConfig.currency;
   const price = car
-    ? `${formatPrice(Number(car.price_per_day), siteConfig.currency, locale as Locale)}`
+    ? `${formatPrice(Number(car.price_per_day), currency, locale as Locale)}`
     : "";
 
   const fonts = almarai

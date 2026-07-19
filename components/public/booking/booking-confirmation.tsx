@@ -7,7 +7,7 @@ import { CheckCircle2, Copy } from "lucide-react";
 import { useState } from "react";
 
 import { Link } from "@/i18n/navigation";
-import { siteConfig, type Locale } from "@/config/site.config";
+import { type Locale } from "@/config/site.config";
 import { formatPrice } from "@/lib/display";
 import type { BookingConfirmation as Confirmation } from "@/server/mutations";
 import { Badge } from "@/components/ui/badge";
@@ -62,7 +62,7 @@ export function BookingConfirmationView({
     ...(dropoff ? [{ label: t("dropoff"), value: dropoff }] : []),
     {
       label: t("total"),
-      value: formatPrice(confirmation.total_price, siteConfig.currency, locale),
+      value: formatPrice(confirmation.total_price, car.currency, locale),
     },
   ];
 

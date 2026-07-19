@@ -14,5 +14,7 @@ export interface BookingCar {
   pricePer15Days: number | null;
   pricePerMonth: number | null;
   deposit: number;
+  /** Agency currency (from `agency_settings`, falling back to site config). */
+  currency: string;
   image: { url: string; alt: string } | null;
 }

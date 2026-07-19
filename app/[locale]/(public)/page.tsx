@@ -2,7 +2,7 @@ import { Fragment, type ReactNode } from "react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { type Locale } from "@/config/site.config";
+import { siteConfig, type Locale } from "@/config/site.config";
 import {
   clampDescription,
   localizedAlternates,
@@ -78,6 +78,7 @@ export default async function HomePage({ params }: Props) {
 
   const brand = resolveBranding(settings, locale as Locale);
   const design = parseDesign(settings?.design);
+  const currency = settings?.currency || siteConfig.currency;
   const featured = cars.slice(0, 6);
 
   // Hero LCP visual: the owner-picked image (admin → settings → design)
@@ -115,7 +116,9 @@ export default async function HomePage({ params }: Props) {
   const sections: Record<HomeSectionId, ReactNode> = {
     howItWorks: <HowItWorks />,
     fleet: <FleetCategories locale={locale} />,
-    featured: <FeaturedCars cars={featured} locale={locale} />,
+    featured: (
+      <FeaturedCars cars={featured} locale={locale} currency={currency} />
+    ),
     valueProps: <ValueProps />,
     stats: <Stats carsCount={cars.length} overrides={design.stats} />,
     testimonials: (

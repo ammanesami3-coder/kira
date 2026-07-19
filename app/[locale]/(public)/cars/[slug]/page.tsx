@@ -27,6 +27,7 @@ import {
 import { breadcrumbJsonLd, carJsonLd } from "@/lib/structured-data";
 import { routing } from "@/i18n/routing";
 import {
+  getAgencySettings,
   getCarBySlug,
   getCarSlugs,
   type CarWithImages,
@@ -97,8 +98,12 @@ export default async function CarDetailPage({ params }: Props) {
   const car = await getCarBySlug(slug);
   if (!car) notFound();
 
-  const ranges = await getUnavailableRanges(car.id);
-  const t = await getTranslations({ locale });
+  const [ranges, settings, t] = await Promise.all([
+    getUnavailableRanges(car.id),
+    getAgencySettings().catch(() => null),
+    getTranslations({ locale }),
+  ]);
+  const currency = settings?.currency || siteConfig.currency;
 
   const name = carName(car, locale as Locale);
   const description = carDescription(car, locale as Locale);
@@ -122,7 +127,7 @@ export default async function CarDetailPage({ params }: Props) {
     doors: car.doors,
     images: galleryImages(car.car_images).map((img) => img.url),
     pricePerDay: Number(car.price_per_day),
-    currency: siteConfig.currency,
+    currency,
     url,
     available: car.is_available,
   });
@@ -135,7 +140,7 @@ export default async function CarDetailPage({ params }: Props) {
   return (
     <>
       <JsonLd data={[carLd, breadcrumbLd]} />
-      <CarDetail car={car} ranges={ranges} />
+      <CarDetail car={car} ranges={ranges} currency={currency} />
     </>
   );
 }
@@ -143,9 +148,11 @@ export default async function CarDetailPage({ params }: Props) {
 function CarDetail({
   car,
   ranges,
+  currency,
 }: {
   car: CarWithImages;
   ranges: DateRange[];
+  currency: string;
 }) {
   const t = useTranslations();
   const locale = useLocale() as Locale;
@@ -215,11 +222,7 @@ function CarDetail({
                 <p className="text-muted-foreground text-xs">{t("car.from")}</p>
                 <p>
                   <span className="text-3xl font-bold">
-                    {formatPrice(
-                      car.price_per_day,
-                      siteConfig.currency,
-                      locale,
-                    )}
+                    {formatPrice(car.price_per_day, currency, locale)}
                   </span>
                   <span className="text-muted-foreground">
                     {" "}
@@ -230,31 +233,19 @@ function CarDetail({
               <div className="flex flex-wrap justify-end gap-1.5">
                 {car.price_per_week != null && (
                   <Badge variant="outline" className="gap-1">
-                    {formatPrice(
-                      car.price_per_week,
-                      siteConfig.currency,
-                      locale,
-                    )}
+                    {formatPrice(car.price_per_week, currency, locale)}
                     {t("car.perWeek")}
                   </Badge>
                 )}
                 {car.price_per_15_days != null && (
                   <Badge variant="outline" className="gap-1">
-                    {formatPrice(
-                      car.price_per_15_days,
-                      siteConfig.currency,
-                      locale,
-                    )}
+                    {formatPrice(car.price_per_15_days, currency, locale)}
                     {t("car.per15Days")}
                   </Badge>
                 )}
                 {car.price_per_month != null && (
                   <Badge variant="outline" className="gap-1">
-                    {formatPrice(
-                      car.price_per_month,
-                      siteConfig.currency,
-                      locale,
-                    )}
+                    {formatPrice(car.price_per_month, currency, locale)}
                     {t("car.perMonth")}
                   </Badge>
                 )}
@@ -263,8 +254,7 @@ function CarDetail({
 
             <p className="text-muted-foreground mt-3 flex items-center gap-1.5 text-sm">
               <ShieldCheck className="size-4" aria-hidden />
-              {t("car.deposit")}:{" "}
-              {formatPrice(car.deposit, siteConfig.currency, locale)}
+              {t("car.deposit")}: {formatPrice(car.deposit, currency, locale)}
             </p>
 
             <Button asChild size="lg" className="mt-5 w-full">

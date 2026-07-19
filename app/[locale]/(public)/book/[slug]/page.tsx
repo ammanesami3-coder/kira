@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { type Locale } from "@/config/site.config";
+import { siteConfig, type Locale } from "@/config/site.config";
 import { getAgencySettings, getCarBySlug } from "@/server/queries";
 import { getUnavailableRanges } from "@/server/availability";
 import { carName, imageAlt, primaryImage } from "@/lib/display";
@@ -58,6 +58,7 @@ export default async function BookPage({ params }: Props) {
     pricePerMonth:
       car.price_per_month != null ? Number(car.price_per_month) : null,
     deposit: Number(car.deposit),
+    currency: settings?.currency || siteConfig.currency,
     image: primary
       ? { url: primary.url, alt: imageAlt(primary, name, locale as Locale) }
       : null,

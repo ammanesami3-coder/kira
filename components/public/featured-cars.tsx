@@ -12,9 +12,11 @@ import { Stagger, StaggerItem } from "@/components/motion/stagger";
 export function FeaturedCars({
   cars,
   locale,
+  currency,
 }: {
   cars: CarWithImages[];
   locale: string;
+  currency: string;
 }) {
   const t = useTranslations("home.featured");
   const Arrow = locale === "ar" ? ArrowLeft : ArrowRight;
@@ -48,7 +50,7 @@ export function FeaturedCars({
               key={car.id}
               className={i === 0 ? "lg:col-span-2 lg:row-span-2" : undefined}
             >
-              <CarCard car={car} featured={i === 0} />
+              <CarCard car={car} currency={currency} featured={i === 0} />
             </StaggerItem>
           ))}
         </Stagger>

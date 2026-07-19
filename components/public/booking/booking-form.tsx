@@ -10,7 +10,7 @@ import type { DateRange as DayPickerRange } from "react-day-picker";
 import { AlertCircle, ArrowLeft, ArrowRight, ImageOff } from "lucide-react";
 
 import { Link } from "@/i18n/navigation";
-import { siteConfig, type Locale } from "@/config/site.config";
+import { type Locale } from "@/config/site.config";
 import { formatPrice } from "@/lib/display";
 import {
   extraPriceIn,
@@ -342,7 +342,7 @@ export function BookingForm({
                         {tExtras(extra.id)}
                       </span>
                       <span className="text-muted-foreground text-xs">
-                        {formatPrice(extra.price, siteConfig.currency, locale)}
+                        {formatPrice(extra.price, car.currency, locale)}
                         {extra.pricing === "per_day"
                           ? ` ${tExtras("perDay")}`
                           : ` ${tExtras("perBooking")}`}
@@ -398,7 +398,7 @@ export function BookingForm({
                         {t("price.perDayLine", {
                           price: formatPrice(
                             effectiveRate,
-                            siteConfig.currency,
+                            car.currency,
                             locale,
                           ),
                           days: t("price.days", { count: totalDays }),
@@ -406,7 +406,7 @@ export function BookingForm({
                       </span>
                     </dt>
                     <dd className="font-medium">
-                      {formatPrice(basePrice, siteConfig.currency, locale)}
+                      {formatPrice(basePrice, car.currency, locale)}
                     </dd>
                   </div>
 
@@ -424,7 +424,7 @@ export function BookingForm({
                           <dd className="font-medium">
                             {formatPrice(
                               extraPriceIn(extrasCatalog, e.id, totalDays),
-                              siteConfig.currency,
+                              car.currency,
                               locale,
                             )}
                           </dd>
@@ -434,7 +434,7 @@ export function BookingForm({
                   <div className="flex items-center justify-between gap-3 border-t pt-2">
                     <dt className="font-semibold">{t("price.total")}</dt>
                     <dd className="text-lg font-bold">
-                      {formatPrice(totalPrice, siteConfig.currency, locale)}
+                      {formatPrice(totalPrice, car.currency, locale)}
                     </dd>
                   </div>
                 </dl>
@@ -446,8 +446,7 @@ export function BookingForm({
             </div>
 
             <p className="text-muted-foreground text-xs">
-              {t("deposit")}:{" "}
-              {formatPrice(car.deposit, siteConfig.currency, locale)}
+              {t("deposit")}: {formatPrice(car.deposit, car.currency, locale)}
             </p>
 
             <Button

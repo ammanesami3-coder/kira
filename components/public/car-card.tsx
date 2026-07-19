@@ -3,7 +3,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Users, Cog, Fuel, ImageOff } from "lucide-react";
 
 import { Link } from "@/i18n/navigation";
-import { type Locale, siteConfig } from "@/config/site.config";
+import { type Locale } from "@/config/site.config";
 import type { CarWithImages } from "@/server/queries";
 import { carName, formatPrice, imageAlt, primaryImage } from "@/lib/display";
 import { lowestDailyRate } from "@/lib/booking/pricing";
@@ -25,10 +25,13 @@ import { TiltCard } from "@/components/motion/tilt-card";
  */
 export function CarCard({
   car,
+  currency,
   priority = false,
   featured = false,
 }: {
   car: CarWithImages;
+  /** Agency currency (from `agency_settings`, falling back to site config). */
+  currency: string;
   priority?: boolean;
   featured?: boolean;
 }) {
@@ -137,7 +140,7 @@ export function CarCard({
                 </span>
               )}
               <span className="text-lg font-bold">
-                {formatPrice(fromRate, siteConfig.currency, locale)}
+                {formatPrice(fromRate, currency, locale)}
               </span>
               <span className="text-muted-foreground text-sm">
                 {" "}

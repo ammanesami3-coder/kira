@@ -2,7 +2,8 @@ import { getTranslations } from "next-intl/server";
 import { SearchX } from "lucide-react";
 
 import { Link } from "@/i18n/navigation";
-import { getAvailableCars } from "@/server/queries";
+import { siteConfig } from "@/config/site.config";
+import { getAgencySettings, getAvailableCars } from "@/server/queries";
 import { isCarAvailable } from "@/server/availability";
 import {
   applyFilters,
@@ -28,7 +29,11 @@ export async function CarResults({
   const t = await getTranslations({ locale, namespace: "catalog" });
   const filters = parseFilters(searchParams);
 
-  const all = await getAvailableCars();
+  const [all, settings] = await Promise.all([
+    getAvailableCars(),
+    getAgencySettings().catch(() => null),
+  ]);
+  const currency = settings?.currency || siteConfig.currency;
   let cars = applyFilters(all, filters);
 
   // When a date window is given, keep only cars free for that range.
@@ -64,7 +69,7 @@ export async function CarResults({
       <Stagger className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {cars.map((car, i) => (
           <StaggerItem key={car.id}>
-            <CarCard car={car} priority={i < 3} />
+            <CarCard car={car} currency={currency} priority={i < 3} />
           </StaggerItem>
         ))}
       </Stagger>
