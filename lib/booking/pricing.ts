@@ -2,13 +2,13 @@
  * Tiered rental pricing — the single source of truth for the base price,
  * shared by the client form (display) and the Server Action (authoritative).
  *
- * Each tier is an optional package total (7 / 15 / 30 days). The booking
- * uses the daily rate of the LONGEST tier the duration qualifies for, so:
- *   7 days  → exactly price_per_week
- *   15 days → exactly price_per_15_days
- *   30 days → exactly price_per_month
- * and in-between durations get the discounted rate (e.g. 10 days at the
- * weekly rate). A missing tier falls back to the next shorter one.
+ * Tier prices are package totals that apply ONLY when the duration matches
+ * the package exactly:
+ *   exactly 7 days  → price_per_week      (if configured)
+ *   exactly 15 days → price_per_15_days   (if configured)
+ *   exactly 30 days → price_per_month     (if configured)
+ * Every other duration — and any duration whose tier is not configured —
+ * is charged at the plain daily rate: price_per_day × days.
  */
 
 export interface CarPricingTiers {
@@ -19,25 +19,30 @@ export interface CarPricingTiers {
 }
 
 const TIERS: Array<{
-  minDays: number;
   key: keyof Omit<CarPricingTiers, "pricePerDay">;
   tierDays: number;
 }> = [
-  { minDays: 7, key: "pricePerWeek", tierDays: 7 },
-  { minDays: 15, key: "pricePer15Days", tierDays: 15 },
-  { minDays: 30, key: "pricePerMonth", tierDays: 30 },
+  { key: "pricePerWeek", tierDays: 7 },
+  { key: "pricePer15Days", tierDays: 15 },
+  { key: "pricePerMonth", tierDays: 30 },
 ];
+
+/** The configured package total for exactly `days` days, or null. */
+function exactTierTotal(days: number, car: CarPricingTiers): number | null {
+  for (const { key, tierDays } of TIERS) {
+    const total = car[key];
+    if (days === tierDays && total != null && Number(total) > 0) {
+      return Number(total);
+    }
+  }
+  return null;
+}
 
 /** Effective daily rate for a rental of `days` days. */
 export function dailyRate(days: number, car: CarPricingTiers): number {
-  let rate = Number(car.pricePerDay);
-  for (const { minDays, key, tierDays } of TIERS) {
-    const total = car[key];
-    if (days >= minDays && total != null && Number(total) > 0) {
-      rate = Number(total) / tierDays;
-    }
-  }
-  return rate;
+  const tierTotal = exactTierTotal(days, car);
+  if (tierTotal != null && days > 0) return tierTotal / days;
+  return Number(car.pricePerDay);
 }
 
 /**
@@ -59,5 +64,7 @@ export function lowestDailyRate(car: CarPricingTiers): number {
 /** Base rental price (before extras), rounded to 2 decimals. */
 export function baseRentalPrice(days: number, car: CarPricingTiers): number {
   if (days <= 0) return 0;
-  return Math.round(days * dailyRate(days, car) * 100) / 100;
+  const tierTotal = exactTierTotal(days, car);
+  const base = tierTotal ?? days * Number(car.pricePerDay);
+  return Math.round(base * 100) / 100;
 }
