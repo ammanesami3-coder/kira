@@ -15,7 +15,11 @@ import {
   type HomeSectionId,
 } from "@/lib/design";
 import { autoRentalJsonLd, faqJsonLd } from "@/lib/structured-data";
-import { aggregateFromReviews, parseReviews } from "@/lib/reviews";
+import {
+  aggregateFromReviews,
+  elfsightAppId,
+  parseReviews,
+} from "@/lib/reviews";
 import { getAgencySettings, getAvailableCars } from "@/server/queries";
 import { primaryImage } from "@/lib/display";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -126,6 +130,7 @@ export default async function HomePage({ params }: Props) {
         reviews={curatedReviews}
         googleMapsLink={settings?.google_maps_link ?? null}
         rating={rating}
+        elfsightAppId={elfsightAppId(settings?.reviews_elfsight_app_id)}
       />
     ),
     faq: <FaqSection />,

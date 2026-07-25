@@ -32,6 +32,7 @@ import {
   normalizeHomeSectionOrder,
 } from "@/lib/design";
 import { EXTRA_IDS } from "@/lib/booking/extras";
+import { elfsightAppId } from "@/lib/reviews";
 
 /**
  * Admin (owner) data access for the dashboard. Reads are consumed by
@@ -526,18 +527,28 @@ export async function updateAgencySettings(
       quote: r.quote,
       ...(r.date ? { date: r.date } : {}),
     })) as Json,
+    // Normalise whatever the owner pasted (id / class / embed) to the bare id.
+    reviews_elfsight_app_id: elfsightAppId(d.reviews_elfsight_app_id),
     design: toDesignJson(d.design),
     booking_extras: toBookingExtrasJson(d.booking_extras),
     updated_at: new Date().toISOString(),
   };
 
-  // `booking_extras` is a later migration — if this deployment's DB doesn't
-  // have the column yet (PostgREST rejects unknown body keys), retry the
-  // save without it instead of failing the whole settings form.
-  const isMissingExtrasColumn = (code: string | undefined) =>
+  // `booking_extras` and `reviews_elfsight_app_id` are later migrations — if
+  // this deployment's DB doesn't have a column yet (PostgREST rejects unknown
+  // body keys), retry the save without the newer optional columns instead of
+  // failing the whole settings form.
+  const isMissingOptionalColumn = (code: string | undefined) =>
     code === "PGRST204" || code === "42703";
-  const withoutExtras = (): Omit<typeof payload, "booking_extras"> => {
-    const { booking_extras: _drop, ...rest } = payload;
+  const withoutOptionalColumns = (): Omit<
+    typeof payload,
+    "booking_extras" | "reviews_elfsight_app_id"
+  > => {
+    const {
+      booking_extras: _extras,
+      reviews_elfsight_app_id: _elfsight,
+      ...rest
+    } = payload;
     return rest;
   };
 
@@ -553,10 +564,10 @@ export async function updateAgencySettings(
       .from("agency_settings")
       .update(payload)
       .eq("id", existing.id);
-    if (error && isMissingExtrasColumn(error.code)) {
+    if (error && isMissingOptionalColumn(error.code)) {
       ({ error } = await supabase
         .from("agency_settings")
-        .update(withoutExtras())
+        .update(withoutOptionalColumns())
         .eq("id", existing.id));
     }
     if (error) return { ok: false, error: "DB_ERROR", code: error.code };
@@ -569,10 +580,10 @@ export async function updateAgencySettings(
     .insert(payload)
     .select("id")
     .single();
-  if (error && isMissingExtrasColumn(error.code)) {
+  if (error && isMissingOptionalColumn(error.code)) {
     ({ data, error } = await supabase
       .from("agency_settings")
-      .insert(withoutExtras())
+      .insert(withoutOptionalColumns())
       .select("id")
       .single());
   }

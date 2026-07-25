@@ -131,6 +131,7 @@ function defaults(s: AgencySettings | null): AgencySettingsInput {
     seo_description: s?.seo_description ?? "",
     og_image_url: s?.og_image_url ?? "",
     google_maps_link: s?.google_maps_link ?? "",
+    reviews_elfsight_app_id: s?.reviews_elfsight_app_id ?? "",
     reviews: parseReviews(s?.reviews).map((r) => ({
       ...r,
       date: r.date ?? "",
@@ -557,6 +558,18 @@ export function SettingsForm({
             dir="ltr"
             placeholder="https://maps.app.goo.gl/…"
             {...register("google_maps_link")}
+          />
+        </Field>
+
+        <Field
+          label={t("reviewsWidget")}
+          hint={t("reviewsWidgetHint")}
+          className="sm:col-span-2"
+        >
+          <Input
+            dir="ltr"
+            placeholder="618e726b-427e-4e44-b9c9-edbd86ead43f"
+            {...register("reviews_elfsight_app_id")}
           />
         </Field>
 

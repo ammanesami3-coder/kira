@@ -1,3 +1,4 @@
+import Script from "next/script";
 import { useTranslations } from "next-intl";
 import { ExternalLink, Quote, Star } from "lucide-react";
 
@@ -42,13 +43,18 @@ export function Testimonials({
   reviews = [],
   googleMapsLink = null,
   rating = AGGREGATE_RATING,
+  elfsightAppId = null,
 }: {
   reviews?: AgencyReview[];
   googleMapsLink?: string | null;
   rating?: AggregateRatingInput;
+  /** Elfsight Google Reviews app id (UUID). When set, the live widget of real
+   * Google Maps reviews replaces the curated/built-in cards. */
+  elfsightAppId?: string | null;
 }) {
   const t = useTranslations("testimonials");
   const curated = reviews.length > 0;
+  const useWidget = !!elfsightAppId;
 
   return (
     <section
@@ -61,19 +67,23 @@ export function Testimonials({
         </h2>
         <p className="text-muted-foreground mt-3">{t("subtitle")}</p>
 
-        {/* Rating summary — same numbers as the AggregateRating JSON-LD. */}
-        <div className="glass mx-auto mt-6 flex w-fit items-center gap-3 rounded-full px-5 py-2.5">
-          <span className="text-2xl font-bold tracking-tight">
-            {rating.ratingValue}
-          </span>
-          <Stars rating={Math.round(rating.ratingValue)} />
-          <span className="text-muted-foreground text-sm">
-            {t("ratingLabel", {
-              rating: rating.ratingValue,
-              count: rating.reviewCount,
-            })}
-          </span>
-        </div>
+        {/* Rating summary — same numbers as the AggregateRating JSON-LD.
+            Hidden when the live Elfsight widget is shown, so the fallback
+            numbers never contradict the real Google rating it renders. */}
+        {!useWidget && (
+          <div className="glass mx-auto mt-6 flex w-fit items-center gap-3 rounded-full px-5 py-2.5">
+            <span className="text-2xl font-bold tracking-tight">
+              {rating.ratingValue}
+            </span>
+            <Stars rating={Math.round(rating.ratingValue)} />
+            <span className="text-muted-foreground text-sm">
+              {t("ratingLabel", {
+                rating: rating.ratingValue,
+                count: rating.reviewCount,
+              })}
+            </span>
+          </div>
+        )}
 
         {googleMapsLink && (
           <Magnetic className="mt-6">
@@ -93,7 +103,20 @@ export function Testimonials({
         )}
       </Reveal>
 
-      {curated ? (
+      {useWidget ? (
+        <div className="mt-12">
+          {/* Live Elfsight "Google Reviews" widget — real Google Maps reviews.
+              platform.js scans the DOM for the `elfsight-app-<id>` class. */}
+          <Script
+            src="https://elfsightcdn.com/platform.js"
+            strategy="afterInteractive"
+          />
+          <div
+            className={`elfsight-app-${elfsightAppId}`}
+            data-elfsight-app-lazy
+          />
+        </div>
+      ) : curated ? (
         <div className="mt-12">
           <ReviewsCarousel reviews={reviews} />
         </div>

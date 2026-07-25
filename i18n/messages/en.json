@@ -645,6 +645,8 @@
       "reviews": "Google reviews",
       "googleMapsLink": "Google Maps link",
       "googleMapsLinkHint": "Paste your Google Maps business page link — used for the “Write a review” button on the site.",
+      "reviewsWidget": "Google reviews widget (Elfsight)",
+      "reviewsWidgetHint": "Paste your Elfsight app id (or the full embed code). When set, the site shows your real Google reviews live instead of the manually-added testimonials. Leave empty to use the manual reviews.",
       "reviewsEmpty": "No curated reviews yet — the site shows default testimonials until you add real ones.",
       "reviewAuthor": "Customer name",
       "reviewRating": "Rating",

@@ -44,6 +44,20 @@ export function parseReviews(value: Json | null | undefined): AgencyReview[] {
   return reviews;
 }
 
+/**
+ * Extract the bare Elfsight app id (a UUID) from whatever the owner pasted:
+ * the raw id, the `elfsight-app-<uuid>` class, or the full embed snippet
+ * (`<div class="elfsight-app-…">`). Returns null when no id is present, so a
+ * blank/garbage value cleanly falls back to curated/built-in reviews.
+ */
+export function elfsightAppId(value: string | null | undefined): string | null {
+  if (typeof value !== "string") return null;
+  const match = value.match(
+    /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/,
+  );
+  return match ? match[0].toLowerCase() : null;
+}
+
 /** Average rating (1 decimal) + count, or null when there is nothing to rate. */
 export function aggregateFromReviews(
   reviews: AgencyReview[],

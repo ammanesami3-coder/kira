@@ -645,6 +645,8 @@
       "reviews": "Avis Google",
       "googleMapsLink": "Lien Google Maps",
       "googleMapsLinkHint": "Collez le lien de votre fiche Google Maps — il alimente le bouton « Laisser un avis » sur le site.",
+      "reviewsWidget": "Widget avis Google (Elfsight)",
+      "reviewsWidgetHint": "Collez l’identifiant de l’app Elfsight (ou le code d’intégration complet). Une fois renseigné, le site affiche vos vrais avis Google en direct au lieu des témoignages ajoutés manuellement. Laissez vide pour utiliser les avis manuels.",
       "reviewsEmpty": "Aucun avis sélectionné pour l'instant — le site affiche des témoignages par défaut jusqu'à l'ajout d'avis réels.",
       "reviewAuthor": "Nom du client",
       "reviewRating": "Note",

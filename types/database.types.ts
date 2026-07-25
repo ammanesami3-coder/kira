@@ -69,6 +69,7 @@ export interface Database {
           og_image_url: string | null;
           google_maps_link: string | null;
           reviews: Json;
+          reviews_elfsight_app_id: string | null;
           design: Json;
           booking_extras: Json;
           notify_via_bot: boolean;
@@ -101,6 +102,7 @@ export interface Database {
           og_image_url?: string | null;
           google_maps_link?: string | null;
           reviews?: Json;
+          reviews_elfsight_app_id?: string | null;
           design?: Json;
           booking_extras?: Json;
           notify_via_bot?: boolean;
@@ -133,6 +135,7 @@ export interface Database {
           og_image_url?: string | null;
           google_maps_link?: string | null;
           reviews?: Json;
+          reviews_elfsight_app_id?: string | null;
           design?: Json;
           booking_extras?: Json;
           notify_via_bot?: boolean;

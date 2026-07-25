@@ -141,6 +141,10 @@ export const agencySettingsSchema = z.object({
   og_image_url: z.url().nullish().or(z.literal("")),
   google_maps_link: z.url().nullish().or(z.literal("")),
   reviews: z.array(agencyReviewSchema).max(12).default([]),
+  // Elfsight "Google Reviews" widget: the raw app id (UUID), the
+  // `elfsight-app-<uuid>` class, or the full embed snippet — normalised to the
+  // bare id on write (server/admin.ts). Empty = keep curated/built-in reviews.
+  reviews_elfsight_app_id: z.string().max(400).nullish().or(z.literal("")),
   design: siteDesignSchema.default({ stats: {}, sections: {} }),
   booking_extras: bookingExtrasSchema,
 });

@@ -19,6 +19,9 @@ const isDev = process.env.NODE_ENV !== "production";
  *   - *.supabase.co        → DB/auth REST, Storage, realtime (wss) + images
  *   - va.vercel-scripts.com / *.vercel-insights.com → Analytics + Speed Insights
  *   - challenges.cloudflare.com → optional Turnstile anti-spam widget
+ *   - *.elfsight.com / *.elfsightcdn.com → optional Elfsight "Google Reviews"
+ *     widget (per-client, behind agency_settings.reviews_elfsight_app_id):
+ *     platform.js + widget assets, its review-data API, fonts and iframes.
  * Google fonts are self-hosted by next/font at build time, so no font origin
  * is required.
  */
@@ -28,12 +31,12 @@ const csp = [
   `object-src 'none'`,
   `frame-ancestors 'self'`,
   `form-action 'self'`,
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://va.vercel-scripts.com`,
-  `style-src 'self' 'unsafe-inline'`,
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://va.vercel-scripts.com https://elfsightcdn.com https://*.elfsightcdn.com https://*.elfsight.com`,
+  `style-src 'self' 'unsafe-inline' https://elfsightcdn.com https://*.elfsightcdn.com https://*.elfsight.com`,
   `img-src 'self' data: blob: https:`,
-  `font-src 'self' data:`,
-  `connect-src 'self' https://*.supabase.co wss://*.supabase.co https://va.vercel-scripts.com https://*.vercel-insights.com https://challenges.cloudflare.com`,
-  `frame-src https://challenges.cloudflare.com https://www.google.com https://maps.google.com`,
+  `font-src 'self' data: https://*.elfsightcdn.com https://*.elfsight.com`,
+  `connect-src 'self' https://*.supabase.co wss://*.supabase.co https://va.vercel-scripts.com https://*.vercel-insights.com https://challenges.cloudflare.com https://elfsightcdn.com https://*.elfsightcdn.com https://*.elfsight.com`,
+  `frame-src https://challenges.cloudflare.com https://www.google.com https://maps.google.com https://*.elfsight.com https://*.elfsightcdn.com`,
   `worker-src 'self' blob:`,
   `manifest-src 'self'`,
   `upgrade-insecure-requests`,
